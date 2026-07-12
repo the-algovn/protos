@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package algovn.demo.v1;
+
+option go_package = "github.com/the-algovn/protos/gen/go/algovn/demo/v1;demov1";
+
+service DemoService {
+  rpc Ping(PingRequest) returns (PingResponse);
+}
+
+message PingRequest {
+  string message = 1;
+}
+
+message PingResponse {
+  string message = 1;
+}
