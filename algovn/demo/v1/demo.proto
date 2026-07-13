@@ -5,7 +5,15 @@ package algovn.demo.v1;
 option go_package = "github.com/the-algovn/protos/gen/go/algovn/demo/v1;demov1";
 
 service DemoService {
+  // buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
   rpc Ping(PingRequest) returns (PingResponse);
+  // WhoAmI echoes the caller's Zitadel subject, parsed from the forwarded
+  // Authorization metadata — smoke-tests the claims-forwarding convention.
+  rpc WhoAmI(WhoAmIRequest) returns (WhoAmIResponse);
+  // AdminPing exists so the gateway's role:admin rule has a target.
+  // buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+  // buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+  rpc AdminPing(AdminPingRequest) returns (PingResponse);
 }
 
 message PingRequest {
@@ -15,3 +23,11 @@ message PingRequest {
 message PingResponse {
   string message = 1;
 }
+
+message WhoAmIRequest {}
+
+message WhoAmIResponse {
+  string sub = 1;
+}
+
+message AdminPingRequest {}

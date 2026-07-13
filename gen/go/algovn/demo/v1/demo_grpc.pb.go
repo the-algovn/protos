@@ -19,14 +19,24 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	DemoService_Ping_FullMethodName = "/algovn.demo.v1.DemoService/Ping"
+	DemoService_Ping_FullMethodName      = "/algovn.demo.v1.DemoService/Ping"
+	DemoService_WhoAmI_FullMethodName    = "/algovn.demo.v1.DemoService/WhoAmI"
+	DemoService_AdminPing_FullMethodName = "/algovn.demo.v1.DemoService/AdminPing"
 )
 
 // DemoServiceClient is the client API for DemoService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type DemoServiceClient interface {
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
 	Ping(ctx context.Context, in *PingRequest, opts ...grpc.CallOption) (*PingResponse, error)
+	// WhoAmI echoes the caller's Zitadel subject, parsed from the forwarded
+	// Authorization metadata — smoke-tests the claims-forwarding convention.
+	WhoAmI(ctx context.Context, in *WhoAmIRequest, opts ...grpc.CallOption) (*WhoAmIResponse, error)
+	// AdminPing exists so the gateway's role:admin rule has a target.
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+	AdminPing(ctx context.Context, in *AdminPingRequest, opts ...grpc.CallOption) (*PingResponse, error)
 }
 
 type demoServiceClient struct {
@@ -47,11 +57,39 @@ func (c *demoServiceClient) Ping(ctx context.Context, in *PingRequest, opts ...g
 	return out, nil
 }
 
+func (c *demoServiceClient) WhoAmI(ctx context.Context, in *WhoAmIRequest, opts ...grpc.CallOption) (*WhoAmIResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(WhoAmIResponse)
+	err := c.cc.Invoke(ctx, DemoService_WhoAmI_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *demoServiceClient) AdminPing(ctx context.Context, in *AdminPingRequest, opts ...grpc.CallOption) (*PingResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PingResponse)
+	err := c.cc.Invoke(ctx, DemoService_AdminPing_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // DemoServiceServer is the server API for DemoService service.
 // All implementations must embed UnimplementedDemoServiceServer
 // for forward compatibility.
 type DemoServiceServer interface {
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
 	Ping(context.Context, *PingRequest) (*PingResponse, error)
+	// WhoAmI echoes the caller's Zitadel subject, parsed from the forwarded
+	// Authorization metadata — smoke-tests the claims-forwarding convention.
+	WhoAmI(context.Context, *WhoAmIRequest) (*WhoAmIResponse, error)
+	// AdminPing exists so the gateway's role:admin rule has a target.
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+	AdminPing(context.Context, *AdminPingRequest) (*PingResponse, error)
 	mustEmbedUnimplementedDemoServiceServer()
 }
 
@@ -64,6 +102,12 @@ type UnimplementedDemoServiceServer struct{}
 
 func (UnimplementedDemoServiceServer) Ping(context.Context, *PingRequest) (*PingResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Ping not implemented")
+}
+func (UnimplementedDemoServiceServer) WhoAmI(context.Context, *WhoAmIRequest) (*WhoAmIResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method WhoAmI not implemented")
+}
+func (UnimplementedDemoServiceServer) AdminPing(context.Context, *AdminPingRequest) (*PingResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method AdminPing not implemented")
 }
 func (UnimplementedDemoServiceServer) mustEmbedUnimplementedDemoServiceServer() {}
 func (UnimplementedDemoServiceServer) testEmbeddedByValue()                     {}
@@ -104,6 +148,42 @@ func _DemoService_Ping_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
+func _DemoService_WhoAmI_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(WhoAmIRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DemoServiceServer).WhoAmI(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DemoService_WhoAmI_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DemoServiceServer).WhoAmI(ctx, req.(*WhoAmIRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DemoService_AdminPing_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AdminPingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DemoServiceServer).AdminPing(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DemoService_AdminPing_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DemoServiceServer).AdminPing(ctx, req.(*AdminPingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // DemoService_ServiceDesc is the grpc.ServiceDesc for DemoService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -114,6 +194,14 @@ var DemoService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Ping",
 			Handler:    _DemoService_Ping_Handler,
+		},
+		{
+			MethodName: "WhoAmI",
+			Handler:    _DemoService_WhoAmI_Handler,
+		},
+		{
+			MethodName: "AdminPing",
+			Handler:    _DemoService_AdminPing_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
