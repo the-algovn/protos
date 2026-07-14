@@ -1,0 +1,76 @@
+syntax = "proto3";
+
+package algovn.button.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/the-algovn/protos/gen/go/algovn/button/v1;buttonv1";
+
+service ButtonService {
+  // GetCounter returns the live global click total (anonymous).
+  rpc GetCounter(GetCounterRequest) returns (GetCounterResponse);
+  // ListAchievements returns the full catalog plus reached global
+  // milestones; unlocked_at is set when a valid token is forwarded
+  // (anonymous rule, personalized opportunistically).
+  rpc ListAchievements(ListAchievementsRequest) returns (ListAchievementsResponse);
+  // IssueChallenge hands out a proof-of-work challenge bound to the caller.
+  rpc IssueChallenge(IssueChallengeRequest) returns (IssueChallengeResponse);
+  // SubmitClicks redeems a solved challenge for a click batch (deadline 3s).
+  rpc SubmitClicks(SubmitClicksRequest) returns (SubmitClicksResponse);
+}
+
+message GetCounterRequest {}
+
+message GetCounterResponse {
+  uint64 total = 1;
+}
+
+message IssueChallengeRequest {
+  uint32 intended_clicks = 1;
+}
+
+message IssueChallengeResponse {
+  // Opaque b64url(payload || HMAC-SHA256(payload, K)).
+  string challenge = 1;
+  // W0*L at issuance (per-click expected hashes).
+  uint64 work_factor = 2;
+  uint32 min_interval_seconds = 3;
+  // 10000.
+  uint32 max_batch = 4;
+  google.protobuf.Timestamp expires_at = 5;
+}
+
+message SubmitClicksRequest {
+  string challenge = 1;
+  uint64 nonce = 2;
+  uint32 click_count = 3;
+}
+
+message SubmitClicksResponse {
+  uint64 user_total_clicks = 1;
+  repeated Achievement unlocked = 2;
+  // Piggyback: client starts solving immediately.
+  IssueChallengeResponse next_challenge = 3;
+}
+
+message ListAchievementsRequest {}
+
+message ListAchievementsResponse {
+  // Full catalog, unlocked_at set when personalized.
+  repeated Achievement catalog = 1;
+  // Reached global milestones.
+  repeated Milestone milestones = 2;
+}
+
+message Achievement {
+  string id = 1;
+  string title = 2;
+  string description = 3;
+  google.protobuf.Timestamp unlocked_at = 4;
+}
+
+message Milestone {
+  uint64 threshold = 1;
+  string title = 2;
+  google.protobuf.Timestamp reached_at = 3;
+}
