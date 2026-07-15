@@ -23,6 +23,8 @@ message GetCounterRequest {}
 
 message GetCounterResponse {
   uint64 total = 1;
+  // Distinct authenticated contributors (COUNT of user_clicks rows).
+  uint64 total_users = 2;
 }
 
 message IssueChallengeRequest {

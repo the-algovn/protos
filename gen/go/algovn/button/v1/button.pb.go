@@ -59,8 +59,10 @@ func (*GetCounterRequest) Descriptor() ([]byte, []int) {
 }
 
 type GetCounterResponse struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Total         uint64                 `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"`
+	state protoimpl.MessageState `protogen:"open.v1"`
+	Total uint64                 `protobuf:"varint,1,opt,name=total,proto3" json:"total,omitempty"`
+	// Distinct authenticated contributors (COUNT of user_clicks rows).
+	TotalUsers    uint64 `protobuf:"varint,2,opt,name=total_users,json=totalUsers,proto3" json:"total_users,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -98,6 +100,13 @@ func (*GetCounterResponse) Descriptor() ([]byte, []int) {
 func (x *GetCounterResponse) GetTotal() uint64 {
 	if x != nil {
 		return x.Total
+	}
+	return 0
+}
+
+func (x *GetCounterResponse) GetTotalUsers() uint64 {
+	if x != nil {
+		return x.TotalUsers
 	}
 	return 0
 }
@@ -569,9 +578,11 @@ var File_algovn_button_v1_button_proto protoreflect.FileDescriptor
 const file_algovn_button_v1_button_proto_rawDesc = "" +
 	"\n" +
 	"\x1dalgovn/button/v1/button.proto\x12\x10algovn.button.v1\x1a\x1fgoogle/protobuf/timestamp.proto\"\x13\n" +
-	"\x11GetCounterRequest\"*\n" +
+	"\x11GetCounterRequest\"K\n" +
 	"\x12GetCounterResponse\x12\x14\n" +
-	"\x05total\x18\x01 \x01(\x04R\x05total\"@\n" +
+	"\x05total\x18\x01 \x01(\x04R\x05total\x12\x1f\n" +
+	"\vtotal_users\x18\x02 \x01(\x04R\n" +
+	"totalUsers\"@\n" +
 	"\x15IssueChallengeRequest\x12'\n" +
 	"\x0fintended_clicks\x18\x01 \x01(\rR\x0eintendedClicks\"\xe1\x01\n" +
 	"\x16IssueChallengeResponse\x12\x1c\n" +
