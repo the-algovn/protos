@@ -1,0 +1,201 @@
+syntax = "proto3";
+
+package algovn.radiolab.v1;
+
+option go_package = "github.com/the-algovn/protos/gen/go/algovn/radiolab/v1;radiolabv1";
+
+// LabService is the Phase-0 component bench for Tần Số 42 (spec:
+// the-algovn/specs products/radio/lab.md). Dev-only: registered at the
+// LOCAL gateway only, never in iac. Audio bytes never travel through
+// these RPCs — responses carry artifact ids served by the lab's :9291
+// HTTP endpoint.
+service LabService {
+  rpc ListVoices(ListVoicesRequest) returns (ListVoicesResponse);
+  rpc SynthesizeVoice(SynthesizeVoiceRequest) returns (SynthesizeVoiceResponse);
+  rpc GenerateScript(GenerateScriptRequest) returns (GenerateScriptResponse);
+  rpc GetPersona(GetPersonaRequest) returns (GetPersonaResponse);
+  rpc SavePersona(SavePersonaRequest) returns (SavePersonaResponse);
+  rpc ParseCallIn(ParseCallInRequest) returns (ParseCallInResponse);
+  rpc SearchTracks(SearchTracksRequest) returns (SearchTracksResponse);
+  rpc DownloadTrack(DownloadTrackRequest) returns (DownloadTrackResponse);
+  rpc RenderPreview(RenderPreviewRequest) returns (RenderPreviewResponse);
+  rpc ListArtifacts(ListArtifactsRequest) returns (ListArtifactsResponse);
+  rpc GetLedger(GetLedgerRequest) returns (GetLedgerResponse);
+  rpc SaveFixture(SaveFixtureRequest) returns (SaveFixtureResponse);
+}
+
+message Artifact {
+  string id = 1;
+  string kind = 2; // take | track | render
+  string label = 3;
+  string ext = 4;
+  int64 bytes = 5;
+  string created_at = 6; // RFC3339
+  map<string, string> meta = 7;
+}
+
+message Voice {
+  string id = 1;    // e.g. vi-VN-Chirp3-HD-…
+  string label = 2;
+  string tier = 3;  // chirp3-hd | neural2 | standard | fake
+}
+
+message ListVoicesRequest {}
+message ListVoicesResponse {
+  repeated Voice voices = 1;
+}
+
+message SynthesizeVoiceRequest {
+  string text = 1;
+  string voice_id = 2;
+  double speaking_rate = 3; // 0 → provider default (1.0)
+  string label = 4;         // human name for the saved take
+}
+message SynthesizeVoiceResponse {
+  Artifact artifact = 1;
+  double cost_usd = 2;
+  bool fake = 3;
+}
+
+message Track {
+  string title = 1;
+  string artist = 2;
+  string mood = 3;
+  string era = 4;
+}
+
+message Dedication {
+  string from = 1;
+  string to = 2;
+  string digest = 3;
+  string weight = 4; // casual | warm | heavy
+}
+
+message Brief {
+  string type = 1;  // intro | backsell | station_id | dedication_read | wake_greeting | musing | daypart_transition
+  string clock = 2; // "hai mươi ba giờ mười hai, thứ Năm"
+  string daypart = 3;
+  string weather = 4;
+  Track now = 5;
+  Track next = 6;
+  repeated Dedication dedications = 7;
+  repeated string memory_summaries = 8;
+  repeated string recent_phrases = 9;
+  int32 max_chars = 10;
+}
+
+message GenerateScriptRequest {
+  Brief brief = 1;
+  string model = 2;            // gemini | anthropic | fake ("" → default)
+  string persona_override = 3; // "" → persona file on disk
+}
+message GenerateScriptResponse {
+  string script = 1;
+  string summary = 2;
+  repeated string used_phrases = 3;
+  repeated string violations = 4; // digit-lint / length findings
+  int32 in_tokens = 5;
+  int32 out_tokens = 6;
+  double cost_usd = 7;
+  bool fake = 8;
+  string model = 9;
+}
+
+message GetPersonaRequest {}
+message GetPersonaResponse {
+  string content = 1;
+}
+message SavePersonaRequest {
+  string content = 1;
+}
+message SavePersonaResponse {}
+
+message ParseCallInRequest {
+  string text = 1;
+  string model = 2; // "" → default
+}
+message ParseCallInResponse {
+  string song_query = 1;
+  string recipient = 2;
+  string message = 3;
+  string verdict = 4; // allow | reject
+  string reject_reason = 5;
+  string digest = 6;
+  string weight = 7; // casual | warm | heavy
+  double cost_usd = 8;
+  bool fake = 9;
+}
+
+message SearchTracksRequest {
+  string query = 1;
+  int32 limit = 2; // default 10
+}
+message Candidate {
+  string yt_id = 1;
+  string title = 2;
+  string channel = 3;
+  int64 duration_s = 4;
+  int64 view_count = 5;
+  string thumbnail_url = 6;
+  int32 score = 7;
+  repeated string score_notes = 8;
+}
+message SearchTracksResponse {
+  repeated Candidate candidates = 1;
+}
+
+message DownloadTrackRequest {
+  string yt_id = 1;
+  string title = 2; // label for the artifact
+}
+message DownloadTrackResponse {
+  Artifact artifact = 1;
+  double duration_s = 2;
+  double input_i = 3;   // integrated LUFS
+  double input_tp = 4;  // true peak
+  double input_lra = 5; // loudness range
+}
+
+message RenderPreviewRequest {
+  string track_artifact_id = 1;
+  string voice_artifact_id = 2;
+  double offset_s = 3;  // voice starts this far into the music
+  double duck_db = 4;   // music attenuation while voice speaks
+  double tail_s = 5;    // music alone after the voice ends
+}
+message RenderPreviewResponse {
+  Artifact artifact = 1;
+  double duration_s = 2;
+}
+
+message ListArtifactsRequest {
+  string kind = 1; // "" → all
+}
+message ListArtifactsResponse {
+  repeated Artifact artifacts = 1;
+}
+
+message GetLedgerRequest {}
+message LedgerLine {
+  string ts = 1; // RFC3339
+  string kind = 2;     // tts | llm
+  string provider = 3; // google | gemini | anthropic | fake
+  string label = 4;
+  int32 chars = 5;
+  int32 in_tokens = 6;
+  int32 out_tokens = 7;
+  double cost_usd = 8;
+}
+message GetLedgerResponse {
+  repeated LedgerLine lines = 1;
+  double total_usd = 2;
+}
+
+message SaveFixtureRequest {
+  string name = 1;          // kebab-case, becomes the filename
+  string raw_text = 2;
+  string expected_json = 3; // the ParseCallInResponse the reviewer blessed, as JSON
+}
+message SaveFixtureResponse {
+  string path = 1;
+}
