@@ -396,9 +396,13 @@ type ListAchievementsResponse struct {
 	// Full catalog, unlocked_at set when personalized.
 	Catalog []*Achievement `protobuf:"bytes,1,rep,name=catalog,proto3" json:"catalog,omitempty"`
 	// Reached global milestones.
-	Milestones    []*Milestone `protobuf:"bytes,2,rep,name=milestones,proto3" json:"milestones,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Milestones []*Milestone `protobuf:"bytes,2,rep,name=milestones,proto3" json:"milestones,omitempty"`
+	// Caller's lifetime clicks. Set only when personalized (token forwarded);
+	// absent for anonymous callers. Lets a returning client seed its own total
+	// at page load without waiting for a SubmitClicks round-trip.
+	UserTotalClicks uint64 `protobuf:"varint,3,opt,name=user_total_clicks,json=userTotalClicks,proto3" json:"user_total_clicks,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *ListAchievementsResponse) Reset() {
@@ -443,6 +447,13 @@ func (x *ListAchievementsResponse) GetMilestones() []*Milestone {
 		return x.Milestones
 	}
 	return nil
+}
+
+func (x *ListAchievementsResponse) GetUserTotalClicks() uint64 {
+	if x != nil {
+		return x.UserTotalClicks
+	}
+	return 0
 }
 
 type Achievement struct {
@@ -602,12 +613,13 @@ const file_algovn_button_v1_button_proto_rawDesc = "" +
 	"\x11user_total_clicks\x18\x01 \x01(\x04R\x0fuserTotalClicks\x129\n" +
 	"\bunlocked\x18\x02 \x03(\v2\x1d.algovn.button.v1.AchievementR\bunlocked\x12O\n" +
 	"\x0enext_challenge\x18\x03 \x01(\v2(.algovn.button.v1.IssueChallengeResponseR\rnextChallenge\"\x19\n" +
-	"\x17ListAchievementsRequest\"\x90\x01\n" +
+	"\x17ListAchievementsRequest\"\xbc\x01\n" +
 	"\x18ListAchievementsResponse\x127\n" +
 	"\acatalog\x18\x01 \x03(\v2\x1d.algovn.button.v1.AchievementR\acatalog\x12;\n" +
 	"\n" +
 	"milestones\x18\x02 \x03(\v2\x1b.algovn.button.v1.MilestoneR\n" +
-	"milestones\"\x92\x01\n" +
+	"milestones\x12*\n" +
+	"\x11user_total_clicks\x18\x03 \x01(\x04R\x0fuserTotalClicks\"\x92\x01\n" +
 	"\vAchievement\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
 	"\x05title\x18\x02 \x01(\tR\x05title\x12 \n" +

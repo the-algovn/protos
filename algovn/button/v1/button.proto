@@ -62,6 +62,10 @@ message ListAchievementsResponse {
   repeated Achievement catalog = 1;
   // Reached global milestones.
   repeated Milestone milestones = 2;
+  // Caller's lifetime clicks. Set only when personalized (token forwarded);
+  // absent for anonymous callers. Lets a returning client seed its own total
+  // at page load without waiting for a SubmitClicks round-trip.
+  uint64 user_total_clicks = 3;
 }
 
 message Achievement {
