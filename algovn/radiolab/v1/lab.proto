@@ -32,6 +32,7 @@ message Artifact {
   int64 bytes = 5;
   string created_at = 6; // RFC3339
   map<string, string> meta = 7;
+  string url = 8; // presigned MinIO GET URL, time-limited; empty if unavailable
 }
 
 message Voice {

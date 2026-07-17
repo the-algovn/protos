@@ -30,6 +30,7 @@ type Artifact struct {
 	Bytes         int64                  `protobuf:"varint,5,opt,name=bytes,proto3" json:"bytes,omitempty"`
 	CreatedAt     string                 `protobuf:"bytes,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"` // RFC3339
 	Meta          map[string]string      `protobuf:"bytes,7,rep,name=meta,proto3" json:"meta,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	Url           string                 `protobuf:"bytes,8,opt,name=url,proto3" json:"url,omitempty"` // presigned MinIO GET URL, time-limited; empty if unavailable
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -111,6 +112,13 @@ func (x *Artifact) GetMeta() map[string]string {
 		return x.Meta
 	}
 	return nil
+}
+
+func (x *Artifact) GetUrl() string {
+	if x != nil {
+		return x.Url
+	}
+	return ""
 }
 
 type Voice struct {
@@ -1957,7 +1965,7 @@ var File_algovn_radiolab_v1_lab_proto protoreflect.FileDescriptor
 
 const file_algovn_radiolab_v1_lab_proto_rawDesc = "" +
 	"\n" +
-	"\x1calgovn/radiolab/v1/lab.proto\x12\x12algovn.radiolab.v1\"\x80\x02\n" +
+	"\x1calgovn/radiolab/v1/lab.proto\x12\x12algovn.radiolab.v1\"\x92\x02\n" +
 	"\bArtifact\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x12\n" +
 	"\x04kind\x18\x02 \x01(\tR\x04kind\x12\x14\n" +
@@ -1966,7 +1974,8 @@ const file_algovn_radiolab_v1_lab_proto_rawDesc = "" +
 	"\x05bytes\x18\x05 \x01(\x03R\x05bytes\x12\x1d\n" +
 	"\n" +
 	"created_at\x18\x06 \x01(\tR\tcreatedAt\x12:\n" +
-	"\x04meta\x18\a \x03(\v2&.algovn.radiolab.v1.Artifact.MetaEntryR\x04meta\x1a7\n" +
+	"\x04meta\x18\a \x03(\v2&.algovn.radiolab.v1.Artifact.MetaEntryR\x04meta\x12\x10\n" +
+	"\x03url\x18\b \x01(\tR\x03url\x1a7\n" +
 	"\tMetaEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"A\n" +
