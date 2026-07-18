@@ -17,6 +17,9 @@ service ButtonService {
   rpc IssueChallenge(IssueChallengeRequest) returns (IssueChallengeResponse);
   // SubmitClicks redeems a solved challenge for a click batch (deadline 3s).
   rpc SubmitClicks(SubmitClicksRequest) returns (SubmitClicksResponse);
+  // GetLeaderboard returns the top-20 all-time and weekly boards (anonymous);
+  // the caller's own ranks are set only when a token is forwarded.
+  rpc GetLeaderboard(GetLeaderboardRequest) returns (GetLeaderboardResponse);
 }
 
 message GetCounterRequest {}
@@ -53,6 +56,9 @@ message SubmitClicksResponse {
   repeated Achievement unlocked = 2;
   // Piggyback: client starts solving immediately.
   IssueChallengeResponse next_challenge = 3;
+  // Caller's rank after this batch (1-based); 0 = unranked.
+  uint32 all_time_rank = 4;
+  uint32 weekly_rank = 5;
 }
 
 message ListAchievementsRequest {}
@@ -79,4 +85,20 @@ message Milestone {
   uint64 threshold = 1;
   string title = 2;
   google.protobuf.Timestamp reached_at = 3;
+}
+
+message GetLeaderboardRequest {}
+
+message LeaderboardEntry {
+  uint32 rank = 1;         // 1-based position
+  string display_name = 2;
+  uint64 clicks = 3;
+}
+
+message GetLeaderboardResponse {
+  repeated LeaderboardEntry all_time = 1;
+  repeated LeaderboardEntry this_week = 2;
+  // Caller's own ranks; set only when personalized (token forwarded). 0 = unranked.
+  uint32 my_all_time_rank = 3;
+  uint32 my_weekly_rank = 4;
 }

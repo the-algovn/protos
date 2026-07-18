@@ -23,6 +23,7 @@ const (
 	ButtonService_ListAchievements_FullMethodName = "/algovn.button.v1.ButtonService/ListAchievements"
 	ButtonService_IssueChallenge_FullMethodName   = "/algovn.button.v1.ButtonService/IssueChallenge"
 	ButtonService_SubmitClicks_FullMethodName     = "/algovn.button.v1.ButtonService/SubmitClicks"
+	ButtonService_GetLeaderboard_FullMethodName   = "/algovn.button.v1.ButtonService/GetLeaderboard"
 )
 
 // ButtonServiceClient is the client API for ButtonService service.
@@ -39,6 +40,9 @@ type ButtonServiceClient interface {
 	IssueChallenge(ctx context.Context, in *IssueChallengeRequest, opts ...grpc.CallOption) (*IssueChallengeResponse, error)
 	// SubmitClicks redeems a solved challenge for a click batch (deadline 3s).
 	SubmitClicks(ctx context.Context, in *SubmitClicksRequest, opts ...grpc.CallOption) (*SubmitClicksResponse, error)
+	// GetLeaderboard returns the top-20 all-time and weekly boards (anonymous);
+	// the caller's own ranks are set only when a token is forwarded.
+	GetLeaderboard(ctx context.Context, in *GetLeaderboardRequest, opts ...grpc.CallOption) (*GetLeaderboardResponse, error)
 }
 
 type buttonServiceClient struct {
@@ -89,6 +93,16 @@ func (c *buttonServiceClient) SubmitClicks(ctx context.Context, in *SubmitClicks
 	return out, nil
 }
 
+func (c *buttonServiceClient) GetLeaderboard(ctx context.Context, in *GetLeaderboardRequest, opts ...grpc.CallOption) (*GetLeaderboardResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetLeaderboardResponse)
+	err := c.cc.Invoke(ctx, ButtonService_GetLeaderboard_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ButtonServiceServer is the server API for ButtonService service.
 // All implementations must embed UnimplementedButtonServiceServer
 // for forward compatibility.
@@ -103,6 +117,9 @@ type ButtonServiceServer interface {
 	IssueChallenge(context.Context, *IssueChallengeRequest) (*IssueChallengeResponse, error)
 	// SubmitClicks redeems a solved challenge for a click batch (deadline 3s).
 	SubmitClicks(context.Context, *SubmitClicksRequest) (*SubmitClicksResponse, error)
+	// GetLeaderboard returns the top-20 all-time and weekly boards (anonymous);
+	// the caller's own ranks are set only when a token is forwarded.
+	GetLeaderboard(context.Context, *GetLeaderboardRequest) (*GetLeaderboardResponse, error)
 	mustEmbedUnimplementedButtonServiceServer()
 }
 
@@ -124,6 +141,9 @@ func (UnimplementedButtonServiceServer) IssueChallenge(context.Context, *IssueCh
 }
 func (UnimplementedButtonServiceServer) SubmitClicks(context.Context, *SubmitClicksRequest) (*SubmitClicksResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method SubmitClicks not implemented")
+}
+func (UnimplementedButtonServiceServer) GetLeaderboard(context.Context, *GetLeaderboardRequest) (*GetLeaderboardResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetLeaderboard not implemented")
 }
 func (UnimplementedButtonServiceServer) mustEmbedUnimplementedButtonServiceServer() {}
 func (UnimplementedButtonServiceServer) testEmbeddedByValue()                       {}
@@ -218,6 +238,24 @@ func _ButtonService_SubmitClicks_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ButtonService_GetLeaderboard_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetLeaderboardRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ButtonServiceServer).GetLeaderboard(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ButtonService_GetLeaderboard_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ButtonServiceServer).GetLeaderboard(ctx, req.(*GetLeaderboardRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ButtonService_ServiceDesc is the grpc.ServiceDesc for ButtonService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -240,6 +278,10 @@ var ButtonService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SubmitClicks",
 			Handler:    _ButtonService_SubmitClicks_Handler,
+		},
+		{
+			MethodName: "GetLeaderboard",
+			Handler:    _ButtonService_GetLeaderboard_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

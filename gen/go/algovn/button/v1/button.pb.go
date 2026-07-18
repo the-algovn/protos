@@ -300,6 +300,9 @@ type SubmitClicksResponse struct {
 	Unlocked        []*Achievement         `protobuf:"bytes,2,rep,name=unlocked,proto3" json:"unlocked,omitempty"`
 	// Piggyback: client starts solving immediately.
 	NextChallenge *IssueChallengeResponse `protobuf:"bytes,3,opt,name=next_challenge,json=nextChallenge,proto3" json:"next_challenge,omitempty"`
+	// Caller's rank after this batch (1-based); 0 = unranked.
+	AllTimeRank   uint32 `protobuf:"varint,4,opt,name=all_time_rank,json=allTimeRank,proto3" json:"all_time_rank,omitempty"`
+	WeeklyRank    uint32 `protobuf:"varint,5,opt,name=weekly_rank,json=weeklyRank,proto3" json:"weekly_rank,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -353,6 +356,20 @@ func (x *SubmitClicksResponse) GetNextChallenge() *IssueChallengeResponse {
 		return x.NextChallenge
 	}
 	return nil
+}
+
+func (x *SubmitClicksResponse) GetAllTimeRank() uint32 {
+	if x != nil {
+		return x.AllTimeRank
+	}
+	return 0
+}
+
+func (x *SubmitClicksResponse) GetWeeklyRank() uint32 {
+	if x != nil {
+		return x.WeeklyRank
+	}
+	return 0
 }
 
 type ListAchievementsRequest struct {
@@ -584,6 +601,171 @@ func (x *Milestone) GetReachedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+type GetLeaderboardRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetLeaderboardRequest) Reset() {
+	*x = GetLeaderboardRequest{}
+	mi := &file_algovn_button_v1_button_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetLeaderboardRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetLeaderboardRequest) ProtoMessage() {}
+
+func (x *GetLeaderboardRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_algovn_button_v1_button_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetLeaderboardRequest.ProtoReflect.Descriptor instead.
+func (*GetLeaderboardRequest) Descriptor() ([]byte, []int) {
+	return file_algovn_button_v1_button_proto_rawDescGZIP(), []int{10}
+}
+
+type LeaderboardEntry struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Rank          uint32                 `protobuf:"varint,1,opt,name=rank,proto3" json:"rank,omitempty"` // 1-based position
+	DisplayName   string                 `protobuf:"bytes,2,opt,name=display_name,json=displayName,proto3" json:"display_name,omitempty"`
+	Clicks        uint64                 `protobuf:"varint,3,opt,name=clicks,proto3" json:"clicks,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *LeaderboardEntry) Reset() {
+	*x = LeaderboardEntry{}
+	mi := &file_algovn_button_v1_button_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *LeaderboardEntry) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LeaderboardEntry) ProtoMessage() {}
+
+func (x *LeaderboardEntry) ProtoReflect() protoreflect.Message {
+	mi := &file_algovn_button_v1_button_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LeaderboardEntry.ProtoReflect.Descriptor instead.
+func (*LeaderboardEntry) Descriptor() ([]byte, []int) {
+	return file_algovn_button_v1_button_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *LeaderboardEntry) GetRank() uint32 {
+	if x != nil {
+		return x.Rank
+	}
+	return 0
+}
+
+func (x *LeaderboardEntry) GetDisplayName() string {
+	if x != nil {
+		return x.DisplayName
+	}
+	return ""
+}
+
+func (x *LeaderboardEntry) GetClicks() uint64 {
+	if x != nil {
+		return x.Clicks
+	}
+	return 0
+}
+
+type GetLeaderboardResponse struct {
+	state    protoimpl.MessageState `protogen:"open.v1"`
+	AllTime  []*LeaderboardEntry    `protobuf:"bytes,1,rep,name=all_time,json=allTime,proto3" json:"all_time,omitempty"`
+	ThisWeek []*LeaderboardEntry    `protobuf:"bytes,2,rep,name=this_week,json=thisWeek,proto3" json:"this_week,omitempty"`
+	// Caller's own ranks; set only when personalized (token forwarded). 0 = unranked.
+	MyAllTimeRank uint32 `protobuf:"varint,3,opt,name=my_all_time_rank,json=myAllTimeRank,proto3" json:"my_all_time_rank,omitempty"`
+	MyWeeklyRank  uint32 `protobuf:"varint,4,opt,name=my_weekly_rank,json=myWeeklyRank,proto3" json:"my_weekly_rank,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetLeaderboardResponse) Reset() {
+	*x = GetLeaderboardResponse{}
+	mi := &file_algovn_button_v1_button_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetLeaderboardResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetLeaderboardResponse) ProtoMessage() {}
+
+func (x *GetLeaderboardResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_algovn_button_v1_button_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetLeaderboardResponse.ProtoReflect.Descriptor instead.
+func (*GetLeaderboardResponse) Descriptor() ([]byte, []int) {
+	return file_algovn_button_v1_button_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *GetLeaderboardResponse) GetAllTime() []*LeaderboardEntry {
+	if x != nil {
+		return x.AllTime
+	}
+	return nil
+}
+
+func (x *GetLeaderboardResponse) GetThisWeek() []*LeaderboardEntry {
+	if x != nil {
+		return x.ThisWeek
+	}
+	return nil
+}
+
+func (x *GetLeaderboardResponse) GetMyAllTimeRank() uint32 {
+	if x != nil {
+		return x.MyAllTimeRank
+	}
+	return 0
+}
+
+func (x *GetLeaderboardResponse) GetMyWeeklyRank() uint32 {
+	if x != nil {
+		return x.MyWeeklyRank
+	}
+	return 0
+}
+
 var File_algovn_button_v1_button_proto protoreflect.FileDescriptor
 
 const file_algovn_button_v1_button_proto_rawDesc = "" +
@@ -608,11 +790,14 @@ const file_algovn_button_v1_button_proto_rawDesc = "" +
 	"\tchallenge\x18\x01 \x01(\tR\tchallenge\x12\x14\n" +
 	"\x05nonce\x18\x02 \x01(\x04R\x05nonce\x12\x1f\n" +
 	"\vclick_count\x18\x03 \x01(\rR\n" +
-	"clickCount\"\xce\x01\n" +
+	"clickCount\"\x93\x02\n" +
 	"\x14SubmitClicksResponse\x12*\n" +
 	"\x11user_total_clicks\x18\x01 \x01(\x04R\x0fuserTotalClicks\x129\n" +
 	"\bunlocked\x18\x02 \x03(\v2\x1d.algovn.button.v1.AchievementR\bunlocked\x12O\n" +
-	"\x0enext_challenge\x18\x03 \x01(\v2(.algovn.button.v1.IssueChallengeResponseR\rnextChallenge\"\x19\n" +
+	"\x0enext_challenge\x18\x03 \x01(\v2(.algovn.button.v1.IssueChallengeResponseR\rnextChallenge\x12\"\n" +
+	"\rall_time_rank\x18\x04 \x01(\rR\vallTimeRank\x12\x1f\n" +
+	"\vweekly_rank\x18\x05 \x01(\rR\n" +
+	"weeklyRank\"\x19\n" +
 	"\x17ListAchievementsRequest\"\xbc\x01\n" +
 	"\x18ListAchievementsResponse\x127\n" +
 	"\acatalog\x18\x01 \x03(\v2\x1d.algovn.button.v1.AchievementR\acatalog\x12;\n" +
@@ -630,13 +815,24 @@ const file_algovn_button_v1_button_proto_rawDesc = "" +
 	"\tthreshold\x18\x01 \x01(\x04R\tthreshold\x12\x14\n" +
 	"\x05title\x18\x02 \x01(\tR\x05title\x129\n" +
 	"\n" +
-	"reached_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\treachedAt2\x97\x03\n" +
+	"reached_at\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\treachedAt\"\x17\n" +
+	"\x15GetLeaderboardRequest\"a\n" +
+	"\x10LeaderboardEntry\x12\x12\n" +
+	"\x04rank\x18\x01 \x01(\rR\x04rank\x12!\n" +
+	"\fdisplay_name\x18\x02 \x01(\tR\vdisplayName\x12\x16\n" +
+	"\x06clicks\x18\x03 \x01(\x04R\x06clicks\"\xe7\x01\n" +
+	"\x16GetLeaderboardResponse\x12=\n" +
+	"\ball_time\x18\x01 \x03(\v2\".algovn.button.v1.LeaderboardEntryR\aallTime\x12?\n" +
+	"\tthis_week\x18\x02 \x03(\v2\".algovn.button.v1.LeaderboardEntryR\bthisWeek\x12'\n" +
+	"\x10my_all_time_rank\x18\x03 \x01(\rR\rmyAllTimeRank\x12$\n" +
+	"\x0emy_weekly_rank\x18\x04 \x01(\rR\fmyWeeklyRank2\xfc\x03\n" +
 	"\rButtonService\x12W\n" +
 	"\n" +
 	"GetCounter\x12#.algovn.button.v1.GetCounterRequest\x1a$.algovn.button.v1.GetCounterResponse\x12i\n" +
 	"\x10ListAchievements\x12).algovn.button.v1.ListAchievementsRequest\x1a*.algovn.button.v1.ListAchievementsResponse\x12c\n" +
 	"\x0eIssueChallenge\x12'.algovn.button.v1.IssueChallengeRequest\x1a(.algovn.button.v1.IssueChallengeResponse\x12]\n" +
-	"\fSubmitClicks\x12%.algovn.button.v1.SubmitClicksRequest\x1a&.algovn.button.v1.SubmitClicksResponseB?Z=github.com/the-algovn/protos/gen/go/algovn/button/v1;buttonv1b\x06proto3"
+	"\fSubmitClicks\x12%.algovn.button.v1.SubmitClicksRequest\x1a&.algovn.button.v1.SubmitClicksResponse\x12c\n" +
+	"\x0eGetLeaderboard\x12'.algovn.button.v1.GetLeaderboardRequest\x1a(.algovn.button.v1.GetLeaderboardResponseB?Z=github.com/the-algovn/protos/gen/go/algovn/button/v1;buttonv1b\x06proto3"
 
 var (
 	file_algovn_button_v1_button_proto_rawDescOnce sync.Once
@@ -650,7 +846,7 @@ func file_algovn_button_v1_button_proto_rawDescGZIP() []byte {
 	return file_algovn_button_v1_button_proto_rawDescData
 }
 
-var file_algovn_button_v1_button_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
+var file_algovn_button_v1_button_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
 var file_algovn_button_v1_button_proto_goTypes = []any{
 	(*GetCounterRequest)(nil),        // 0: algovn.button.v1.GetCounterRequest
 	(*GetCounterResponse)(nil),       // 1: algovn.button.v1.GetCounterResponse
@@ -662,29 +858,36 @@ var file_algovn_button_v1_button_proto_goTypes = []any{
 	(*ListAchievementsResponse)(nil), // 7: algovn.button.v1.ListAchievementsResponse
 	(*Achievement)(nil),              // 8: algovn.button.v1.Achievement
 	(*Milestone)(nil),                // 9: algovn.button.v1.Milestone
-	(*timestamppb.Timestamp)(nil),    // 10: google.protobuf.Timestamp
+	(*GetLeaderboardRequest)(nil),    // 10: algovn.button.v1.GetLeaderboardRequest
+	(*LeaderboardEntry)(nil),         // 11: algovn.button.v1.LeaderboardEntry
+	(*GetLeaderboardResponse)(nil),   // 12: algovn.button.v1.GetLeaderboardResponse
+	(*timestamppb.Timestamp)(nil),    // 13: google.protobuf.Timestamp
 }
 var file_algovn_button_v1_button_proto_depIdxs = []int32{
-	10, // 0: algovn.button.v1.IssueChallengeResponse.expires_at:type_name -> google.protobuf.Timestamp
+	13, // 0: algovn.button.v1.IssueChallengeResponse.expires_at:type_name -> google.protobuf.Timestamp
 	8,  // 1: algovn.button.v1.SubmitClicksResponse.unlocked:type_name -> algovn.button.v1.Achievement
 	3,  // 2: algovn.button.v1.SubmitClicksResponse.next_challenge:type_name -> algovn.button.v1.IssueChallengeResponse
 	8,  // 3: algovn.button.v1.ListAchievementsResponse.catalog:type_name -> algovn.button.v1.Achievement
 	9,  // 4: algovn.button.v1.ListAchievementsResponse.milestones:type_name -> algovn.button.v1.Milestone
-	10, // 5: algovn.button.v1.Achievement.unlocked_at:type_name -> google.protobuf.Timestamp
-	10, // 6: algovn.button.v1.Milestone.reached_at:type_name -> google.protobuf.Timestamp
-	0,  // 7: algovn.button.v1.ButtonService.GetCounter:input_type -> algovn.button.v1.GetCounterRequest
-	6,  // 8: algovn.button.v1.ButtonService.ListAchievements:input_type -> algovn.button.v1.ListAchievementsRequest
-	2,  // 9: algovn.button.v1.ButtonService.IssueChallenge:input_type -> algovn.button.v1.IssueChallengeRequest
-	4,  // 10: algovn.button.v1.ButtonService.SubmitClicks:input_type -> algovn.button.v1.SubmitClicksRequest
-	1,  // 11: algovn.button.v1.ButtonService.GetCounter:output_type -> algovn.button.v1.GetCounterResponse
-	7,  // 12: algovn.button.v1.ButtonService.ListAchievements:output_type -> algovn.button.v1.ListAchievementsResponse
-	3,  // 13: algovn.button.v1.ButtonService.IssueChallenge:output_type -> algovn.button.v1.IssueChallengeResponse
-	5,  // 14: algovn.button.v1.ButtonService.SubmitClicks:output_type -> algovn.button.v1.SubmitClicksResponse
-	11, // [11:15] is the sub-list for method output_type
-	7,  // [7:11] is the sub-list for method input_type
-	7,  // [7:7] is the sub-list for extension type_name
-	7,  // [7:7] is the sub-list for extension extendee
-	0,  // [0:7] is the sub-list for field type_name
+	13, // 5: algovn.button.v1.Achievement.unlocked_at:type_name -> google.protobuf.Timestamp
+	13, // 6: algovn.button.v1.Milestone.reached_at:type_name -> google.protobuf.Timestamp
+	11, // 7: algovn.button.v1.GetLeaderboardResponse.all_time:type_name -> algovn.button.v1.LeaderboardEntry
+	11, // 8: algovn.button.v1.GetLeaderboardResponse.this_week:type_name -> algovn.button.v1.LeaderboardEntry
+	0,  // 9: algovn.button.v1.ButtonService.GetCounter:input_type -> algovn.button.v1.GetCounterRequest
+	6,  // 10: algovn.button.v1.ButtonService.ListAchievements:input_type -> algovn.button.v1.ListAchievementsRequest
+	2,  // 11: algovn.button.v1.ButtonService.IssueChallenge:input_type -> algovn.button.v1.IssueChallengeRequest
+	4,  // 12: algovn.button.v1.ButtonService.SubmitClicks:input_type -> algovn.button.v1.SubmitClicksRequest
+	10, // 13: algovn.button.v1.ButtonService.GetLeaderboard:input_type -> algovn.button.v1.GetLeaderboardRequest
+	1,  // 14: algovn.button.v1.ButtonService.GetCounter:output_type -> algovn.button.v1.GetCounterResponse
+	7,  // 15: algovn.button.v1.ButtonService.ListAchievements:output_type -> algovn.button.v1.ListAchievementsResponse
+	3,  // 16: algovn.button.v1.ButtonService.IssueChallenge:output_type -> algovn.button.v1.IssueChallengeResponse
+	5,  // 17: algovn.button.v1.ButtonService.SubmitClicks:output_type -> algovn.button.v1.SubmitClicksResponse
+	12, // 18: algovn.button.v1.ButtonService.GetLeaderboard:output_type -> algovn.button.v1.GetLeaderboardResponse
+	14, // [14:19] is the sub-list for method output_type
+	9,  // [9:14] is the sub-list for method input_type
+	9,  // [9:9] is the sub-list for extension type_name
+	9,  // [9:9] is the sub-list for extension extendee
+	0,  // [0:9] is the sub-list for field type_name
 }
 
 func init() { file_algovn_button_v1_button_proto_init() }
@@ -698,7 +901,7 @@ func file_algovn_button_v1_button_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_algovn_button_v1_button_proto_rawDesc), len(file_algovn_button_v1_button_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   10,
+			NumMessages:   13,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
