@@ -1,0 +1,125 @@
+syntax = "proto3";
+
+package algovn.button.v2;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/the-algovn/protos/gen/go/algovn/button/v2;buttonv2";
+
+// ButtonService v2 — the redesigned contract. SubmitClicks is pure-ack: it
+// returns only the next challenge; per-user results (total, rank, unlocked,
+// quests, streak) arrive over the authenticated per-user SSE channel, and the
+// initial snapshot comes from GetPlayerState.
+service ButtonService {
+  // GetCounter returns the live global click total (anonymous).
+  rpc GetCounter(GetCounterRequest) returns (GetCounterResponse);
+  // IssueChallenge hands out a proof-of-work challenge bound to the caller.
+  rpc IssueChallenge(IssueChallengeRequest) returns (IssueChallengeResponse);
+  // SubmitClicks verifies a solved challenge, enqueues the batch, and returns
+  // the next challenge. It computes no per-user state (pure ack).
+  rpc SubmitClicks(SubmitClicksRequest) returns (SubmitClicksResponse);
+  // GetLeaderboard returns the top-20 all-time and weekly boards (anonymous);
+  // the caller's own ranks are set only when a token is forwarded.
+  rpc GetLeaderboard(GetLeaderboardRequest) returns (GetLeaderboardResponse);
+  // GetPlayerState returns the caller's full snapshot for initial load
+  // (personalized; requires a forwarded token). The per-user SSE channel keeps
+  // it live afterward.
+  rpc GetPlayerState(GetPlayerStateRequest) returns (GetPlayerStateResponse);
+}
+
+message GetCounterRequest {}
+
+message GetCounterResponse {
+  uint64 total = 1;
+  uint64 total_users = 2;
+}
+
+message IssueChallengeRequest {
+  uint32 intended_clicks = 1;
+}
+
+message IssueChallengeResponse {
+  string challenge = 1;
+  uint64 work_factor = 2;
+  uint32 min_interval_seconds = 3;
+  uint32 max_batch = 4;
+  google.protobuf.Timestamp expires_at = 5;
+}
+
+message SubmitClicksRequest {
+  string challenge = 1;
+  uint64 nonce = 2;
+  uint32 click_count = 3;
+}
+
+// Pure ack: only the next challenge, to keep the client's solver pipeline full.
+message SubmitClicksResponse {
+  IssueChallengeResponse next_challenge = 1;
+}
+
+message GetLeaderboardRequest {}
+
+message LeaderboardEntry {
+  uint32 rank = 1;
+  string display_name = 2;
+  uint64 clicks = 3;
+}
+
+message GetLeaderboardResponse {
+  repeated LeaderboardEntry all_time = 1;
+  repeated LeaderboardEntry this_week = 2;
+  uint32 my_all_time_rank = 3;
+  uint32 my_weekly_rank = 4;
+}
+
+message Achievement {
+  string id = 1;
+  string title = 2;
+  string description = 3;
+  google.protobuf.Timestamp unlocked_at = 4;
+}
+
+message Milestone {
+  uint64 threshold = 1;
+  string title = 2;
+  google.protobuf.Timestamp reached_at = 3;
+}
+
+enum QuestKind {
+  QUEST_KIND_UNSPECIFIED = 0;
+  QUEST_KIND_DAILY = 1;
+  QUEST_KIND_WEEKLY = 2;
+}
+
+message Quest {
+  string id = 1;
+  string title = 2;
+  string description = 3;
+  QuestKind kind = 4;
+  uint64 target = 5;
+  uint64 progress = 6;
+  bool done = 7;
+  string reward = 8;
+  google.protobuf.Timestamp resets_at = 9;
+}
+
+message Streak {
+  uint32 current_days = 1;
+  uint32 best_days = 2;
+  // ISO date (YYYY-MM-DD) of the last contributing day, in Asia/Ho_Chi_Minh.
+  string last_contrib_date = 3;
+}
+
+message GetPlayerStateRequest {}
+
+message GetPlayerStateResponse {
+  uint64 total_clicks = 1;
+  uint32 all_time_rank = 2;
+  uint32 weekly_rank = 3;
+  // Full catalog; unlocked_at set on earned entries.
+  repeated Achievement achievements = 4;
+  repeated Milestone milestones = 5;
+  // Active daily + weekly quests with the caller's progress.
+  repeated Quest quests = 6;
+  Streak streak = 7;
+}
