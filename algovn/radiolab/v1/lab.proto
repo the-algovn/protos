@@ -7,8 +7,8 @@ option go_package = "github.com/the-algovn/protos/gen/go/algovn/radiolab/v1;radi
 // LabService is the Phase-0 component bench for Tần Số 42 (spec:
 // the-algovn/specs products/radio/lab.md). Dev-only: registered at the
 // LOCAL gateway only, never in iac. Audio bytes never travel through
-// these RPCs — responses carry artifact ids served by the lab's :9291
-// HTTP endpoint.
+// these RPCs — responses carry artifact ids; the browser fetches the bytes
+// from a time-limited presigned MinIO URL (PresignArtifact / Artifact.url).
 service LabService {
   rpc ListVoices(ListVoicesRequest) returns (ListVoicesResponse);
   rpc SynthesizeVoice(SynthesizeVoiceRequest) returns (SynthesizeVoiceResponse);
@@ -22,6 +22,7 @@ service LabService {
   rpc DeleteTrack(DeleteTrackRequest) returns (DeleteTrackResponse);
   rpc RenderPreview(RenderPreviewRequest) returns (RenderPreviewResponse);
   rpc ListArtifacts(ListArtifactsRequest) returns (ListArtifactsResponse);
+  rpc PresignArtifact(PresignArtifactRequest) returns (PresignArtifactResponse);
   rpc GetLedger(GetLedgerRequest) returns (GetLedgerResponse);
   rpc SaveFixture(SaveFixtureRequest) returns (SaveFixtureResponse);
 }
@@ -205,6 +206,13 @@ message ListArtifactsRequest {
 }
 message ListArtifactsResponse {
   repeated Artifact artifacts = 1;
+}
+
+message PresignArtifactRequest {
+  string id = 1;
+}
+message PresignArtifactResponse {
+  string url = 1; // presigned MinIO GET URL, time-limited
 }
 
 message GetLedgerRequest {}

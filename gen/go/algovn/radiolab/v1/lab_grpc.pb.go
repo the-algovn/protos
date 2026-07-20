@@ -31,6 +31,7 @@ const (
 	LabService_DeleteTrack_FullMethodName     = "/algovn.radiolab.v1.LabService/DeleteTrack"
 	LabService_RenderPreview_FullMethodName   = "/algovn.radiolab.v1.LabService/RenderPreview"
 	LabService_ListArtifacts_FullMethodName   = "/algovn.radiolab.v1.LabService/ListArtifacts"
+	LabService_PresignArtifact_FullMethodName = "/algovn.radiolab.v1.LabService/PresignArtifact"
 	LabService_GetLedger_FullMethodName       = "/algovn.radiolab.v1.LabService/GetLedger"
 	LabService_SaveFixture_FullMethodName     = "/algovn.radiolab.v1.LabService/SaveFixture"
 )
@@ -42,8 +43,8 @@ const (
 // LabService is the Phase-0 component bench for Tần Số 42 (spec:
 // the-algovn/specs products/radio/lab.md). Dev-only: registered at the
 // LOCAL gateway only, never in iac. Audio bytes never travel through
-// these RPCs — responses carry artifact ids served by the lab's :9291
-// HTTP endpoint.
+// these RPCs — responses carry artifact ids; the browser fetches the bytes
+// from a time-limited presigned MinIO URL (PresignArtifact / Artifact.url).
 type LabServiceClient interface {
 	ListVoices(ctx context.Context, in *ListVoicesRequest, opts ...grpc.CallOption) (*ListVoicesResponse, error)
 	SynthesizeVoice(ctx context.Context, in *SynthesizeVoiceRequest, opts ...grpc.CallOption) (*SynthesizeVoiceResponse, error)
@@ -57,6 +58,7 @@ type LabServiceClient interface {
 	DeleteTrack(ctx context.Context, in *DeleteTrackRequest, opts ...grpc.CallOption) (*DeleteTrackResponse, error)
 	RenderPreview(ctx context.Context, in *RenderPreviewRequest, opts ...grpc.CallOption) (*RenderPreviewResponse, error)
 	ListArtifacts(ctx context.Context, in *ListArtifactsRequest, opts ...grpc.CallOption) (*ListArtifactsResponse, error)
+	PresignArtifact(ctx context.Context, in *PresignArtifactRequest, opts ...grpc.CallOption) (*PresignArtifactResponse, error)
 	GetLedger(ctx context.Context, in *GetLedgerRequest, opts ...grpc.CallOption) (*GetLedgerResponse, error)
 	SaveFixture(ctx context.Context, in *SaveFixtureRequest, opts ...grpc.CallOption) (*SaveFixtureResponse, error)
 }
@@ -189,6 +191,16 @@ func (c *labServiceClient) ListArtifacts(ctx context.Context, in *ListArtifactsR
 	return out, nil
 }
 
+func (c *labServiceClient) PresignArtifact(ctx context.Context, in *PresignArtifactRequest, opts ...grpc.CallOption) (*PresignArtifactResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(PresignArtifactResponse)
+	err := c.cc.Invoke(ctx, LabService_PresignArtifact_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *labServiceClient) GetLedger(ctx context.Context, in *GetLedgerRequest, opts ...grpc.CallOption) (*GetLedgerResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetLedgerResponse)
@@ -216,8 +228,8 @@ func (c *labServiceClient) SaveFixture(ctx context.Context, in *SaveFixtureReque
 // LabService is the Phase-0 component bench for Tần Số 42 (spec:
 // the-algovn/specs products/radio/lab.md). Dev-only: registered at the
 // LOCAL gateway only, never in iac. Audio bytes never travel through
-// these RPCs — responses carry artifact ids served by the lab's :9291
-// HTTP endpoint.
+// these RPCs — responses carry artifact ids; the browser fetches the bytes
+// from a time-limited presigned MinIO URL (PresignArtifact / Artifact.url).
 type LabServiceServer interface {
 	ListVoices(context.Context, *ListVoicesRequest) (*ListVoicesResponse, error)
 	SynthesizeVoice(context.Context, *SynthesizeVoiceRequest) (*SynthesizeVoiceResponse, error)
@@ -231,6 +243,7 @@ type LabServiceServer interface {
 	DeleteTrack(context.Context, *DeleteTrackRequest) (*DeleteTrackResponse, error)
 	RenderPreview(context.Context, *RenderPreviewRequest) (*RenderPreviewResponse, error)
 	ListArtifacts(context.Context, *ListArtifactsRequest) (*ListArtifactsResponse, error)
+	PresignArtifact(context.Context, *PresignArtifactRequest) (*PresignArtifactResponse, error)
 	GetLedger(context.Context, *GetLedgerRequest) (*GetLedgerResponse, error)
 	SaveFixture(context.Context, *SaveFixtureRequest) (*SaveFixtureResponse, error)
 	mustEmbedUnimplementedLabServiceServer()
@@ -278,6 +291,9 @@ func (UnimplementedLabServiceServer) RenderPreview(context.Context, *RenderPrevi
 }
 func (UnimplementedLabServiceServer) ListArtifacts(context.Context, *ListArtifactsRequest) (*ListArtifactsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListArtifacts not implemented")
+}
+func (UnimplementedLabServiceServer) PresignArtifact(context.Context, *PresignArtifactRequest) (*PresignArtifactResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method PresignArtifact not implemented")
 }
 func (UnimplementedLabServiceServer) GetLedger(context.Context, *GetLedgerRequest) (*GetLedgerResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetLedger not implemented")
@@ -522,6 +538,24 @@ func _LabService_ListArtifacts_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _LabService_PresignArtifact_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PresignArtifactRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LabServiceServer).PresignArtifact(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: LabService_PresignArtifact_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LabServiceServer).PresignArtifact(ctx, req.(*PresignArtifactRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _LabService_GetLedger_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetLedgerRequest)
 	if err := dec(in); err != nil {
@@ -612,6 +646,10 @@ var LabService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListArtifacts",
 			Handler:    _LabService_ListArtifacts_Handler,
+		},
+		{
+			MethodName: "PresignArtifact",
+			Handler:    _LabService_PresignArtifact_Handler,
 		},
 		{
 			MethodName: "GetLedger",
