@@ -1581,6 +1581,7 @@ type ListTracksRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Query         string                 `protobuf:"bytes,1,opt,name=query,proto3" json:"query,omitempty"`
 	Limit         int32                  `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
+	Offset        int32                  `protobuf:"varint,3,opt,name=offset,proto3" json:"offset,omitempty"` // rows to skip (page * limit)
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1629,9 +1630,17 @@ func (x *ListTracksRequest) GetLimit() int32 {
 	return 0
 }
 
+func (x *ListTracksRequest) GetOffset() int32 {
+	if x != nil {
+		return x.Offset
+	}
+	return 0
+}
+
 type ListTracksResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Tracks        []*LibraryTrack        `protobuf:"bytes,1,rep,name=tracks,proto3" json:"tracks,omitempty"`
+	Total         int64                  `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"` // total rows matching query (JSON string over REST)
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1671,6 +1680,13 @@ func (x *ListTracksResponse) GetTracks() []*LibraryTrack {
 		return x.Tracks
 	}
 	return nil
+}
+
+func (x *ListTracksResponse) GetTotal() int64 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
 }
 
 type DeleteTrackRequest struct {
@@ -2397,12 +2413,14 @@ const file_algovn_radiolab_v1_lab_proto_rawDesc = "" +
 	"\ainput_i\x18\x06 \x01(\x01R\x06inputI\x12\x19\n" +
 	"\binput_tp\x18\a \x01(\x01R\ainputTp\x12\x1b\n" +
 	"\tinput_lra\x18\b \x01(\x01R\binputLra\x12\x19\n" +
-	"\badded_at\x18\t \x01(\tR\aaddedAt\"?\n" +
+	"\badded_at\x18\t \x01(\tR\aaddedAt\"W\n" +
 	"\x11ListTracksRequest\x12\x14\n" +
 	"\x05query\x18\x01 \x01(\tR\x05query\x12\x14\n" +
-	"\x05limit\x18\x02 \x01(\x05R\x05limit\"N\n" +
+	"\x05limit\x18\x02 \x01(\x05R\x05limit\x12\x16\n" +
+	"\x06offset\x18\x03 \x01(\x05R\x06offset\"d\n" +
 	"\x12ListTracksResponse\x128\n" +
-	"\x06tracks\x18\x01 \x03(\v2 .algovn.radiolab.v1.LibraryTrackR\x06tracks\")\n" +
+	"\x06tracks\x18\x01 \x03(\v2 .algovn.radiolab.v1.LibraryTrackR\x06tracks\x12\x14\n" +
+	"\x05total\x18\x02 \x01(\x03R\x05total\")\n" +
 	"\x12DeleteTrackRequest\x12\x13\n" +
 	"\x05yt_id\x18\x01 \x01(\tR\x04ytId\"\x15\n" +
 	"\x13DeleteTrackResponse\"\xb9\x01\n" +

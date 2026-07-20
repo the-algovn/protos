@@ -176,9 +176,11 @@ message LibraryTrack {
 message ListTracksRequest {
   string query = 1;
   int32 limit = 2;
+  int32 offset = 3; // rows to skip (page * limit)
 }
 message ListTracksResponse {
   repeated LibraryTrack tracks = 1;
+  int64 total = 2; // total rows matching query (JSON string over REST)
 }
 
 message DeleteTrackRequest {
