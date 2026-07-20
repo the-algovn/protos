@@ -1,0 +1,136 @@
+syntax = "proto3";
+
+package algovn.radio.v1;
+
+option go_package = "github.com/the-algovn/protos/gen/go/algovn/radio/v1;radiov1";
+
+// RadioService is the public radio product's contract (Tần Số 42). Slice 1
+// carries the operator-only playlist + station-control surface (gateway
+// prefix /radio, every route role:admin); the public listener RPCs
+// (now-playing / queue) join this service in Slice 2. Spec:
+// the-algovn/specs docs/superpowers/specs/2026-07-20-radio-v0-playlist-station-control-design.md
+service RadioService {
+  rpc CreatePlaylist(CreatePlaylistRequest) returns (CreatePlaylistResponse);
+  rpc ListPlaylists(ListPlaylistsRequest) returns (ListPlaylistsResponse);
+  rpc GetPlaylist(GetPlaylistRequest) returns (GetPlaylistResponse);
+  rpc RenamePlaylist(RenamePlaylistRequest) returns (RenamePlaylistResponse);
+  rpc DeletePlaylist(DeletePlaylistRequest) returns (DeletePlaylistResponse);
+  rpc AddTrack(AddTrackRequest) returns (AddTrackResponse);
+  rpc RemoveTrack(RemoveTrackRequest) returns (RemoveTrackResponse);
+  rpc ReorderTracks(ReorderTracksRequest) returns (ReorderTracksResponse);
+  rpc GetStation(GetStationRequest) returns (GetStationResponse);
+  rpc SetActivePlaylist(SetActivePlaylistRequest) returns (SetActivePlaylistResponse);
+  rpc GoOnAir(GoOnAirRequest) returns (GoOnAirResponse);
+  rpc GoOffAir(GoOffAirRequest) returns (GoOffAirResponse);
+}
+
+message PlaylistSummary {
+  string id = 1;                 // uuid
+  string name = 2;
+  int32 track_count = 3;
+  int64 total_duration_s = 4;    // JSON string over REST
+  bool is_active = 5;            // this playlist is station.active_playlist_id
+  string created_at = 6;         // RFC3339
+  string updated_at = 7;         // RFC3339
+}
+
+// A library track projected into a playlist. Ordering is authoritative in
+// the repeated field order; position is informational (0-based, contiguous).
+message PlaylistTrack {
+  int32 position = 1;
+  string yt_id = 2;
+  string title = 3;
+  string channel = 4;
+  int64 duration_s = 5;          // JSON string over REST
+}
+
+message Playlist {
+  PlaylistSummary summary = 1;
+  repeated PlaylistTrack tracks = 2;  // ordered by position
+}
+
+message Station {
+  string active_playlist_id = 1;    // "" when unset
+  string active_playlist_name = 2;  // "" when unset
+  int32 active_track_count = 3;     // 0 when unset
+  bool on_air = 4;
+  string on_air_since = 5;          // RFC3339, "" when off air — Slice 2's ear-sync anchor
+}
+
+message CreatePlaylistRequest {
+  string name = 1;  // trimmed, non-blank, <= 200 runes
+}
+message CreatePlaylistResponse {
+  PlaylistSummary summary = 1;
+}
+
+message ListPlaylistsRequest {}
+message ListPlaylistsResponse {
+  repeated PlaylistSummary playlists = 1;  // newest first
+}
+
+message GetPlaylistRequest {
+  string id = 1;
+}
+message GetPlaylistResponse {
+  Playlist playlist = 1;
+}
+
+message RenamePlaylistRequest {
+  string id = 1;
+  string name = 2;  // trimmed, non-blank, <= 200 runes
+}
+message RenamePlaylistResponse {
+  PlaylistSummary summary = 1;
+}
+
+message DeletePlaylistRequest {
+  string id = 1;
+}
+message DeletePlaylistResponse {}
+
+message AddTrackRequest {
+  string playlist_id = 1;
+  string yt_id = 2;  // must exist in the library; already-present is an idempotent no-op
+}
+message AddTrackResponse {
+  Playlist playlist = 1;
+}
+
+message RemoveTrackRequest {
+  string playlist_id = 1;
+  string yt_id = 2;
+}
+message RemoveTrackResponse {
+  Playlist playlist = 1;
+}
+
+message ReorderTracksRequest {
+  string playlist_id = 1;
+  repeated string yt_ids = 2;  // must equal current membership as a set
+}
+message ReorderTracksResponse {
+  Playlist playlist = 1;
+}
+
+message GetStationRequest {}
+message GetStationResponse {
+  Station station = 1;
+}
+
+message SetActivePlaylistRequest {
+  string playlist_id = 1;  // must exist and be non-empty
+}
+message SetActivePlaylistResponse {
+  Station station = 1;
+}
+
+message GoOnAirRequest {}
+message GoOnAirResponse {
+  Station station = 1;
+}
+
+message GoOffAirRequest {}
+message GoOffAirResponse {
+  Station station = 1;
+}
