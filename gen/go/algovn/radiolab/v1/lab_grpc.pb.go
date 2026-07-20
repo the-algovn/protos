@@ -27,6 +27,8 @@ const (
 	LabService_ParseCallIn_FullMethodName     = "/algovn.radiolab.v1.LabService/ParseCallIn"
 	LabService_SearchTracks_FullMethodName    = "/algovn.radiolab.v1.LabService/SearchTracks"
 	LabService_DownloadTrack_FullMethodName   = "/algovn.radiolab.v1.LabService/DownloadTrack"
+	LabService_ListTracks_FullMethodName      = "/algovn.radiolab.v1.LabService/ListTracks"
+	LabService_DeleteTrack_FullMethodName     = "/algovn.radiolab.v1.LabService/DeleteTrack"
 	LabService_RenderPreview_FullMethodName   = "/algovn.radiolab.v1.LabService/RenderPreview"
 	LabService_ListArtifacts_FullMethodName   = "/algovn.radiolab.v1.LabService/ListArtifacts"
 	LabService_GetLedger_FullMethodName       = "/algovn.radiolab.v1.LabService/GetLedger"
@@ -51,6 +53,8 @@ type LabServiceClient interface {
 	ParseCallIn(ctx context.Context, in *ParseCallInRequest, opts ...grpc.CallOption) (*ParseCallInResponse, error)
 	SearchTracks(ctx context.Context, in *SearchTracksRequest, opts ...grpc.CallOption) (*SearchTracksResponse, error)
 	DownloadTrack(ctx context.Context, in *DownloadTrackRequest, opts ...grpc.CallOption) (*DownloadTrackResponse, error)
+	ListTracks(ctx context.Context, in *ListTracksRequest, opts ...grpc.CallOption) (*ListTracksResponse, error)
+	DeleteTrack(ctx context.Context, in *DeleteTrackRequest, opts ...grpc.CallOption) (*DeleteTrackResponse, error)
 	RenderPreview(ctx context.Context, in *RenderPreviewRequest, opts ...grpc.CallOption) (*RenderPreviewResponse, error)
 	ListArtifacts(ctx context.Context, in *ListArtifactsRequest, opts ...grpc.CallOption) (*ListArtifactsResponse, error)
 	GetLedger(ctx context.Context, in *GetLedgerRequest, opts ...grpc.CallOption) (*GetLedgerResponse, error)
@@ -145,6 +149,26 @@ func (c *labServiceClient) DownloadTrack(ctx context.Context, in *DownloadTrackR
 	return out, nil
 }
 
+func (c *labServiceClient) ListTracks(ctx context.Context, in *ListTracksRequest, opts ...grpc.CallOption) (*ListTracksResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListTracksResponse)
+	err := c.cc.Invoke(ctx, LabService_ListTracks_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *labServiceClient) DeleteTrack(ctx context.Context, in *DeleteTrackRequest, opts ...grpc.CallOption) (*DeleteTrackResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteTrackResponse)
+	err := c.cc.Invoke(ctx, LabService_DeleteTrack_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *labServiceClient) RenderPreview(ctx context.Context, in *RenderPreviewRequest, opts ...grpc.CallOption) (*RenderPreviewResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RenderPreviewResponse)
@@ -203,6 +227,8 @@ type LabServiceServer interface {
 	ParseCallIn(context.Context, *ParseCallInRequest) (*ParseCallInResponse, error)
 	SearchTracks(context.Context, *SearchTracksRequest) (*SearchTracksResponse, error)
 	DownloadTrack(context.Context, *DownloadTrackRequest) (*DownloadTrackResponse, error)
+	ListTracks(context.Context, *ListTracksRequest) (*ListTracksResponse, error)
+	DeleteTrack(context.Context, *DeleteTrackRequest) (*DeleteTrackResponse, error)
 	RenderPreview(context.Context, *RenderPreviewRequest) (*RenderPreviewResponse, error)
 	ListArtifacts(context.Context, *ListArtifactsRequest) (*ListArtifactsResponse, error)
 	GetLedger(context.Context, *GetLedgerRequest) (*GetLedgerResponse, error)
@@ -240,6 +266,12 @@ func (UnimplementedLabServiceServer) SearchTracks(context.Context, *SearchTracks
 }
 func (UnimplementedLabServiceServer) DownloadTrack(context.Context, *DownloadTrackRequest) (*DownloadTrackResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method DownloadTrack not implemented")
+}
+func (UnimplementedLabServiceServer) ListTracks(context.Context, *ListTracksRequest) (*ListTracksResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListTracks not implemented")
+}
+func (UnimplementedLabServiceServer) DeleteTrack(context.Context, *DeleteTrackRequest) (*DeleteTrackResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeleteTrack not implemented")
 }
 func (UnimplementedLabServiceServer) RenderPreview(context.Context, *RenderPreviewRequest) (*RenderPreviewResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method RenderPreview not implemented")
@@ -418,6 +450,42 @@ func _LabService_DownloadTrack_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _LabService_ListTracks_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListTracksRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LabServiceServer).ListTracks(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: LabService_ListTracks_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LabServiceServer).ListTracks(ctx, req.(*ListTracksRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _LabService_DeleteTrack_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteTrackRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LabServiceServer).DeleteTrack(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: LabService_DeleteTrack_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LabServiceServer).DeleteTrack(ctx, req.(*DeleteTrackRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _LabService_RenderPreview_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(RenderPreviewRequest)
 	if err := dec(in); err != nil {
@@ -528,6 +596,14 @@ var LabService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DownloadTrack",
 			Handler:    _LabService_DownloadTrack_Handler,
+		},
+		{
+			MethodName: "ListTracks",
+			Handler:    _LabService_ListTracks_Handler,
+		},
+		{
+			MethodName: "DeleteTrack",
+			Handler:    _LabService_DeleteTrack_Handler,
 		},
 		{
 			MethodName: "RenderPreview",

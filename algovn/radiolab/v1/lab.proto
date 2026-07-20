@@ -18,6 +18,8 @@ service LabService {
   rpc ParseCallIn(ParseCallInRequest) returns (ParseCallInResponse);
   rpc SearchTracks(SearchTracksRequest) returns (SearchTracksResponse);
   rpc DownloadTrack(DownloadTrackRequest) returns (DownloadTrackResponse);
+  rpc ListTracks(ListTracksRequest) returns (ListTracksResponse);
+  rpc DeleteTrack(DeleteTrackRequest) returns (DeleteTrackResponse);
   rpc RenderPreview(RenderPreviewRequest) returns (RenderPreviewResponse);
   rpc ListArtifacts(ListArtifactsRequest) returns (ListArtifactsResponse);
   rpc GetLedger(GetLedgerRequest) returns (GetLedgerResponse);
@@ -148,6 +150,7 @@ message SearchTracksResponse {
 message DownloadTrackRequest {
   string yt_id = 1;
   string title = 2; // label for the artifact
+  string channel = 3;
 }
 message DownloadTrackResponse {
   Artifact artifact = 1;
@@ -155,7 +158,33 @@ message DownloadTrackResponse {
   double input_i = 3;   // integrated LUFS
   double input_tp = 4;  // true peak
   double input_lra = 5; // loudness range
+  bool cached = 6;
 }
+
+message LibraryTrack {
+  string yt_id = 1;
+  string title = 2;
+  string channel = 3;
+  int64 duration_s = 4;
+  string artifact_id = 5;
+  double input_i = 6;
+  double input_tp = 7;
+  double input_lra = 8;
+  string added_at = 9;
+}
+
+message ListTracksRequest {
+  string query = 1;
+  int32 limit = 2;
+}
+message ListTracksResponse {
+  repeated LibraryTrack tracks = 1;
+}
+
+message DeleteTrackRequest {
+  string yt_id = 1;
+}
+message DeleteTrackResponse {}
 
 message RenderPreviewRequest {
   string track_artifact_id = 1;

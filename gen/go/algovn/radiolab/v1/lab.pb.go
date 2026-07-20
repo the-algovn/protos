@@ -1329,6 +1329,7 @@ type DownloadTrackRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	YtId          string                 `protobuf:"bytes,1,opt,name=yt_id,json=ytId,proto3" json:"yt_id,omitempty"`
 	Title         string                 `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"` // label for the artifact
+	Channel       string                 `protobuf:"bytes,3,opt,name=channel,proto3" json:"channel,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1377,6 +1378,13 @@ func (x *DownloadTrackRequest) GetTitle() string {
 	return ""
 }
 
+func (x *DownloadTrackRequest) GetChannel() string {
+	if x != nil {
+		return x.Channel
+	}
+	return ""
+}
+
 type DownloadTrackResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Artifact      *Artifact              `protobuf:"bytes,1,opt,name=artifact,proto3" json:"artifact,omitempty"`
@@ -1384,6 +1392,7 @@ type DownloadTrackResponse struct {
 	InputI        float64                `protobuf:"fixed64,3,opt,name=input_i,json=inputI,proto3" json:"input_i,omitempty"`       // integrated LUFS
 	InputTp       float64                `protobuf:"fixed64,4,opt,name=input_tp,json=inputTp,proto3" json:"input_tp,omitempty"`    // true peak
 	InputLra      float64                `protobuf:"fixed64,5,opt,name=input_lra,json=inputLra,proto3" json:"input_lra,omitempty"` // loudness range
+	Cached        bool                   `protobuf:"varint,6,opt,name=cached,proto3" json:"cached,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -1453,6 +1462,297 @@ func (x *DownloadTrackResponse) GetInputLra() float64 {
 	return 0
 }
 
+func (x *DownloadTrackResponse) GetCached() bool {
+	if x != nil {
+		return x.Cached
+	}
+	return false
+}
+
+type LibraryTrack struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	YtId          string                 `protobuf:"bytes,1,opt,name=yt_id,json=ytId,proto3" json:"yt_id,omitempty"`
+	Title         string                 `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
+	Channel       string                 `protobuf:"bytes,3,opt,name=channel,proto3" json:"channel,omitempty"`
+	DurationS     int64                  `protobuf:"varint,4,opt,name=duration_s,json=durationS,proto3" json:"duration_s,omitempty"`
+	ArtifactId    string                 `protobuf:"bytes,5,opt,name=artifact_id,json=artifactId,proto3" json:"artifact_id,omitempty"`
+	InputI        float64                `protobuf:"fixed64,6,opt,name=input_i,json=inputI,proto3" json:"input_i,omitempty"`
+	InputTp       float64                `protobuf:"fixed64,7,opt,name=input_tp,json=inputTp,proto3" json:"input_tp,omitempty"`
+	InputLra      float64                `protobuf:"fixed64,8,opt,name=input_lra,json=inputLra,proto3" json:"input_lra,omitempty"`
+	AddedAt       string                 `protobuf:"bytes,9,opt,name=added_at,json=addedAt,proto3" json:"added_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *LibraryTrack) Reset() {
+	*x = LibraryTrack{}
+	mi := &file_algovn_radiolab_v1_lab_proto_msgTypes[22]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *LibraryTrack) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LibraryTrack) ProtoMessage() {}
+
+func (x *LibraryTrack) ProtoReflect() protoreflect.Message {
+	mi := &file_algovn_radiolab_v1_lab_proto_msgTypes[22]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LibraryTrack.ProtoReflect.Descriptor instead.
+func (*LibraryTrack) Descriptor() ([]byte, []int) {
+	return file_algovn_radiolab_v1_lab_proto_rawDescGZIP(), []int{22}
+}
+
+func (x *LibraryTrack) GetYtId() string {
+	if x != nil {
+		return x.YtId
+	}
+	return ""
+}
+
+func (x *LibraryTrack) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
+func (x *LibraryTrack) GetChannel() string {
+	if x != nil {
+		return x.Channel
+	}
+	return ""
+}
+
+func (x *LibraryTrack) GetDurationS() int64 {
+	if x != nil {
+		return x.DurationS
+	}
+	return 0
+}
+
+func (x *LibraryTrack) GetArtifactId() string {
+	if x != nil {
+		return x.ArtifactId
+	}
+	return ""
+}
+
+func (x *LibraryTrack) GetInputI() float64 {
+	if x != nil {
+		return x.InputI
+	}
+	return 0
+}
+
+func (x *LibraryTrack) GetInputTp() float64 {
+	if x != nil {
+		return x.InputTp
+	}
+	return 0
+}
+
+func (x *LibraryTrack) GetInputLra() float64 {
+	if x != nil {
+		return x.InputLra
+	}
+	return 0
+}
+
+func (x *LibraryTrack) GetAddedAt() string {
+	if x != nil {
+		return x.AddedAt
+	}
+	return ""
+}
+
+type ListTracksRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Query         string                 `protobuf:"bytes,1,opt,name=query,proto3" json:"query,omitempty"`
+	Limit         int32                  `protobuf:"varint,2,opt,name=limit,proto3" json:"limit,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListTracksRequest) Reset() {
+	*x = ListTracksRequest{}
+	mi := &file_algovn_radiolab_v1_lab_proto_msgTypes[23]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListTracksRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListTracksRequest) ProtoMessage() {}
+
+func (x *ListTracksRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_algovn_radiolab_v1_lab_proto_msgTypes[23]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListTracksRequest.ProtoReflect.Descriptor instead.
+func (*ListTracksRequest) Descriptor() ([]byte, []int) {
+	return file_algovn_radiolab_v1_lab_proto_rawDescGZIP(), []int{23}
+}
+
+func (x *ListTracksRequest) GetQuery() string {
+	if x != nil {
+		return x.Query
+	}
+	return ""
+}
+
+func (x *ListTracksRequest) GetLimit() int32 {
+	if x != nil {
+		return x.Limit
+	}
+	return 0
+}
+
+type ListTracksResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Tracks        []*LibraryTrack        `protobuf:"bytes,1,rep,name=tracks,proto3" json:"tracks,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListTracksResponse) Reset() {
+	*x = ListTracksResponse{}
+	mi := &file_algovn_radiolab_v1_lab_proto_msgTypes[24]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListTracksResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListTracksResponse) ProtoMessage() {}
+
+func (x *ListTracksResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_algovn_radiolab_v1_lab_proto_msgTypes[24]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListTracksResponse.ProtoReflect.Descriptor instead.
+func (*ListTracksResponse) Descriptor() ([]byte, []int) {
+	return file_algovn_radiolab_v1_lab_proto_rawDescGZIP(), []int{24}
+}
+
+func (x *ListTracksResponse) GetTracks() []*LibraryTrack {
+	if x != nil {
+		return x.Tracks
+	}
+	return nil
+}
+
+type DeleteTrackRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	YtId          string                 `protobuf:"bytes,1,opt,name=yt_id,json=ytId,proto3" json:"yt_id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteTrackRequest) Reset() {
+	*x = DeleteTrackRequest{}
+	mi := &file_algovn_radiolab_v1_lab_proto_msgTypes[25]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteTrackRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteTrackRequest) ProtoMessage() {}
+
+func (x *DeleteTrackRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_algovn_radiolab_v1_lab_proto_msgTypes[25]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteTrackRequest.ProtoReflect.Descriptor instead.
+func (*DeleteTrackRequest) Descriptor() ([]byte, []int) {
+	return file_algovn_radiolab_v1_lab_proto_rawDescGZIP(), []int{25}
+}
+
+func (x *DeleteTrackRequest) GetYtId() string {
+	if x != nil {
+		return x.YtId
+	}
+	return ""
+}
+
+type DeleteTrackResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteTrackResponse) Reset() {
+	*x = DeleteTrackResponse{}
+	mi := &file_algovn_radiolab_v1_lab_proto_msgTypes[26]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteTrackResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteTrackResponse) ProtoMessage() {}
+
+func (x *DeleteTrackResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_algovn_radiolab_v1_lab_proto_msgTypes[26]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteTrackResponse.ProtoReflect.Descriptor instead.
+func (*DeleteTrackResponse) Descriptor() ([]byte, []int) {
+	return file_algovn_radiolab_v1_lab_proto_rawDescGZIP(), []int{26}
+}
+
 type RenderPreviewRequest struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	TrackArtifactId string                 `protobuf:"bytes,1,opt,name=track_artifact_id,json=trackArtifactId,proto3" json:"track_artifact_id,omitempty"`
@@ -1466,7 +1766,7 @@ type RenderPreviewRequest struct {
 
 func (x *RenderPreviewRequest) Reset() {
 	*x = RenderPreviewRequest{}
-	mi := &file_algovn_radiolab_v1_lab_proto_msgTypes[22]
+	mi := &file_algovn_radiolab_v1_lab_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1478,7 +1778,7 @@ func (x *RenderPreviewRequest) String() string {
 func (*RenderPreviewRequest) ProtoMessage() {}
 
 func (x *RenderPreviewRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_algovn_radiolab_v1_lab_proto_msgTypes[22]
+	mi := &file_algovn_radiolab_v1_lab_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1491,7 +1791,7 @@ func (x *RenderPreviewRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RenderPreviewRequest.ProtoReflect.Descriptor instead.
 func (*RenderPreviewRequest) Descriptor() ([]byte, []int) {
-	return file_algovn_radiolab_v1_lab_proto_rawDescGZIP(), []int{22}
+	return file_algovn_radiolab_v1_lab_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *RenderPreviewRequest) GetTrackArtifactId() string {
@@ -1539,7 +1839,7 @@ type RenderPreviewResponse struct {
 
 func (x *RenderPreviewResponse) Reset() {
 	*x = RenderPreviewResponse{}
-	mi := &file_algovn_radiolab_v1_lab_proto_msgTypes[23]
+	mi := &file_algovn_radiolab_v1_lab_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1551,7 +1851,7 @@ func (x *RenderPreviewResponse) String() string {
 func (*RenderPreviewResponse) ProtoMessage() {}
 
 func (x *RenderPreviewResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_algovn_radiolab_v1_lab_proto_msgTypes[23]
+	mi := &file_algovn_radiolab_v1_lab_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1564,7 +1864,7 @@ func (x *RenderPreviewResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use RenderPreviewResponse.ProtoReflect.Descriptor instead.
 func (*RenderPreviewResponse) Descriptor() ([]byte, []int) {
-	return file_algovn_radiolab_v1_lab_proto_rawDescGZIP(), []int{23}
+	return file_algovn_radiolab_v1_lab_proto_rawDescGZIP(), []int{28}
 }
 
 func (x *RenderPreviewResponse) GetArtifact() *Artifact {
@@ -1590,7 +1890,7 @@ type ListArtifactsRequest struct {
 
 func (x *ListArtifactsRequest) Reset() {
 	*x = ListArtifactsRequest{}
-	mi := &file_algovn_radiolab_v1_lab_proto_msgTypes[24]
+	mi := &file_algovn_radiolab_v1_lab_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1602,7 +1902,7 @@ func (x *ListArtifactsRequest) String() string {
 func (*ListArtifactsRequest) ProtoMessage() {}
 
 func (x *ListArtifactsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_algovn_radiolab_v1_lab_proto_msgTypes[24]
+	mi := &file_algovn_radiolab_v1_lab_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1615,7 +1915,7 @@ func (x *ListArtifactsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListArtifactsRequest.ProtoReflect.Descriptor instead.
 func (*ListArtifactsRequest) Descriptor() ([]byte, []int) {
-	return file_algovn_radiolab_v1_lab_proto_rawDescGZIP(), []int{24}
+	return file_algovn_radiolab_v1_lab_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *ListArtifactsRequest) GetKind() string {
@@ -1634,7 +1934,7 @@ type ListArtifactsResponse struct {
 
 func (x *ListArtifactsResponse) Reset() {
 	*x = ListArtifactsResponse{}
-	mi := &file_algovn_radiolab_v1_lab_proto_msgTypes[25]
+	mi := &file_algovn_radiolab_v1_lab_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1646,7 +1946,7 @@ func (x *ListArtifactsResponse) String() string {
 func (*ListArtifactsResponse) ProtoMessage() {}
 
 func (x *ListArtifactsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_algovn_radiolab_v1_lab_proto_msgTypes[25]
+	mi := &file_algovn_radiolab_v1_lab_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1659,7 +1959,7 @@ func (x *ListArtifactsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListArtifactsResponse.ProtoReflect.Descriptor instead.
 func (*ListArtifactsResponse) Descriptor() ([]byte, []int) {
-	return file_algovn_radiolab_v1_lab_proto_rawDescGZIP(), []int{25}
+	return file_algovn_radiolab_v1_lab_proto_rawDescGZIP(), []int{30}
 }
 
 func (x *ListArtifactsResponse) GetArtifacts() []*Artifact {
@@ -1677,7 +1977,7 @@ type GetLedgerRequest struct {
 
 func (x *GetLedgerRequest) Reset() {
 	*x = GetLedgerRequest{}
-	mi := &file_algovn_radiolab_v1_lab_proto_msgTypes[26]
+	mi := &file_algovn_radiolab_v1_lab_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1689,7 +1989,7 @@ func (x *GetLedgerRequest) String() string {
 func (*GetLedgerRequest) ProtoMessage() {}
 
 func (x *GetLedgerRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_algovn_radiolab_v1_lab_proto_msgTypes[26]
+	mi := &file_algovn_radiolab_v1_lab_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1702,7 +2002,7 @@ func (x *GetLedgerRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetLedgerRequest.ProtoReflect.Descriptor instead.
 func (*GetLedgerRequest) Descriptor() ([]byte, []int) {
-	return file_algovn_radiolab_v1_lab_proto_rawDescGZIP(), []int{26}
+	return file_algovn_radiolab_v1_lab_proto_rawDescGZIP(), []int{31}
 }
 
 type LedgerLine struct {
@@ -1721,7 +2021,7 @@ type LedgerLine struct {
 
 func (x *LedgerLine) Reset() {
 	*x = LedgerLine{}
-	mi := &file_algovn_radiolab_v1_lab_proto_msgTypes[27]
+	mi := &file_algovn_radiolab_v1_lab_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1733,7 +2033,7 @@ func (x *LedgerLine) String() string {
 func (*LedgerLine) ProtoMessage() {}
 
 func (x *LedgerLine) ProtoReflect() protoreflect.Message {
-	mi := &file_algovn_radiolab_v1_lab_proto_msgTypes[27]
+	mi := &file_algovn_radiolab_v1_lab_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1746,7 +2046,7 @@ func (x *LedgerLine) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LedgerLine.ProtoReflect.Descriptor instead.
 func (*LedgerLine) Descriptor() ([]byte, []int) {
-	return file_algovn_radiolab_v1_lab_proto_rawDescGZIP(), []int{27}
+	return file_algovn_radiolab_v1_lab_proto_rawDescGZIP(), []int{32}
 }
 
 func (x *LedgerLine) GetTs() string {
@@ -1815,7 +2115,7 @@ type GetLedgerResponse struct {
 
 func (x *GetLedgerResponse) Reset() {
 	*x = GetLedgerResponse{}
-	mi := &file_algovn_radiolab_v1_lab_proto_msgTypes[28]
+	mi := &file_algovn_radiolab_v1_lab_proto_msgTypes[33]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1827,7 +2127,7 @@ func (x *GetLedgerResponse) String() string {
 func (*GetLedgerResponse) ProtoMessage() {}
 
 func (x *GetLedgerResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_algovn_radiolab_v1_lab_proto_msgTypes[28]
+	mi := &file_algovn_radiolab_v1_lab_proto_msgTypes[33]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1840,7 +2140,7 @@ func (x *GetLedgerResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetLedgerResponse.ProtoReflect.Descriptor instead.
 func (*GetLedgerResponse) Descriptor() ([]byte, []int) {
-	return file_algovn_radiolab_v1_lab_proto_rawDescGZIP(), []int{28}
+	return file_algovn_radiolab_v1_lab_proto_rawDescGZIP(), []int{33}
 }
 
 func (x *GetLedgerResponse) GetLines() []*LedgerLine {
@@ -1868,7 +2168,7 @@ type SaveFixtureRequest struct {
 
 func (x *SaveFixtureRequest) Reset() {
 	*x = SaveFixtureRequest{}
-	mi := &file_algovn_radiolab_v1_lab_proto_msgTypes[29]
+	mi := &file_algovn_radiolab_v1_lab_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1880,7 +2180,7 @@ func (x *SaveFixtureRequest) String() string {
 func (*SaveFixtureRequest) ProtoMessage() {}
 
 func (x *SaveFixtureRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_algovn_radiolab_v1_lab_proto_msgTypes[29]
+	mi := &file_algovn_radiolab_v1_lab_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1893,7 +2193,7 @@ func (x *SaveFixtureRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SaveFixtureRequest.ProtoReflect.Descriptor instead.
 func (*SaveFixtureRequest) Descriptor() ([]byte, []int) {
-	return file_algovn_radiolab_v1_lab_proto_rawDescGZIP(), []int{29}
+	return file_algovn_radiolab_v1_lab_proto_rawDescGZIP(), []int{34}
 }
 
 func (x *SaveFixtureRequest) GetName() string {
@@ -1926,7 +2226,7 @@ type SaveFixtureResponse struct {
 
 func (x *SaveFixtureResponse) Reset() {
 	*x = SaveFixtureResponse{}
-	mi := &file_algovn_radiolab_v1_lab_proto_msgTypes[30]
+	mi := &file_algovn_radiolab_v1_lab_proto_msgTypes[35]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1938,7 +2238,7 @@ func (x *SaveFixtureResponse) String() string {
 func (*SaveFixtureResponse) ProtoMessage() {}
 
 func (x *SaveFixtureResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_algovn_radiolab_v1_lab_proto_msgTypes[30]
+	mi := &file_algovn_radiolab_v1_lab_proto_msgTypes[35]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1951,7 +2251,7 @@ func (x *SaveFixtureResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SaveFixtureResponse.ProtoReflect.Descriptor instead.
 func (*SaveFixtureResponse) Descriptor() ([]byte, []int) {
-	return file_algovn_radiolab_v1_lab_proto_rawDescGZIP(), []int{30}
+	return file_algovn_radiolab_v1_lab_proto_rawDescGZIP(), []int{35}
 }
 
 func (x *SaveFixtureResponse) GetPath() string {
@@ -2073,17 +2373,39 @@ const file_algovn_radiolab_v1_lab_proto_rawDesc = "" +
 	"\x14SearchTracksResponse\x12=\n" +
 	"\n" +
 	"candidates\x18\x01 \x03(\v2\x1d.algovn.radiolab.v1.CandidateR\n" +
-	"candidates\"A\n" +
+	"candidates\"[\n" +
 	"\x14DownloadTrackRequest\x12\x13\n" +
 	"\x05yt_id\x18\x01 \x01(\tR\x04ytId\x12\x14\n" +
-	"\x05title\x18\x02 \x01(\tR\x05title\"\xc1\x01\n" +
+	"\x05title\x18\x02 \x01(\tR\x05title\x12\x18\n" +
+	"\achannel\x18\x03 \x01(\tR\achannel\"\xd9\x01\n" +
 	"\x15DownloadTrackResponse\x128\n" +
 	"\bartifact\x18\x01 \x01(\v2\x1c.algovn.radiolab.v1.ArtifactR\bartifact\x12\x1d\n" +
 	"\n" +
 	"duration_s\x18\x02 \x01(\x01R\tdurationS\x12\x17\n" +
 	"\ainput_i\x18\x03 \x01(\x01R\x06inputI\x12\x19\n" +
 	"\binput_tp\x18\x04 \x01(\x01R\ainputTp\x12\x1b\n" +
-	"\tinput_lra\x18\x05 \x01(\x01R\binputLra\"\xb9\x01\n" +
+	"\tinput_lra\x18\x05 \x01(\x01R\binputLra\x12\x16\n" +
+	"\x06cached\x18\x06 \x01(\bR\x06cached\"\xff\x01\n" +
+	"\fLibraryTrack\x12\x13\n" +
+	"\x05yt_id\x18\x01 \x01(\tR\x04ytId\x12\x14\n" +
+	"\x05title\x18\x02 \x01(\tR\x05title\x12\x18\n" +
+	"\achannel\x18\x03 \x01(\tR\achannel\x12\x1d\n" +
+	"\n" +
+	"duration_s\x18\x04 \x01(\x03R\tdurationS\x12\x1f\n" +
+	"\vartifact_id\x18\x05 \x01(\tR\n" +
+	"artifactId\x12\x17\n" +
+	"\ainput_i\x18\x06 \x01(\x01R\x06inputI\x12\x19\n" +
+	"\binput_tp\x18\a \x01(\x01R\ainputTp\x12\x1b\n" +
+	"\tinput_lra\x18\b \x01(\x01R\binputLra\x12\x19\n" +
+	"\badded_at\x18\t \x01(\tR\aaddedAt\"?\n" +
+	"\x11ListTracksRequest\x12\x14\n" +
+	"\x05query\x18\x01 \x01(\tR\x05query\x12\x14\n" +
+	"\x05limit\x18\x02 \x01(\x05R\x05limit\"N\n" +
+	"\x12ListTracksResponse\x128\n" +
+	"\x06tracks\x18\x01 \x03(\v2 .algovn.radiolab.v1.LibraryTrackR\x06tracks\")\n" +
+	"\x12DeleteTrackRequest\x12\x13\n" +
+	"\x05yt_id\x18\x01 \x01(\tR\x04ytId\"\x15\n" +
+	"\x13DeleteTrackResponse\"\xb9\x01\n" +
 	"\x14RenderPreviewRequest\x12*\n" +
 	"\x11track_artifact_id\x18\x01 \x01(\tR\x0ftrackArtifactId\x12*\n" +
 	"\x11voice_artifact_id\x18\x02 \x01(\tR\x0fvoiceArtifactId\x12\x19\n" +
@@ -2118,7 +2440,8 @@ const file_algovn_radiolab_v1_lab_proto_rawDesc = "" +
 	"\braw_text\x18\x02 \x01(\tR\arawText\x12#\n" +
 	"\rexpected_json\x18\x03 \x01(\tR\fexpectedJson\")\n" +
 	"\x13SaveFixtureResponse\x12\x12\n" +
-	"\x04path\x18\x01 \x01(\tR\x04path2\xaa\t\n" +
+	"\x04path\x18\x01 \x01(\tR\x04path2\xe7\n" +
+	"\n" +
 	"\n" +
 	"LabService\x12[\n" +
 	"\n" +
@@ -2130,7 +2453,10 @@ const file_algovn_radiolab_v1_lab_proto_rawDesc = "" +
 	"\vSavePersona\x12&.algovn.radiolab.v1.SavePersonaRequest\x1a'.algovn.radiolab.v1.SavePersonaResponse\x12^\n" +
 	"\vParseCallIn\x12&.algovn.radiolab.v1.ParseCallInRequest\x1a'.algovn.radiolab.v1.ParseCallInResponse\x12a\n" +
 	"\fSearchTracks\x12'.algovn.radiolab.v1.SearchTracksRequest\x1a(.algovn.radiolab.v1.SearchTracksResponse\x12d\n" +
-	"\rDownloadTrack\x12(.algovn.radiolab.v1.DownloadTrackRequest\x1a).algovn.radiolab.v1.DownloadTrackResponse\x12d\n" +
+	"\rDownloadTrack\x12(.algovn.radiolab.v1.DownloadTrackRequest\x1a).algovn.radiolab.v1.DownloadTrackResponse\x12[\n" +
+	"\n" +
+	"ListTracks\x12%.algovn.radiolab.v1.ListTracksRequest\x1a&.algovn.radiolab.v1.ListTracksResponse\x12^\n" +
+	"\vDeleteTrack\x12&.algovn.radiolab.v1.DeleteTrackRequest\x1a'.algovn.radiolab.v1.DeleteTrackResponse\x12d\n" +
 	"\rRenderPreview\x12(.algovn.radiolab.v1.RenderPreviewRequest\x1a).algovn.radiolab.v1.RenderPreviewResponse\x12d\n" +
 	"\rListArtifacts\x12(.algovn.radiolab.v1.ListArtifactsRequest\x1a).algovn.radiolab.v1.ListArtifactsResponse\x12X\n" +
 	"\tGetLedger\x12$.algovn.radiolab.v1.GetLedgerRequest\x1a%.algovn.radiolab.v1.GetLedgerResponse\x12^\n" +
@@ -2148,7 +2474,7 @@ func file_algovn_radiolab_v1_lab_proto_rawDescGZIP() []byte {
 	return file_algovn_radiolab_v1_lab_proto_rawDescData
 }
 
-var file_algovn_radiolab_v1_lab_proto_msgTypes = make([]protoimpl.MessageInfo, 32)
+var file_algovn_radiolab_v1_lab_proto_msgTypes = make([]protoimpl.MessageInfo, 37)
 var file_algovn_radiolab_v1_lab_proto_goTypes = []any{
 	(*Artifact)(nil),                // 0: algovn.radiolab.v1.Artifact
 	(*Voice)(nil),                   // 1: algovn.radiolab.v1.Voice
@@ -2172,19 +2498,24 @@ var file_algovn_radiolab_v1_lab_proto_goTypes = []any{
 	(*SearchTracksResponse)(nil),    // 19: algovn.radiolab.v1.SearchTracksResponse
 	(*DownloadTrackRequest)(nil),    // 20: algovn.radiolab.v1.DownloadTrackRequest
 	(*DownloadTrackResponse)(nil),   // 21: algovn.radiolab.v1.DownloadTrackResponse
-	(*RenderPreviewRequest)(nil),    // 22: algovn.radiolab.v1.RenderPreviewRequest
-	(*RenderPreviewResponse)(nil),   // 23: algovn.radiolab.v1.RenderPreviewResponse
-	(*ListArtifactsRequest)(nil),    // 24: algovn.radiolab.v1.ListArtifactsRequest
-	(*ListArtifactsResponse)(nil),   // 25: algovn.radiolab.v1.ListArtifactsResponse
-	(*GetLedgerRequest)(nil),        // 26: algovn.radiolab.v1.GetLedgerRequest
-	(*LedgerLine)(nil),              // 27: algovn.radiolab.v1.LedgerLine
-	(*GetLedgerResponse)(nil),       // 28: algovn.radiolab.v1.GetLedgerResponse
-	(*SaveFixtureRequest)(nil),      // 29: algovn.radiolab.v1.SaveFixtureRequest
-	(*SaveFixtureResponse)(nil),     // 30: algovn.radiolab.v1.SaveFixtureResponse
-	nil,                             // 31: algovn.radiolab.v1.Artifact.MetaEntry
+	(*LibraryTrack)(nil),            // 22: algovn.radiolab.v1.LibraryTrack
+	(*ListTracksRequest)(nil),       // 23: algovn.radiolab.v1.ListTracksRequest
+	(*ListTracksResponse)(nil),      // 24: algovn.radiolab.v1.ListTracksResponse
+	(*DeleteTrackRequest)(nil),      // 25: algovn.radiolab.v1.DeleteTrackRequest
+	(*DeleteTrackResponse)(nil),     // 26: algovn.radiolab.v1.DeleteTrackResponse
+	(*RenderPreviewRequest)(nil),    // 27: algovn.radiolab.v1.RenderPreviewRequest
+	(*RenderPreviewResponse)(nil),   // 28: algovn.radiolab.v1.RenderPreviewResponse
+	(*ListArtifactsRequest)(nil),    // 29: algovn.radiolab.v1.ListArtifactsRequest
+	(*ListArtifactsResponse)(nil),   // 30: algovn.radiolab.v1.ListArtifactsResponse
+	(*GetLedgerRequest)(nil),        // 31: algovn.radiolab.v1.GetLedgerRequest
+	(*LedgerLine)(nil),              // 32: algovn.radiolab.v1.LedgerLine
+	(*GetLedgerResponse)(nil),       // 33: algovn.radiolab.v1.GetLedgerResponse
+	(*SaveFixtureRequest)(nil),      // 34: algovn.radiolab.v1.SaveFixtureRequest
+	(*SaveFixtureResponse)(nil),     // 35: algovn.radiolab.v1.SaveFixtureResponse
+	nil,                             // 36: algovn.radiolab.v1.Artifact.MetaEntry
 }
 var file_algovn_radiolab_v1_lab_proto_depIdxs = []int32{
-	31, // 0: algovn.radiolab.v1.Artifact.meta:type_name -> algovn.radiolab.v1.Artifact.MetaEntry
+	36, // 0: algovn.radiolab.v1.Artifact.meta:type_name -> algovn.radiolab.v1.Artifact.MetaEntry
 	1,  // 1: algovn.radiolab.v1.ListVoicesResponse.voices:type_name -> algovn.radiolab.v1.Voice
 	0,  // 2: algovn.radiolab.v1.SynthesizeVoiceResponse.artifact:type_name -> algovn.radiolab.v1.Artifact
 	6,  // 3: algovn.radiolab.v1.Brief.now:type_name -> algovn.radiolab.v1.Track
@@ -2193,38 +2524,43 @@ var file_algovn_radiolab_v1_lab_proto_depIdxs = []int32{
 	8,  // 6: algovn.radiolab.v1.GenerateScriptRequest.brief:type_name -> algovn.radiolab.v1.Brief
 	18, // 7: algovn.radiolab.v1.SearchTracksResponse.candidates:type_name -> algovn.radiolab.v1.Candidate
 	0,  // 8: algovn.radiolab.v1.DownloadTrackResponse.artifact:type_name -> algovn.radiolab.v1.Artifact
-	0,  // 9: algovn.radiolab.v1.RenderPreviewResponse.artifact:type_name -> algovn.radiolab.v1.Artifact
-	0,  // 10: algovn.radiolab.v1.ListArtifactsResponse.artifacts:type_name -> algovn.radiolab.v1.Artifact
-	27, // 11: algovn.radiolab.v1.GetLedgerResponse.lines:type_name -> algovn.radiolab.v1.LedgerLine
-	2,  // 12: algovn.radiolab.v1.LabService.ListVoices:input_type -> algovn.radiolab.v1.ListVoicesRequest
-	4,  // 13: algovn.radiolab.v1.LabService.SynthesizeVoice:input_type -> algovn.radiolab.v1.SynthesizeVoiceRequest
-	9,  // 14: algovn.radiolab.v1.LabService.GenerateScript:input_type -> algovn.radiolab.v1.GenerateScriptRequest
-	11, // 15: algovn.radiolab.v1.LabService.GetPersona:input_type -> algovn.radiolab.v1.GetPersonaRequest
-	13, // 16: algovn.radiolab.v1.LabService.SavePersona:input_type -> algovn.radiolab.v1.SavePersonaRequest
-	15, // 17: algovn.radiolab.v1.LabService.ParseCallIn:input_type -> algovn.radiolab.v1.ParseCallInRequest
-	17, // 18: algovn.radiolab.v1.LabService.SearchTracks:input_type -> algovn.radiolab.v1.SearchTracksRequest
-	20, // 19: algovn.radiolab.v1.LabService.DownloadTrack:input_type -> algovn.radiolab.v1.DownloadTrackRequest
-	22, // 20: algovn.radiolab.v1.LabService.RenderPreview:input_type -> algovn.radiolab.v1.RenderPreviewRequest
-	24, // 21: algovn.radiolab.v1.LabService.ListArtifacts:input_type -> algovn.radiolab.v1.ListArtifactsRequest
-	26, // 22: algovn.radiolab.v1.LabService.GetLedger:input_type -> algovn.radiolab.v1.GetLedgerRequest
-	29, // 23: algovn.radiolab.v1.LabService.SaveFixture:input_type -> algovn.radiolab.v1.SaveFixtureRequest
-	3,  // 24: algovn.radiolab.v1.LabService.ListVoices:output_type -> algovn.radiolab.v1.ListVoicesResponse
-	5,  // 25: algovn.radiolab.v1.LabService.SynthesizeVoice:output_type -> algovn.radiolab.v1.SynthesizeVoiceResponse
-	10, // 26: algovn.radiolab.v1.LabService.GenerateScript:output_type -> algovn.radiolab.v1.GenerateScriptResponse
-	12, // 27: algovn.radiolab.v1.LabService.GetPersona:output_type -> algovn.radiolab.v1.GetPersonaResponse
-	14, // 28: algovn.radiolab.v1.LabService.SavePersona:output_type -> algovn.radiolab.v1.SavePersonaResponse
-	16, // 29: algovn.radiolab.v1.LabService.ParseCallIn:output_type -> algovn.radiolab.v1.ParseCallInResponse
-	19, // 30: algovn.radiolab.v1.LabService.SearchTracks:output_type -> algovn.radiolab.v1.SearchTracksResponse
-	21, // 31: algovn.radiolab.v1.LabService.DownloadTrack:output_type -> algovn.radiolab.v1.DownloadTrackResponse
-	23, // 32: algovn.radiolab.v1.LabService.RenderPreview:output_type -> algovn.radiolab.v1.RenderPreviewResponse
-	25, // 33: algovn.radiolab.v1.LabService.ListArtifacts:output_type -> algovn.radiolab.v1.ListArtifactsResponse
-	28, // 34: algovn.radiolab.v1.LabService.GetLedger:output_type -> algovn.radiolab.v1.GetLedgerResponse
-	30, // 35: algovn.radiolab.v1.LabService.SaveFixture:output_type -> algovn.radiolab.v1.SaveFixtureResponse
-	24, // [24:36] is the sub-list for method output_type
-	12, // [12:24] is the sub-list for method input_type
-	12, // [12:12] is the sub-list for extension type_name
-	12, // [12:12] is the sub-list for extension extendee
-	0,  // [0:12] is the sub-list for field type_name
+	22, // 9: algovn.radiolab.v1.ListTracksResponse.tracks:type_name -> algovn.radiolab.v1.LibraryTrack
+	0,  // 10: algovn.radiolab.v1.RenderPreviewResponse.artifact:type_name -> algovn.radiolab.v1.Artifact
+	0,  // 11: algovn.radiolab.v1.ListArtifactsResponse.artifacts:type_name -> algovn.radiolab.v1.Artifact
+	32, // 12: algovn.radiolab.v1.GetLedgerResponse.lines:type_name -> algovn.radiolab.v1.LedgerLine
+	2,  // 13: algovn.radiolab.v1.LabService.ListVoices:input_type -> algovn.radiolab.v1.ListVoicesRequest
+	4,  // 14: algovn.radiolab.v1.LabService.SynthesizeVoice:input_type -> algovn.radiolab.v1.SynthesizeVoiceRequest
+	9,  // 15: algovn.radiolab.v1.LabService.GenerateScript:input_type -> algovn.radiolab.v1.GenerateScriptRequest
+	11, // 16: algovn.radiolab.v1.LabService.GetPersona:input_type -> algovn.radiolab.v1.GetPersonaRequest
+	13, // 17: algovn.radiolab.v1.LabService.SavePersona:input_type -> algovn.radiolab.v1.SavePersonaRequest
+	15, // 18: algovn.radiolab.v1.LabService.ParseCallIn:input_type -> algovn.radiolab.v1.ParseCallInRequest
+	17, // 19: algovn.radiolab.v1.LabService.SearchTracks:input_type -> algovn.radiolab.v1.SearchTracksRequest
+	20, // 20: algovn.radiolab.v1.LabService.DownloadTrack:input_type -> algovn.radiolab.v1.DownloadTrackRequest
+	23, // 21: algovn.radiolab.v1.LabService.ListTracks:input_type -> algovn.radiolab.v1.ListTracksRequest
+	25, // 22: algovn.radiolab.v1.LabService.DeleteTrack:input_type -> algovn.radiolab.v1.DeleteTrackRequest
+	27, // 23: algovn.radiolab.v1.LabService.RenderPreview:input_type -> algovn.radiolab.v1.RenderPreviewRequest
+	29, // 24: algovn.radiolab.v1.LabService.ListArtifacts:input_type -> algovn.radiolab.v1.ListArtifactsRequest
+	31, // 25: algovn.radiolab.v1.LabService.GetLedger:input_type -> algovn.radiolab.v1.GetLedgerRequest
+	34, // 26: algovn.radiolab.v1.LabService.SaveFixture:input_type -> algovn.radiolab.v1.SaveFixtureRequest
+	3,  // 27: algovn.radiolab.v1.LabService.ListVoices:output_type -> algovn.radiolab.v1.ListVoicesResponse
+	5,  // 28: algovn.radiolab.v1.LabService.SynthesizeVoice:output_type -> algovn.radiolab.v1.SynthesizeVoiceResponse
+	10, // 29: algovn.radiolab.v1.LabService.GenerateScript:output_type -> algovn.radiolab.v1.GenerateScriptResponse
+	12, // 30: algovn.radiolab.v1.LabService.GetPersona:output_type -> algovn.radiolab.v1.GetPersonaResponse
+	14, // 31: algovn.radiolab.v1.LabService.SavePersona:output_type -> algovn.radiolab.v1.SavePersonaResponse
+	16, // 32: algovn.radiolab.v1.LabService.ParseCallIn:output_type -> algovn.radiolab.v1.ParseCallInResponse
+	19, // 33: algovn.radiolab.v1.LabService.SearchTracks:output_type -> algovn.radiolab.v1.SearchTracksResponse
+	21, // 34: algovn.radiolab.v1.LabService.DownloadTrack:output_type -> algovn.radiolab.v1.DownloadTrackResponse
+	24, // 35: algovn.radiolab.v1.LabService.ListTracks:output_type -> algovn.radiolab.v1.ListTracksResponse
+	26, // 36: algovn.radiolab.v1.LabService.DeleteTrack:output_type -> algovn.radiolab.v1.DeleteTrackResponse
+	28, // 37: algovn.radiolab.v1.LabService.RenderPreview:output_type -> algovn.radiolab.v1.RenderPreviewResponse
+	30, // 38: algovn.radiolab.v1.LabService.ListArtifacts:output_type -> algovn.radiolab.v1.ListArtifactsResponse
+	33, // 39: algovn.radiolab.v1.LabService.GetLedger:output_type -> algovn.radiolab.v1.GetLedgerResponse
+	35, // 40: algovn.radiolab.v1.LabService.SaveFixture:output_type -> algovn.radiolab.v1.SaveFixtureResponse
+	27, // [27:41] is the sub-list for method output_type
+	13, // [13:27] is the sub-list for method input_type
+	13, // [13:13] is the sub-list for extension type_name
+	13, // [13:13] is the sub-list for extension extendee
+	0,  // [0:13] is the sub-list for field type_name
 }
 
 func init() { file_algovn_radiolab_v1_lab_proto_init() }
@@ -2238,7 +2574,7 @@ func file_algovn_radiolab_v1_lab_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_algovn_radiolab_v1_lab_proto_rawDesc), len(file_algovn_radiolab_v1_lab_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   32,
+			NumMessages:   37,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
