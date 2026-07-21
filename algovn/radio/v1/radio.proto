@@ -22,6 +22,12 @@ service RadioService {
   rpc SetActivePlaylist(SetActivePlaylistRequest) returns (SetActivePlaylistResponse);
   rpc GoOnAir(GoOnAirRequest) returns (GoOnAirResponse);
   rpc GoOffAir(GoOffAirRequest) returns (GoOffAirResponse);
+
+  // Slice 2 — public listener surface (gateway rule: anonymous).
+  rpc GetNowPlaying(GetNowPlayingRequest) returns (GetNowPlayingResponse);
+  rpc GetQueue(GetQueueRequest) returns (GetQueueResponse);
+  rpc GetHistory(GetHistoryRequest) returns (GetHistoryResponse);
+  rpc Heartbeat(HeartbeatRequest) returns (HeartbeatResponse);
 }
 
 message PlaylistSummary {
@@ -134,3 +140,53 @@ message GoOffAirRequest {}
 message GoOffAirResponse {
   Station station = 1;
 }
+
+// NowPlaying mirrors the /radio SPA's parser. duration_seconds and listeners
+// are int32 on purpose: int64 would transcode to a JSON string and fail the
+// SPA's typeof-number checks.
+message NowPlaying {
+  string kind = 1;             // always "track" in v0
+  string title = 2;
+  string artist = 3;           // library channel
+  string thumbnail_url = 4;    // "" in v0 (not persisted at ingest)
+  string dedication = 5;       // "" in v0
+  string started_at = 6;       // RFC3339 — ear-sync anchor, sample-clock truth
+  int32 duration_seconds = 7;
+  int32 listeners = 8;
+}
+
+message GetNowPlayingRequest {}
+message GetNowPlayingResponse {
+  NowPlaying now_playing = 1;  // ABSENT means off-air (the wire rule)
+}
+
+message QueueItem {
+  string title = 1;
+  string artist = 2;
+  string thumbnail_url = 3;
+  bool has_dedication = 4;  // always false in v0
+}
+
+message GetQueueRequest {}
+message GetQueueResponse {
+  // The other N-1 rotation items starting after the current track (wrapping);
+  // the current track is excluded.
+  repeated QueueItem items = 1;
+}
+
+message HistoryItem {
+  string title = 1;
+  string artist = 2;
+  string thumbnail_url = 3;
+  string aired_at = 4;  // RFC3339
+}
+
+message GetHistoryRequest {}
+message GetHistoryResponse {
+  repeated HistoryItem items = 1;  // last completed airings, newest first
+}
+
+message HeartbeatRequest {
+  string session_id = 1;  // the SPA's per-tab UUID
+}
+message HeartbeatResponse {}

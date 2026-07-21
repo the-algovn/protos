@@ -31,6 +31,10 @@ const (
 	RadioService_SetActivePlaylist_FullMethodName = "/algovn.radio.v1.RadioService/SetActivePlaylist"
 	RadioService_GoOnAir_FullMethodName           = "/algovn.radio.v1.RadioService/GoOnAir"
 	RadioService_GoOffAir_FullMethodName          = "/algovn.radio.v1.RadioService/GoOffAir"
+	RadioService_GetNowPlaying_FullMethodName     = "/algovn.radio.v1.RadioService/GetNowPlaying"
+	RadioService_GetQueue_FullMethodName          = "/algovn.radio.v1.RadioService/GetQueue"
+	RadioService_GetHistory_FullMethodName        = "/algovn.radio.v1.RadioService/GetHistory"
+	RadioService_Heartbeat_FullMethodName         = "/algovn.radio.v1.RadioService/Heartbeat"
 )
 
 // RadioServiceClient is the client API for RadioService service.
@@ -55,6 +59,11 @@ type RadioServiceClient interface {
 	SetActivePlaylist(ctx context.Context, in *SetActivePlaylistRequest, opts ...grpc.CallOption) (*SetActivePlaylistResponse, error)
 	GoOnAir(ctx context.Context, in *GoOnAirRequest, opts ...grpc.CallOption) (*GoOnAirResponse, error)
 	GoOffAir(ctx context.Context, in *GoOffAirRequest, opts ...grpc.CallOption) (*GoOffAirResponse, error)
+	// Slice 2 — public listener surface (gateway rule: anonymous).
+	GetNowPlaying(ctx context.Context, in *GetNowPlayingRequest, opts ...grpc.CallOption) (*GetNowPlayingResponse, error)
+	GetQueue(ctx context.Context, in *GetQueueRequest, opts ...grpc.CallOption) (*GetQueueResponse, error)
+	GetHistory(ctx context.Context, in *GetHistoryRequest, opts ...grpc.CallOption) (*GetHistoryResponse, error)
+	Heartbeat(ctx context.Context, in *HeartbeatRequest, opts ...grpc.CallOption) (*HeartbeatResponse, error)
 }
 
 type radioServiceClient struct {
@@ -185,6 +194,46 @@ func (c *radioServiceClient) GoOffAir(ctx context.Context, in *GoOffAirRequest, 
 	return out, nil
 }
 
+func (c *radioServiceClient) GetNowPlaying(ctx context.Context, in *GetNowPlayingRequest, opts ...grpc.CallOption) (*GetNowPlayingResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetNowPlayingResponse)
+	err := c.cc.Invoke(ctx, RadioService_GetNowPlaying_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *radioServiceClient) GetQueue(ctx context.Context, in *GetQueueRequest, opts ...grpc.CallOption) (*GetQueueResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetQueueResponse)
+	err := c.cc.Invoke(ctx, RadioService_GetQueue_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *radioServiceClient) GetHistory(ctx context.Context, in *GetHistoryRequest, opts ...grpc.CallOption) (*GetHistoryResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetHistoryResponse)
+	err := c.cc.Invoke(ctx, RadioService_GetHistory_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *radioServiceClient) Heartbeat(ctx context.Context, in *HeartbeatRequest, opts ...grpc.CallOption) (*HeartbeatResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(HeartbeatResponse)
+	err := c.cc.Invoke(ctx, RadioService_Heartbeat_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RadioServiceServer is the server API for RadioService service.
 // All implementations must embed UnimplementedRadioServiceServer
 // for forward compatibility.
@@ -207,6 +256,11 @@ type RadioServiceServer interface {
 	SetActivePlaylist(context.Context, *SetActivePlaylistRequest) (*SetActivePlaylistResponse, error)
 	GoOnAir(context.Context, *GoOnAirRequest) (*GoOnAirResponse, error)
 	GoOffAir(context.Context, *GoOffAirRequest) (*GoOffAirResponse, error)
+	// Slice 2 — public listener surface (gateway rule: anonymous).
+	GetNowPlaying(context.Context, *GetNowPlayingRequest) (*GetNowPlayingResponse, error)
+	GetQueue(context.Context, *GetQueueRequest) (*GetQueueResponse, error)
+	GetHistory(context.Context, *GetHistoryRequest) (*GetHistoryResponse, error)
+	Heartbeat(context.Context, *HeartbeatRequest) (*HeartbeatResponse, error)
 	mustEmbedUnimplementedRadioServiceServer()
 }
 
@@ -252,6 +306,18 @@ func (UnimplementedRadioServiceServer) GoOnAir(context.Context, *GoOnAirRequest)
 }
 func (UnimplementedRadioServiceServer) GoOffAir(context.Context, *GoOffAirRequest) (*GoOffAirResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GoOffAir not implemented")
+}
+func (UnimplementedRadioServiceServer) GetNowPlaying(context.Context, *GetNowPlayingRequest) (*GetNowPlayingResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetNowPlaying not implemented")
+}
+func (UnimplementedRadioServiceServer) GetQueue(context.Context, *GetQueueRequest) (*GetQueueResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetQueue not implemented")
+}
+func (UnimplementedRadioServiceServer) GetHistory(context.Context, *GetHistoryRequest) (*GetHistoryResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetHistory not implemented")
+}
+func (UnimplementedRadioServiceServer) Heartbeat(context.Context, *HeartbeatRequest) (*HeartbeatResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method Heartbeat not implemented")
 }
 func (UnimplementedRadioServiceServer) mustEmbedUnimplementedRadioServiceServer() {}
 func (UnimplementedRadioServiceServer) testEmbeddedByValue()                      {}
@@ -490,6 +556,78 @@ func _RadioService_GoOffAir_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RadioService_GetNowPlaying_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetNowPlayingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RadioServiceServer).GetNowPlaying(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RadioService_GetNowPlaying_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RadioServiceServer).GetNowPlaying(ctx, req.(*GetNowPlayingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RadioService_GetQueue_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetQueueRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RadioServiceServer).GetQueue(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RadioService_GetQueue_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RadioServiceServer).GetQueue(ctx, req.(*GetQueueRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RadioService_GetHistory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetHistoryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RadioServiceServer).GetHistory(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RadioService_GetHistory_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RadioServiceServer).GetHistory(ctx, req.(*GetHistoryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RadioService_Heartbeat_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(HeartbeatRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RadioServiceServer).Heartbeat(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RadioService_Heartbeat_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RadioServiceServer).Heartbeat(ctx, req.(*HeartbeatRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RadioService_ServiceDesc is the grpc.ServiceDesc for RadioService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -544,6 +682,22 @@ var RadioService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GoOffAir",
 			Handler:    _RadioService_GoOffAir_Handler,
+		},
+		{
+			MethodName: "GetNowPlaying",
+			Handler:    _RadioService_GetNowPlaying_Handler,
+		},
+		{
+			MethodName: "GetQueue",
+			Handler:    _RadioService_GetQueue_Handler,
+		},
+		{
+			MethodName: "GetHistory",
+			Handler:    _RadioService_GetHistory_Handler,
+		},
+		{
+			MethodName: "Heartbeat",
+			Handler:    _RadioService_Heartbeat_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
