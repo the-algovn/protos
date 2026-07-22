@@ -160,6 +160,10 @@ message NowPlaying {
   string started_at = 6;       // RFC3339 — ear-sync anchor, sample-clock truth
   int32 duration_seconds = 7;
   int32 listeners = 8;
+  // Provenance (v1.1): absent on shuffle plays — the bed has no story.
+  string source = 9;             // "listener" | "ai" | absent (shuffle)
+  string requested_by_name = 10; // display name; "" unless source=listener
+  string reason = 11;            // the DJ's stated reason; "" unless source=ai
 }
 
 message GetNowPlayingRequest {}
@@ -174,6 +178,7 @@ message QueueItem {
   bool has_dedication = 4;  // always false in v1 (no dedications yet)
   string source = 5;             // "listener" | "ai"
   string requested_by_name = 6;  // display name; "" for ai
+  string reason = 7;  // the DJ's stated reason; "" unless source=ai
 }
 
 message GetQueueRequest {}
@@ -188,6 +193,11 @@ message HistoryItem {
   string artist = 2;
   string thumbnail_url = 3;
   string aired_at = 4;  // RFC3339
+  // Provenance (v1.1). reason is carried for symmetry; the SPA renders
+  // badges only in history.
+  string source = 5;
+  string requested_by_name = 6;
+  string reason = 7;
 }
 
 message GetHistoryRequest {}

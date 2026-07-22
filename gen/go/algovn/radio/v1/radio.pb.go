@@ -1380,6 +1380,10 @@ type NowPlaying struct {
 	StartedAt       string                 `protobuf:"bytes,6,opt,name=started_at,json=startedAt,proto3" json:"started_at,omitempty"`          // RFC3339 — ear-sync anchor, sample-clock truth
 	DurationSeconds int32                  `protobuf:"varint,7,opt,name=duration_seconds,json=durationSeconds,proto3" json:"duration_seconds,omitempty"`
 	Listeners       int32                  `protobuf:"varint,8,opt,name=listeners,proto3" json:"listeners,omitempty"`
+	// Provenance (v1.1): absent on shuffle plays — the bed has no story.
+	Source          string `protobuf:"bytes,9,opt,name=source,proto3" json:"source,omitempty"`                                             // "listener" | "ai" | absent (shuffle)
+	RequestedByName string `protobuf:"bytes,10,opt,name=requested_by_name,json=requestedByName,proto3" json:"requested_by_name,omitempty"` // display name; "" unless source=listener
+	Reason          string `protobuf:"bytes,11,opt,name=reason,proto3" json:"reason,omitempty"`                                            // the DJ's stated reason; "" unless source=ai
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -1470,6 +1474,27 @@ func (x *NowPlaying) GetListeners() int32 {
 	return 0
 }
 
+func (x *NowPlaying) GetSource() string {
+	if x != nil {
+		return x.Source
+	}
+	return ""
+}
+
+func (x *NowPlaying) GetRequestedByName() string {
+	if x != nil {
+		return x.RequestedByName
+	}
+	return ""
+}
+
+func (x *NowPlaying) GetReason() string {
+	if x != nil {
+		return x.Reason
+	}
+	return ""
+}
+
 type GetNowPlayingRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -1558,6 +1583,7 @@ type QueueItem struct {
 	HasDedication   bool                   `protobuf:"varint,4,opt,name=has_dedication,json=hasDedication,proto3" json:"has_dedication,omitempty"`        // always false in v1 (no dedications yet)
 	Source          string                 `protobuf:"bytes,5,opt,name=source,proto3" json:"source,omitempty"`                                            // "listener" | "ai"
 	RequestedByName string                 `protobuf:"bytes,6,opt,name=requested_by_name,json=requestedByName,proto3" json:"requested_by_name,omitempty"` // display name; "" for ai
+	Reason          string                 `protobuf:"bytes,7,opt,name=reason,proto3" json:"reason,omitempty"`                                            // the DJ's stated reason; "" unless source=ai
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -1630,6 +1656,13 @@ func (x *QueueItem) GetSource() string {
 func (x *QueueItem) GetRequestedByName() string {
 	if x != nil {
 		return x.RequestedByName
+	}
+	return ""
+}
+
+func (x *QueueItem) GetReason() string {
+	if x != nil {
+		return x.Reason
 	}
 	return ""
 }
@@ -1717,13 +1750,18 @@ func (x *GetQueueResponse) GetItems() []*QueueItem {
 }
 
 type HistoryItem struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Title         string                 `protobuf:"bytes,1,opt,name=title,proto3" json:"title,omitempty"`
-	Artist        string                 `protobuf:"bytes,2,opt,name=artist,proto3" json:"artist,omitempty"`
-	ThumbnailUrl  string                 `protobuf:"bytes,3,opt,name=thumbnail_url,json=thumbnailUrl,proto3" json:"thumbnail_url,omitempty"`
-	AiredAt       string                 `protobuf:"bytes,4,opt,name=aired_at,json=airedAt,proto3" json:"aired_at,omitempty"` // RFC3339
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state        protoimpl.MessageState `protogen:"open.v1"`
+	Title        string                 `protobuf:"bytes,1,opt,name=title,proto3" json:"title,omitempty"`
+	Artist       string                 `protobuf:"bytes,2,opt,name=artist,proto3" json:"artist,omitempty"`
+	ThumbnailUrl string                 `protobuf:"bytes,3,opt,name=thumbnail_url,json=thumbnailUrl,proto3" json:"thumbnail_url,omitempty"`
+	AiredAt      string                 `protobuf:"bytes,4,opt,name=aired_at,json=airedAt,proto3" json:"aired_at,omitempty"` // RFC3339
+	// Provenance (v1.1). reason is carried for symmetry; the SPA renders
+	// badges only in history.
+	Source          string `protobuf:"bytes,5,opt,name=source,proto3" json:"source,omitempty"`
+	RequestedByName string `protobuf:"bytes,6,opt,name=requested_by_name,json=requestedByName,proto3" json:"requested_by_name,omitempty"`
+	Reason          string `protobuf:"bytes,7,opt,name=reason,proto3" json:"reason,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *HistoryItem) Reset() {
@@ -1780,6 +1818,27 @@ func (x *HistoryItem) GetThumbnailUrl() string {
 func (x *HistoryItem) GetAiredAt() string {
 	if x != nil {
 		return x.AiredAt
+	}
+	return ""
+}
+
+func (x *HistoryItem) GetSource() string {
+	if x != nil {
+		return x.Source
+	}
+	return ""
+}
+
+func (x *HistoryItem) GetRequestedByName() string {
+	if x != nil {
+		return x.RequestedByName
+	}
+	return ""
+}
+
+func (x *HistoryItem) GetReason() string {
+	if x != nil {
+		return x.Reason
 	}
 	return ""
 }
@@ -2488,7 +2547,7 @@ const file_algovn_radio_v1_radio_proto_rawDesc = "" +
 	"\astation\x18\x01 \x01(\v2\x18.algovn.radio.v1.StationR\astation\"\x11\n" +
 	"\x0fGoOffAirRequest\"F\n" +
 	"\x10GoOffAirResponse\x122\n" +
-	"\astation\x18\x01 \x01(\v2\x18.algovn.radio.v1.StationR\astation\"\xfb\x01\n" +
+	"\astation\x18\x01 \x01(\v2\x18.algovn.radio.v1.StationR\astation\"\xd7\x02\n" +
 	"\n" +
 	"NowPlaying\x12\x12\n" +
 	"\x04kind\x18\x01 \x01(\tR\x04kind\x12\x14\n" +
@@ -2501,26 +2560,34 @@ const file_algovn_radio_v1_radio_proto_rawDesc = "" +
 	"\n" +
 	"started_at\x18\x06 \x01(\tR\tstartedAt\x12)\n" +
 	"\x10duration_seconds\x18\a \x01(\x05R\x0fdurationSeconds\x12\x1c\n" +
-	"\tlisteners\x18\b \x01(\x05R\tlisteners\"\x16\n" +
+	"\tlisteners\x18\b \x01(\x05R\tlisteners\x12\x16\n" +
+	"\x06source\x18\t \x01(\tR\x06source\x12*\n" +
+	"\x11requested_by_name\x18\n" +
+	" \x01(\tR\x0frequestedByName\x12\x16\n" +
+	"\x06reason\x18\v \x01(\tR\x06reason\"\x16\n" +
 	"\x14GetNowPlayingRequest\"U\n" +
 	"\x15GetNowPlayingResponse\x12<\n" +
 	"\vnow_playing\x18\x01 \x01(\v2\x1b.algovn.radio.v1.NowPlayingR\n" +
-	"nowPlaying\"\xc9\x01\n" +
+	"nowPlaying\"\xe1\x01\n" +
 	"\tQueueItem\x12\x14\n" +
 	"\x05title\x18\x01 \x01(\tR\x05title\x12\x16\n" +
 	"\x06artist\x18\x02 \x01(\tR\x06artist\x12#\n" +
 	"\rthumbnail_url\x18\x03 \x01(\tR\fthumbnailUrl\x12%\n" +
 	"\x0ehas_dedication\x18\x04 \x01(\bR\rhasDedication\x12\x16\n" +
 	"\x06source\x18\x05 \x01(\tR\x06source\x12*\n" +
-	"\x11requested_by_name\x18\x06 \x01(\tR\x0frequestedByName\"\x11\n" +
+	"\x11requested_by_name\x18\x06 \x01(\tR\x0frequestedByName\x12\x16\n" +
+	"\x06reason\x18\a \x01(\tR\x06reason\"\x11\n" +
 	"\x0fGetQueueRequest\"D\n" +
 	"\x10GetQueueResponse\x120\n" +
-	"\x05items\x18\x01 \x03(\v2\x1a.algovn.radio.v1.QueueItemR\x05items\"{\n" +
+	"\x05items\x18\x01 \x03(\v2\x1a.algovn.radio.v1.QueueItemR\x05items\"\xd7\x01\n" +
 	"\vHistoryItem\x12\x14\n" +
 	"\x05title\x18\x01 \x01(\tR\x05title\x12\x16\n" +
 	"\x06artist\x18\x02 \x01(\tR\x06artist\x12#\n" +
 	"\rthumbnail_url\x18\x03 \x01(\tR\fthumbnailUrl\x12\x19\n" +
-	"\baired_at\x18\x04 \x01(\tR\aairedAt\"\x13\n" +
+	"\baired_at\x18\x04 \x01(\tR\aairedAt\x12\x16\n" +
+	"\x06source\x18\x05 \x01(\tR\x06source\x12*\n" +
+	"\x11requested_by_name\x18\x06 \x01(\tR\x0frequestedByName\x12\x16\n" +
+	"\x06reason\x18\a \x01(\tR\x06reason\"\x13\n" +
 	"\x11GetHistoryRequest\"H\n" +
 	"\x12GetHistoryResponse\x122\n" +
 	"\x05items\x18\x01 \x03(\v2\x1c.algovn.radio.v1.HistoryItemR\x05items\"1\n" +
