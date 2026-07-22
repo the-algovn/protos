@@ -1551,13 +1551,15 @@ func (x *GetNowPlayingResponse) GetNowPlaying() *NowPlaying {
 }
 
 type QueueItem struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Title         string                 `protobuf:"bytes,1,opt,name=title,proto3" json:"title,omitempty"`
-	Artist        string                 `protobuf:"bytes,2,opt,name=artist,proto3" json:"artist,omitempty"`
-	ThumbnailUrl  string                 `protobuf:"bytes,3,opt,name=thumbnail_url,json=thumbnailUrl,proto3" json:"thumbnail_url,omitempty"`
-	HasDedication bool                   `protobuf:"varint,4,opt,name=has_dedication,json=hasDedication,proto3" json:"has_dedication,omitempty"` // always false in v0
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	Title           string                 `protobuf:"bytes,1,opt,name=title,proto3" json:"title,omitempty"`
+	Artist          string                 `protobuf:"bytes,2,opt,name=artist,proto3" json:"artist,omitempty"`
+	ThumbnailUrl    string                 `protobuf:"bytes,3,opt,name=thumbnail_url,json=thumbnailUrl,proto3" json:"thumbnail_url,omitempty"`
+	HasDedication   bool                   `protobuf:"varint,4,opt,name=has_dedication,json=hasDedication,proto3" json:"has_dedication,omitempty"`        // always false in v1 (no dedications yet)
+	Source          string                 `protobuf:"bytes,5,opt,name=source,proto3" json:"source,omitempty"`                                            // "listener" | "ai"
+	RequestedByName string                 `protobuf:"bytes,6,opt,name=requested_by_name,json=requestedByName,proto3" json:"requested_by_name,omitempty"` // display name; "" for ai
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
 }
 
 func (x *QueueItem) Reset() {
@@ -1618,6 +1620,20 @@ func (x *QueueItem) GetHasDedication() bool {
 	return false
 }
 
+func (x *QueueItem) GetSource() string {
+	if x != nil {
+		return x.Source
+	}
+	return ""
+}
+
+func (x *QueueItem) GetRequestedByName() string {
+	if x != nil {
+		return x.RequestedByName
+	}
+	return ""
+}
+
 type GetQueueRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -1656,8 +1672,8 @@ func (*GetQueueRequest) Descriptor() ([]byte, []int) {
 
 type GetQueueResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// The other N-1 rotation items starting after the current track (wrapping);
-	// the current track is excluded.
+	// Pending requests (approved + ready) in air order: listener requests
+	// FIFO, then AI picks FIFO. Empty when the station is on shuffle.
 	Items         []*QueueItem `protobuf:"bytes,1,rep,name=items,proto3" json:"items,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1928,6 +1944,467 @@ func (*HeartbeatResponse) Descriptor() ([]byte, []int) {
 	return file_algovn_radio_v1_radio_proto_rawDescGZIP(), []int{38}
 }
 
+// A ranked YouTube search result the listener can request. duration_s is
+// int32 on purpose: int64 would transcode to a JSON string and fail the
+// SPA's typeof-number checks.
+type Candidate struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	YtId          string                 `protobuf:"bytes,1,opt,name=yt_id,json=ytId,proto3" json:"yt_id,omitempty"`
+	Title         string                 `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
+	Channel       string                 `protobuf:"bytes,3,opt,name=channel,proto3" json:"channel,omitempty"`
+	DurationS     int32                  `protobuf:"varint,4,opt,name=duration_s,json=durationS,proto3" json:"duration_s,omitempty"`
+	ThumbnailUrl  string                 `protobuf:"bytes,5,opt,name=thumbnail_url,json=thumbnailUrl,proto3" json:"thumbnail_url,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Candidate) Reset() {
+	*x = Candidate{}
+	mi := &file_algovn_radio_v1_radio_proto_msgTypes[39]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Candidate) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Candidate) ProtoMessage() {}
+
+func (x *Candidate) ProtoReflect() protoreflect.Message {
+	mi := &file_algovn_radio_v1_radio_proto_msgTypes[39]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Candidate.ProtoReflect.Descriptor instead.
+func (*Candidate) Descriptor() ([]byte, []int) {
+	return file_algovn_radio_v1_radio_proto_rawDescGZIP(), []int{39}
+}
+
+func (x *Candidate) GetYtId() string {
+	if x != nil {
+		return x.YtId
+	}
+	return ""
+}
+
+func (x *Candidate) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
+func (x *Candidate) GetChannel() string {
+	if x != nil {
+		return x.Channel
+	}
+	return ""
+}
+
+func (x *Candidate) GetDurationS() int32 {
+	if x != nil {
+		return x.DurationS
+	}
+	return 0
+}
+
+func (x *Candidate) GetThumbnailUrl() string {
+	if x != nil {
+		return x.ThumbnailUrl
+	}
+	return ""
+}
+
+type SearchCandidatesRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Query         string                 `protobuf:"bytes,1,opt,name=query,proto3" json:"query,omitempty"` // trimmed, non-blank, <= 200 runes
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SearchCandidatesRequest) Reset() {
+	*x = SearchCandidatesRequest{}
+	mi := &file_algovn_radio_v1_radio_proto_msgTypes[40]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SearchCandidatesRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SearchCandidatesRequest) ProtoMessage() {}
+
+func (x *SearchCandidatesRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_algovn_radio_v1_radio_proto_msgTypes[40]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SearchCandidatesRequest.ProtoReflect.Descriptor instead.
+func (*SearchCandidatesRequest) Descriptor() ([]byte, []int) {
+	return file_algovn_radio_v1_radio_proto_rawDescGZIP(), []int{40}
+}
+
+func (x *SearchCandidatesRequest) GetQuery() string {
+	if x != nil {
+		return x.Query
+	}
+	return ""
+}
+
+type SearchCandidatesResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Candidates    []*Candidate           `protobuf:"bytes,1,rep,name=candidates,proto3" json:"candidates,omitempty"` // ranked, top 8
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SearchCandidatesResponse) Reset() {
+	*x = SearchCandidatesResponse{}
+	mi := &file_algovn_radio_v1_radio_proto_msgTypes[41]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SearchCandidatesResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SearchCandidatesResponse) ProtoMessage() {}
+
+func (x *SearchCandidatesResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_algovn_radio_v1_radio_proto_msgTypes[41]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SearchCandidatesResponse.ProtoReflect.Descriptor instead.
+func (*SearchCandidatesResponse) Descriptor() ([]byte, []int) {
+	return file_algovn_radio_v1_radio_proto_rawDescGZIP(), []int{41}
+}
+
+func (x *SearchCandidatesResponse) GetCandidates() []*Candidate {
+	if x != nil {
+		return x.Candidates
+	}
+	return nil
+}
+
+// TrackRequest is one queue/request record — a listener request or an AI
+// pick. Statuses: approved | ready | aired | failed (spec §3).
+type TrackRequest struct {
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	Id              string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`                                                    // uuid
+	Source          string                 `protobuf:"bytes,2,opt,name=source,proto3" json:"source,omitempty"`                                            // "listener" | "ai"
+	RequestedByName string                 `protobuf:"bytes,3,opt,name=requested_by_name,json=requestedByName,proto3" json:"requested_by_name,omitempty"` // server-derived display name; "" for ai
+	YtId            string                 `protobuf:"bytes,4,opt,name=yt_id,json=ytId,proto3" json:"yt_id,omitempty"`
+	Title           string                 `protobuf:"bytes,5,opt,name=title,proto3" json:"title,omitempty"`
+	Channel         string                 `protobuf:"bytes,6,opt,name=channel,proto3" json:"channel,omitempty"`
+	DurationS       int32                  `protobuf:"varint,7,opt,name=duration_s,json=durationS,proto3" json:"duration_s,omitempty"`
+	ThumbnailUrl    string                 `protobuf:"bytes,8,opt,name=thumbnail_url,json=thumbnailUrl,proto3" json:"thumbnail_url,omitempty"`
+	Status          string                 `protobuf:"bytes,9,opt,name=status,proto3" json:"status,omitempty"`
+	FailReason      string                 `protobuf:"bytes,10,opt,name=fail_reason,json=failReason,proto3" json:"fail_reason,omitempty"`
+	CreatedAt       string                 `protobuf:"bytes,11,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"` // RFC3339
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *TrackRequest) Reset() {
+	*x = TrackRequest{}
+	mi := &file_algovn_radio_v1_radio_proto_msgTypes[42]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TrackRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TrackRequest) ProtoMessage() {}
+
+func (x *TrackRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_algovn_radio_v1_radio_proto_msgTypes[42]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TrackRequest.ProtoReflect.Descriptor instead.
+func (*TrackRequest) Descriptor() ([]byte, []int) {
+	return file_algovn_radio_v1_radio_proto_rawDescGZIP(), []int{42}
+}
+
+func (x *TrackRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *TrackRequest) GetSource() string {
+	if x != nil {
+		return x.Source
+	}
+	return ""
+}
+
+func (x *TrackRequest) GetRequestedByName() string {
+	if x != nil {
+		return x.RequestedByName
+	}
+	return ""
+}
+
+func (x *TrackRequest) GetYtId() string {
+	if x != nil {
+		return x.YtId
+	}
+	return ""
+}
+
+func (x *TrackRequest) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
+func (x *TrackRequest) GetChannel() string {
+	if x != nil {
+		return x.Channel
+	}
+	return ""
+}
+
+func (x *TrackRequest) GetDurationS() int32 {
+	if x != nil {
+		return x.DurationS
+	}
+	return 0
+}
+
+func (x *TrackRequest) GetThumbnailUrl() string {
+	if x != nil {
+		return x.ThumbnailUrl
+	}
+	return ""
+}
+
+func (x *TrackRequest) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *TrackRequest) GetFailReason() string {
+	if x != nil {
+		return x.FailReason
+	}
+	return ""
+}
+
+func (x *TrackRequest) GetCreatedAt() string {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return ""
+}
+
+type RequestTrackRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Candidate     *Candidate             `protobuf:"bytes,1,opt,name=candidate,proto3" json:"candidate,omitempty"` // full snapshot of the picked search result
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RequestTrackRequest) Reset() {
+	*x = RequestTrackRequest{}
+	mi := &file_algovn_radio_v1_radio_proto_msgTypes[43]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RequestTrackRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RequestTrackRequest) ProtoMessage() {}
+
+func (x *RequestTrackRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_algovn_radio_v1_radio_proto_msgTypes[43]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RequestTrackRequest.ProtoReflect.Descriptor instead.
+func (*RequestTrackRequest) Descriptor() ([]byte, []int) {
+	return file_algovn_radio_v1_radio_proto_rawDescGZIP(), []int{43}
+}
+
+func (x *RequestTrackRequest) GetCandidate() *Candidate {
+	if x != nil {
+		return x.Candidate
+	}
+	return nil
+}
+
+type RequestTrackResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Request       *TrackRequest          `protobuf:"bytes,1,opt,name=request,proto3" json:"request,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RequestTrackResponse) Reset() {
+	*x = RequestTrackResponse{}
+	mi := &file_algovn_radio_v1_radio_proto_msgTypes[44]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RequestTrackResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RequestTrackResponse) ProtoMessage() {}
+
+func (x *RequestTrackResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_algovn_radio_v1_radio_proto_msgTypes[44]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RequestTrackResponse.ProtoReflect.Descriptor instead.
+func (*RequestTrackResponse) Descriptor() ([]byte, []int) {
+	return file_algovn_radio_v1_radio_proto_rawDescGZIP(), []int{44}
+}
+
+func (x *RequestTrackResponse) GetRequest() *TrackRequest {
+	if x != nil {
+		return x.Request
+	}
+	return nil
+}
+
+type ListMyRequestsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListMyRequestsRequest) Reset() {
+	*x = ListMyRequestsRequest{}
+	mi := &file_algovn_radio_v1_radio_proto_msgTypes[45]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListMyRequestsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListMyRequestsRequest) ProtoMessage() {}
+
+func (x *ListMyRequestsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_algovn_radio_v1_radio_proto_msgTypes[45]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListMyRequestsRequest.ProtoReflect.Descriptor instead.
+func (*ListMyRequestsRequest) Descriptor() ([]byte, []int) {
+	return file_algovn_radio_v1_radio_proto_rawDescGZIP(), []int{45}
+}
+
+type ListMyRequestsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Requests      []*TrackRequest        `protobuf:"bytes,1,rep,name=requests,proto3" json:"requests,omitempty"` // caller's requests, newest first, cap 50
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListMyRequestsResponse) Reset() {
+	*x = ListMyRequestsResponse{}
+	mi := &file_algovn_radio_v1_radio_proto_msgTypes[46]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListMyRequestsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListMyRequestsResponse) ProtoMessage() {}
+
+func (x *ListMyRequestsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_algovn_radio_v1_radio_proto_msgTypes[46]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListMyRequestsResponse.ProtoReflect.Descriptor instead.
+func (*ListMyRequestsResponse) Descriptor() ([]byte, []int) {
+	return file_algovn_radio_v1_radio_proto_rawDescGZIP(), []int{46}
+}
+
+func (x *ListMyRequestsResponse) GetRequests() []*TrackRequest {
+	if x != nil {
+		return x.Requests
+	}
+	return nil
+}
+
 var File_algovn_radio_v1_radio_proto protoreflect.FileDescriptor
 
 const file_algovn_radio_v1_radio_proto_rawDesc = "" +
@@ -2028,12 +2505,14 @@ const file_algovn_radio_v1_radio_proto_rawDesc = "" +
 	"\x14GetNowPlayingRequest\"U\n" +
 	"\x15GetNowPlayingResponse\x12<\n" +
 	"\vnow_playing\x18\x01 \x01(\v2\x1b.algovn.radio.v1.NowPlayingR\n" +
-	"nowPlaying\"\x85\x01\n" +
+	"nowPlaying\"\xc9\x01\n" +
 	"\tQueueItem\x12\x14\n" +
 	"\x05title\x18\x01 \x01(\tR\x05title\x12\x16\n" +
 	"\x06artist\x18\x02 \x01(\tR\x06artist\x12#\n" +
 	"\rthumbnail_url\x18\x03 \x01(\tR\fthumbnailUrl\x12%\n" +
-	"\x0ehas_dedication\x18\x04 \x01(\bR\rhasDedication\"\x11\n" +
+	"\x0ehas_dedication\x18\x04 \x01(\bR\rhasDedication\x12\x16\n" +
+	"\x06source\x18\x05 \x01(\tR\x06source\x12*\n" +
+	"\x11requested_by_name\x18\x06 \x01(\tR\x0frequestedByName\"\x11\n" +
 	"\x0fGetQueueRequest\"D\n" +
 	"\x10GetQueueResponse\x120\n" +
 	"\x05items\x18\x01 \x03(\v2\x1a.algovn.radio.v1.QueueItemR\x05items\"{\n" +
@@ -2048,7 +2527,43 @@ const file_algovn_radio_v1_radio_proto_rawDesc = "" +
 	"\x10HeartbeatRequest\x12\x1d\n" +
 	"\n" +
 	"session_id\x18\x01 \x01(\tR\tsessionId\"\x13\n" +
-	"\x11HeartbeatResponse2\xba\v\n" +
+	"\x11HeartbeatResponse\"\x94\x01\n" +
+	"\tCandidate\x12\x13\n" +
+	"\x05yt_id\x18\x01 \x01(\tR\x04ytId\x12\x14\n" +
+	"\x05title\x18\x02 \x01(\tR\x05title\x12\x18\n" +
+	"\achannel\x18\x03 \x01(\tR\achannel\x12\x1d\n" +
+	"\n" +
+	"duration_s\x18\x04 \x01(\x05R\tdurationS\x12#\n" +
+	"\rthumbnail_url\x18\x05 \x01(\tR\fthumbnailUrl\"/\n" +
+	"\x17SearchCandidatesRequest\x12\x14\n" +
+	"\x05query\x18\x01 \x01(\tR\x05query\"V\n" +
+	"\x18SearchCandidatesResponse\x12:\n" +
+	"\n" +
+	"candidates\x18\x01 \x03(\v2\x1a.algovn.radio.v1.CandidateR\n" +
+	"candidates\"\xc3\x02\n" +
+	"\fTrackRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\x12\x16\n" +
+	"\x06source\x18\x02 \x01(\tR\x06source\x12*\n" +
+	"\x11requested_by_name\x18\x03 \x01(\tR\x0frequestedByName\x12\x13\n" +
+	"\x05yt_id\x18\x04 \x01(\tR\x04ytId\x12\x14\n" +
+	"\x05title\x18\x05 \x01(\tR\x05title\x12\x18\n" +
+	"\achannel\x18\x06 \x01(\tR\achannel\x12\x1d\n" +
+	"\n" +
+	"duration_s\x18\a \x01(\x05R\tdurationS\x12#\n" +
+	"\rthumbnail_url\x18\b \x01(\tR\fthumbnailUrl\x12\x16\n" +
+	"\x06status\x18\t \x01(\tR\x06status\x12\x1f\n" +
+	"\vfail_reason\x18\n" +
+	" \x01(\tR\n" +
+	"failReason\x12\x1d\n" +
+	"\n" +
+	"created_at\x18\v \x01(\tR\tcreatedAt\"O\n" +
+	"\x13RequestTrackRequest\x128\n" +
+	"\tcandidate\x18\x01 \x01(\v2\x1a.algovn.radio.v1.CandidateR\tcandidate\"O\n" +
+	"\x14RequestTrackResponse\x127\n" +
+	"\arequest\x18\x01 \x01(\v2\x1d.algovn.radio.v1.TrackRequestR\arequest\"\x17\n" +
+	"\x15ListMyRequestsRequest\"S\n" +
+	"\x16ListMyRequestsResponse\x129\n" +
+	"\brequests\x18\x01 \x03(\v2\x1d.algovn.radio.v1.TrackRequestR\brequests2\xe3\r\n" +
 	"\fRadioService\x12a\n" +
 	"\x0eCreatePlaylist\x12&.algovn.radio.v1.CreatePlaylistRequest\x1a'.algovn.radio.v1.CreatePlaylistResponse\x12^\n" +
 	"\rListPlaylists\x12%.algovn.radio.v1.ListPlaylistsRequest\x1a&.algovn.radio.v1.ListPlaylistsResponse\x12X\n" +
@@ -2067,7 +2582,10 @@ const file_algovn_radio_v1_radio_proto_rawDesc = "" +
 	"\bGetQueue\x12 .algovn.radio.v1.GetQueueRequest\x1a!.algovn.radio.v1.GetQueueResponse\x12U\n" +
 	"\n" +
 	"GetHistory\x12\".algovn.radio.v1.GetHistoryRequest\x1a#.algovn.radio.v1.GetHistoryResponse\x12R\n" +
-	"\tHeartbeat\x12!.algovn.radio.v1.HeartbeatRequest\x1a\".algovn.radio.v1.HeartbeatResponseB=Z;github.com/the-algovn/protos/gen/go/algovn/radio/v1;radiov1b\x06proto3"
+	"\tHeartbeat\x12!.algovn.radio.v1.HeartbeatRequest\x1a\".algovn.radio.v1.HeartbeatResponse\x12g\n" +
+	"\x10SearchCandidates\x12(.algovn.radio.v1.SearchCandidatesRequest\x1a).algovn.radio.v1.SearchCandidatesResponse\x12[\n" +
+	"\fRequestTrack\x12$.algovn.radio.v1.RequestTrackRequest\x1a%.algovn.radio.v1.RequestTrackResponse\x12a\n" +
+	"\x0eListMyRequests\x12&.algovn.radio.v1.ListMyRequestsRequest\x1a'.algovn.radio.v1.ListMyRequestsResponseB=Z;github.com/the-algovn/protos/gen/go/algovn/radio/v1;radiov1b\x06proto3"
 
 var (
 	file_algovn_radio_v1_radio_proto_rawDescOnce sync.Once
@@ -2081,7 +2599,7 @@ func file_algovn_radio_v1_radio_proto_rawDescGZIP() []byte {
 	return file_algovn_radio_v1_radio_proto_rawDescData
 }
 
-var file_algovn_radio_v1_radio_proto_msgTypes = make([]protoimpl.MessageInfo, 39)
+var file_algovn_radio_v1_radio_proto_msgTypes = make([]protoimpl.MessageInfo, 47)
 var file_algovn_radio_v1_radio_proto_goTypes = []any{
 	(*PlaylistSummary)(nil),           // 0: algovn.radio.v1.PlaylistSummary
 	(*PlaylistTrack)(nil),             // 1: algovn.radio.v1.PlaylistTrack
@@ -2122,6 +2640,14 @@ var file_algovn_radio_v1_radio_proto_goTypes = []any{
 	(*GetHistoryResponse)(nil),        // 36: algovn.radio.v1.GetHistoryResponse
 	(*HeartbeatRequest)(nil),          // 37: algovn.radio.v1.HeartbeatRequest
 	(*HeartbeatResponse)(nil),         // 38: algovn.radio.v1.HeartbeatResponse
+	(*Candidate)(nil),                 // 39: algovn.radio.v1.Candidate
+	(*SearchCandidatesRequest)(nil),   // 40: algovn.radio.v1.SearchCandidatesRequest
+	(*SearchCandidatesResponse)(nil),  // 41: algovn.radio.v1.SearchCandidatesResponse
+	(*TrackRequest)(nil),              // 42: algovn.radio.v1.TrackRequest
+	(*RequestTrackRequest)(nil),       // 43: algovn.radio.v1.RequestTrackRequest
+	(*RequestTrackResponse)(nil),      // 44: algovn.radio.v1.RequestTrackResponse
+	(*ListMyRequestsRequest)(nil),     // 45: algovn.radio.v1.ListMyRequestsRequest
+	(*ListMyRequestsResponse)(nil),    // 46: algovn.radio.v1.ListMyRequestsResponse
 }
 var file_algovn_radio_v1_radio_proto_depIdxs = []int32{
 	0,  // 0: algovn.radio.v1.Playlist.summary:type_name -> algovn.radio.v1.PlaylistSummary
@@ -2140,43 +2666,53 @@ var file_algovn_radio_v1_radio_proto_depIdxs = []int32{
 	28, // 13: algovn.radio.v1.GetNowPlayingResponse.now_playing:type_name -> algovn.radio.v1.NowPlaying
 	31, // 14: algovn.radio.v1.GetQueueResponse.items:type_name -> algovn.radio.v1.QueueItem
 	34, // 15: algovn.radio.v1.GetHistoryResponse.items:type_name -> algovn.radio.v1.HistoryItem
-	4,  // 16: algovn.radio.v1.RadioService.CreatePlaylist:input_type -> algovn.radio.v1.CreatePlaylistRequest
-	6,  // 17: algovn.radio.v1.RadioService.ListPlaylists:input_type -> algovn.radio.v1.ListPlaylistsRequest
-	8,  // 18: algovn.radio.v1.RadioService.GetPlaylist:input_type -> algovn.radio.v1.GetPlaylistRequest
-	10, // 19: algovn.radio.v1.RadioService.RenamePlaylist:input_type -> algovn.radio.v1.RenamePlaylistRequest
-	12, // 20: algovn.radio.v1.RadioService.DeletePlaylist:input_type -> algovn.radio.v1.DeletePlaylistRequest
-	14, // 21: algovn.radio.v1.RadioService.AddTrack:input_type -> algovn.radio.v1.AddTrackRequest
-	16, // 22: algovn.radio.v1.RadioService.RemoveTrack:input_type -> algovn.radio.v1.RemoveTrackRequest
-	18, // 23: algovn.radio.v1.RadioService.ReorderTracks:input_type -> algovn.radio.v1.ReorderTracksRequest
-	20, // 24: algovn.radio.v1.RadioService.GetStation:input_type -> algovn.radio.v1.GetStationRequest
-	22, // 25: algovn.radio.v1.RadioService.SetActivePlaylist:input_type -> algovn.radio.v1.SetActivePlaylistRequest
-	24, // 26: algovn.radio.v1.RadioService.GoOnAir:input_type -> algovn.radio.v1.GoOnAirRequest
-	26, // 27: algovn.radio.v1.RadioService.GoOffAir:input_type -> algovn.radio.v1.GoOffAirRequest
-	29, // 28: algovn.radio.v1.RadioService.GetNowPlaying:input_type -> algovn.radio.v1.GetNowPlayingRequest
-	32, // 29: algovn.radio.v1.RadioService.GetQueue:input_type -> algovn.radio.v1.GetQueueRequest
-	35, // 30: algovn.radio.v1.RadioService.GetHistory:input_type -> algovn.radio.v1.GetHistoryRequest
-	37, // 31: algovn.radio.v1.RadioService.Heartbeat:input_type -> algovn.radio.v1.HeartbeatRequest
-	5,  // 32: algovn.radio.v1.RadioService.CreatePlaylist:output_type -> algovn.radio.v1.CreatePlaylistResponse
-	7,  // 33: algovn.radio.v1.RadioService.ListPlaylists:output_type -> algovn.radio.v1.ListPlaylistsResponse
-	9,  // 34: algovn.radio.v1.RadioService.GetPlaylist:output_type -> algovn.radio.v1.GetPlaylistResponse
-	11, // 35: algovn.radio.v1.RadioService.RenamePlaylist:output_type -> algovn.radio.v1.RenamePlaylistResponse
-	13, // 36: algovn.radio.v1.RadioService.DeletePlaylist:output_type -> algovn.radio.v1.DeletePlaylistResponse
-	15, // 37: algovn.radio.v1.RadioService.AddTrack:output_type -> algovn.radio.v1.AddTrackResponse
-	17, // 38: algovn.radio.v1.RadioService.RemoveTrack:output_type -> algovn.radio.v1.RemoveTrackResponse
-	19, // 39: algovn.radio.v1.RadioService.ReorderTracks:output_type -> algovn.radio.v1.ReorderTracksResponse
-	21, // 40: algovn.radio.v1.RadioService.GetStation:output_type -> algovn.radio.v1.GetStationResponse
-	23, // 41: algovn.radio.v1.RadioService.SetActivePlaylist:output_type -> algovn.radio.v1.SetActivePlaylistResponse
-	25, // 42: algovn.radio.v1.RadioService.GoOnAir:output_type -> algovn.radio.v1.GoOnAirResponse
-	27, // 43: algovn.radio.v1.RadioService.GoOffAir:output_type -> algovn.radio.v1.GoOffAirResponse
-	30, // 44: algovn.radio.v1.RadioService.GetNowPlaying:output_type -> algovn.radio.v1.GetNowPlayingResponse
-	33, // 45: algovn.radio.v1.RadioService.GetQueue:output_type -> algovn.radio.v1.GetQueueResponse
-	36, // 46: algovn.radio.v1.RadioService.GetHistory:output_type -> algovn.radio.v1.GetHistoryResponse
-	38, // 47: algovn.radio.v1.RadioService.Heartbeat:output_type -> algovn.radio.v1.HeartbeatResponse
-	32, // [32:48] is the sub-list for method output_type
-	16, // [16:32] is the sub-list for method input_type
-	16, // [16:16] is the sub-list for extension type_name
-	16, // [16:16] is the sub-list for extension extendee
-	0,  // [0:16] is the sub-list for field type_name
+	39, // 16: algovn.radio.v1.SearchCandidatesResponse.candidates:type_name -> algovn.radio.v1.Candidate
+	39, // 17: algovn.radio.v1.RequestTrackRequest.candidate:type_name -> algovn.radio.v1.Candidate
+	42, // 18: algovn.radio.v1.RequestTrackResponse.request:type_name -> algovn.radio.v1.TrackRequest
+	42, // 19: algovn.radio.v1.ListMyRequestsResponse.requests:type_name -> algovn.radio.v1.TrackRequest
+	4,  // 20: algovn.radio.v1.RadioService.CreatePlaylist:input_type -> algovn.radio.v1.CreatePlaylistRequest
+	6,  // 21: algovn.radio.v1.RadioService.ListPlaylists:input_type -> algovn.radio.v1.ListPlaylistsRequest
+	8,  // 22: algovn.radio.v1.RadioService.GetPlaylist:input_type -> algovn.radio.v1.GetPlaylistRequest
+	10, // 23: algovn.radio.v1.RadioService.RenamePlaylist:input_type -> algovn.radio.v1.RenamePlaylistRequest
+	12, // 24: algovn.radio.v1.RadioService.DeletePlaylist:input_type -> algovn.radio.v1.DeletePlaylistRequest
+	14, // 25: algovn.radio.v1.RadioService.AddTrack:input_type -> algovn.radio.v1.AddTrackRequest
+	16, // 26: algovn.radio.v1.RadioService.RemoveTrack:input_type -> algovn.radio.v1.RemoveTrackRequest
+	18, // 27: algovn.radio.v1.RadioService.ReorderTracks:input_type -> algovn.radio.v1.ReorderTracksRequest
+	20, // 28: algovn.radio.v1.RadioService.GetStation:input_type -> algovn.radio.v1.GetStationRequest
+	22, // 29: algovn.radio.v1.RadioService.SetActivePlaylist:input_type -> algovn.radio.v1.SetActivePlaylistRequest
+	24, // 30: algovn.radio.v1.RadioService.GoOnAir:input_type -> algovn.radio.v1.GoOnAirRequest
+	26, // 31: algovn.radio.v1.RadioService.GoOffAir:input_type -> algovn.radio.v1.GoOffAirRequest
+	29, // 32: algovn.radio.v1.RadioService.GetNowPlaying:input_type -> algovn.radio.v1.GetNowPlayingRequest
+	32, // 33: algovn.radio.v1.RadioService.GetQueue:input_type -> algovn.radio.v1.GetQueueRequest
+	35, // 34: algovn.radio.v1.RadioService.GetHistory:input_type -> algovn.radio.v1.GetHistoryRequest
+	37, // 35: algovn.radio.v1.RadioService.Heartbeat:input_type -> algovn.radio.v1.HeartbeatRequest
+	40, // 36: algovn.radio.v1.RadioService.SearchCandidates:input_type -> algovn.radio.v1.SearchCandidatesRequest
+	43, // 37: algovn.radio.v1.RadioService.RequestTrack:input_type -> algovn.radio.v1.RequestTrackRequest
+	45, // 38: algovn.radio.v1.RadioService.ListMyRequests:input_type -> algovn.radio.v1.ListMyRequestsRequest
+	5,  // 39: algovn.radio.v1.RadioService.CreatePlaylist:output_type -> algovn.radio.v1.CreatePlaylistResponse
+	7,  // 40: algovn.radio.v1.RadioService.ListPlaylists:output_type -> algovn.radio.v1.ListPlaylistsResponse
+	9,  // 41: algovn.radio.v1.RadioService.GetPlaylist:output_type -> algovn.radio.v1.GetPlaylistResponse
+	11, // 42: algovn.radio.v1.RadioService.RenamePlaylist:output_type -> algovn.radio.v1.RenamePlaylistResponse
+	13, // 43: algovn.radio.v1.RadioService.DeletePlaylist:output_type -> algovn.radio.v1.DeletePlaylistResponse
+	15, // 44: algovn.radio.v1.RadioService.AddTrack:output_type -> algovn.radio.v1.AddTrackResponse
+	17, // 45: algovn.radio.v1.RadioService.RemoveTrack:output_type -> algovn.radio.v1.RemoveTrackResponse
+	19, // 46: algovn.radio.v1.RadioService.ReorderTracks:output_type -> algovn.radio.v1.ReorderTracksResponse
+	21, // 47: algovn.radio.v1.RadioService.GetStation:output_type -> algovn.radio.v1.GetStationResponse
+	23, // 48: algovn.radio.v1.RadioService.SetActivePlaylist:output_type -> algovn.radio.v1.SetActivePlaylistResponse
+	25, // 49: algovn.radio.v1.RadioService.GoOnAir:output_type -> algovn.radio.v1.GoOnAirResponse
+	27, // 50: algovn.radio.v1.RadioService.GoOffAir:output_type -> algovn.radio.v1.GoOffAirResponse
+	30, // 51: algovn.radio.v1.RadioService.GetNowPlaying:output_type -> algovn.radio.v1.GetNowPlayingResponse
+	33, // 52: algovn.radio.v1.RadioService.GetQueue:output_type -> algovn.radio.v1.GetQueueResponse
+	36, // 53: algovn.radio.v1.RadioService.GetHistory:output_type -> algovn.radio.v1.GetHistoryResponse
+	38, // 54: algovn.radio.v1.RadioService.Heartbeat:output_type -> algovn.radio.v1.HeartbeatResponse
+	41, // 55: algovn.radio.v1.RadioService.SearchCandidates:output_type -> algovn.radio.v1.SearchCandidatesResponse
+	44, // 56: algovn.radio.v1.RadioService.RequestTrack:output_type -> algovn.radio.v1.RequestTrackResponse
+	46, // 57: algovn.radio.v1.RadioService.ListMyRequests:output_type -> algovn.radio.v1.ListMyRequestsResponse
+	39, // [39:58] is the sub-list for method output_type
+	20, // [20:39] is the sub-list for method input_type
+	20, // [20:20] is the sub-list for extension type_name
+	20, // [20:20] is the sub-list for extension extendee
+	0,  // [0:20] is the sub-list for field type_name
 }
 
 func init() { file_algovn_radio_v1_radio_proto_init() }
@@ -2190,7 +2726,7 @@ func file_algovn_radio_v1_radio_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_algovn_radio_v1_radio_proto_rawDesc), len(file_algovn_radio_v1_radio_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   39,
+			NumMessages:   47,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

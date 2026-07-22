@@ -35,6 +35,9 @@ const (
 	RadioService_GetQueue_FullMethodName          = "/algovn.radio.v1.RadioService/GetQueue"
 	RadioService_GetHistory_FullMethodName        = "/algovn.radio.v1.RadioService/GetHistory"
 	RadioService_Heartbeat_FullMethodName         = "/algovn.radio.v1.RadioService/Heartbeat"
+	RadioService_SearchCandidates_FullMethodName  = "/algovn.radio.v1.RadioService/SearchCandidates"
+	RadioService_RequestTrack_FullMethodName      = "/algovn.radio.v1.RadioService/RequestTrack"
+	RadioService_ListMyRequests_FullMethodName    = "/algovn.radio.v1.RadioService/ListMyRequests"
 )
 
 // RadioServiceClient is the client API for RadioService service.
@@ -46,6 +49,7 @@ const (
 // prefix /radio, every route role:admin); the public listener RPCs
 // (now-playing / queue) join this service in Slice 2. Spec:
 // the-algovn/specs docs/superpowers/specs/2026-07-20-radio-v0-playlist-station-control-design.md
+// v1 adds the listener request + AI-pick surface (SearchCandidates/RequestTrack/ListMyRequests).
 type RadioServiceClient interface {
 	CreatePlaylist(ctx context.Context, in *CreatePlaylistRequest, opts ...grpc.CallOption) (*CreatePlaylistResponse, error)
 	ListPlaylists(ctx context.Context, in *ListPlaylistsRequest, opts ...grpc.CallOption) (*ListPlaylistsResponse, error)
@@ -64,6 +68,11 @@ type RadioServiceClient interface {
 	GetQueue(ctx context.Context, in *GetQueueRequest, opts ...grpc.CallOption) (*GetQueueResponse, error)
 	GetHistory(ctx context.Context, in *GetHistoryRequest, opts ...grpc.CallOption) (*GetHistoryResponse, error)
 	Heartbeat(ctx context.Context, in *HeartbeatRequest, opts ...grpc.CallOption) (*HeartbeatResponse, error)
+	// v1 — the self-programming station (gateway rule: authenticated). Spec:
+	// the-algovn/specs docs/superpowers/specs/2026-07-21-radio-v1-self-programming-station-design.md
+	SearchCandidates(ctx context.Context, in *SearchCandidatesRequest, opts ...grpc.CallOption) (*SearchCandidatesResponse, error)
+	RequestTrack(ctx context.Context, in *RequestTrackRequest, opts ...grpc.CallOption) (*RequestTrackResponse, error)
+	ListMyRequests(ctx context.Context, in *ListMyRequestsRequest, opts ...grpc.CallOption) (*ListMyRequestsResponse, error)
 }
 
 type radioServiceClient struct {
@@ -234,6 +243,36 @@ func (c *radioServiceClient) Heartbeat(ctx context.Context, in *HeartbeatRequest
 	return out, nil
 }
 
+func (c *radioServiceClient) SearchCandidates(ctx context.Context, in *SearchCandidatesRequest, opts ...grpc.CallOption) (*SearchCandidatesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SearchCandidatesResponse)
+	err := c.cc.Invoke(ctx, RadioService_SearchCandidates_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *radioServiceClient) RequestTrack(ctx context.Context, in *RequestTrackRequest, opts ...grpc.CallOption) (*RequestTrackResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(RequestTrackResponse)
+	err := c.cc.Invoke(ctx, RadioService_RequestTrack_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *radioServiceClient) ListMyRequests(ctx context.Context, in *ListMyRequestsRequest, opts ...grpc.CallOption) (*ListMyRequestsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListMyRequestsResponse)
+	err := c.cc.Invoke(ctx, RadioService_ListMyRequests_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RadioServiceServer is the server API for RadioService service.
 // All implementations must embed UnimplementedRadioServiceServer
 // for forward compatibility.
@@ -243,6 +282,7 @@ func (c *radioServiceClient) Heartbeat(ctx context.Context, in *HeartbeatRequest
 // prefix /radio, every route role:admin); the public listener RPCs
 // (now-playing / queue) join this service in Slice 2. Spec:
 // the-algovn/specs docs/superpowers/specs/2026-07-20-radio-v0-playlist-station-control-design.md
+// v1 adds the listener request + AI-pick surface (SearchCandidates/RequestTrack/ListMyRequests).
 type RadioServiceServer interface {
 	CreatePlaylist(context.Context, *CreatePlaylistRequest) (*CreatePlaylistResponse, error)
 	ListPlaylists(context.Context, *ListPlaylistsRequest) (*ListPlaylistsResponse, error)
@@ -261,6 +301,11 @@ type RadioServiceServer interface {
 	GetQueue(context.Context, *GetQueueRequest) (*GetQueueResponse, error)
 	GetHistory(context.Context, *GetHistoryRequest) (*GetHistoryResponse, error)
 	Heartbeat(context.Context, *HeartbeatRequest) (*HeartbeatResponse, error)
+	// v1 — the self-programming station (gateway rule: authenticated). Spec:
+	// the-algovn/specs docs/superpowers/specs/2026-07-21-radio-v1-self-programming-station-design.md
+	SearchCandidates(context.Context, *SearchCandidatesRequest) (*SearchCandidatesResponse, error)
+	RequestTrack(context.Context, *RequestTrackRequest) (*RequestTrackResponse, error)
+	ListMyRequests(context.Context, *ListMyRequestsRequest) (*ListMyRequestsResponse, error)
 	mustEmbedUnimplementedRadioServiceServer()
 }
 
@@ -318,6 +363,15 @@ func (UnimplementedRadioServiceServer) GetHistory(context.Context, *GetHistoryRe
 }
 func (UnimplementedRadioServiceServer) Heartbeat(context.Context, *HeartbeatRequest) (*HeartbeatResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Heartbeat not implemented")
+}
+func (UnimplementedRadioServiceServer) SearchCandidates(context.Context, *SearchCandidatesRequest) (*SearchCandidatesResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SearchCandidates not implemented")
+}
+func (UnimplementedRadioServiceServer) RequestTrack(context.Context, *RequestTrackRequest) (*RequestTrackResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method RequestTrack not implemented")
+}
+func (UnimplementedRadioServiceServer) ListMyRequests(context.Context, *ListMyRequestsRequest) (*ListMyRequestsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListMyRequests not implemented")
 }
 func (UnimplementedRadioServiceServer) mustEmbedUnimplementedRadioServiceServer() {}
 func (UnimplementedRadioServiceServer) testEmbeddedByValue()                      {}
@@ -628,6 +682,60 @@ func _RadioService_Heartbeat_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RadioService_SearchCandidates_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SearchCandidatesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RadioServiceServer).SearchCandidates(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RadioService_SearchCandidates_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RadioServiceServer).SearchCandidates(ctx, req.(*SearchCandidatesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RadioService_RequestTrack_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RequestTrackRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RadioServiceServer).RequestTrack(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RadioService_RequestTrack_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RadioServiceServer).RequestTrack(ctx, req.(*RequestTrackRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RadioService_ListMyRequests_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListMyRequestsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RadioServiceServer).ListMyRequests(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RadioService_ListMyRequests_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RadioServiceServer).ListMyRequests(ctx, req.(*ListMyRequestsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RadioService_ServiceDesc is the grpc.ServiceDesc for RadioService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -698,6 +806,18 @@ var RadioService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Heartbeat",
 			Handler:    _RadioService_Heartbeat_Handler,
+		},
+		{
+			MethodName: "SearchCandidates",
+			Handler:    _RadioService_SearchCandidates_Handler,
+		},
+		{
+			MethodName: "RequestTrack",
+			Handler:    _RadioService_RequestTrack_Handler,
+		},
+		{
+			MethodName: "ListMyRequests",
+			Handler:    _RadioService_ListMyRequests_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

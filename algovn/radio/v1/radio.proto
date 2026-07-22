@@ -9,6 +9,7 @@ option go_package = "github.com/the-algovn/protos/gen/go/algovn/radio/v1;radiov1
 // prefix /radio, every route role:admin); the public listener RPCs
 // (now-playing / queue) join this service in Slice 2. Spec:
 // the-algovn/specs docs/superpowers/specs/2026-07-20-radio-v0-playlist-station-control-design.md
+// v1 adds the listener request + AI-pick surface (SearchCandidates/RequestTrack/ListMyRequests).
 service RadioService {
   rpc CreatePlaylist(CreatePlaylistRequest) returns (CreatePlaylistResponse);
   rpc ListPlaylists(ListPlaylistsRequest) returns (ListPlaylistsResponse);
@@ -28,6 +29,12 @@ service RadioService {
   rpc GetQueue(GetQueueRequest) returns (GetQueueResponse);
   rpc GetHistory(GetHistoryRequest) returns (GetHistoryResponse);
   rpc Heartbeat(HeartbeatRequest) returns (HeartbeatResponse);
+
+  // v1 — the self-programming station (gateway rule: authenticated). Spec:
+  // the-algovn/specs docs/superpowers/specs/2026-07-21-radio-v1-self-programming-station-design.md
+  rpc SearchCandidates(SearchCandidatesRequest) returns (SearchCandidatesResponse);
+  rpc RequestTrack(RequestTrackRequest) returns (RequestTrackResponse);
+  rpc ListMyRequests(ListMyRequestsRequest) returns (ListMyRequestsResponse);
 }
 
 message PlaylistSummary {
@@ -164,13 +171,15 @@ message QueueItem {
   string title = 1;
   string artist = 2;
   string thumbnail_url = 3;
-  bool has_dedication = 4;  // always false in v0
+  bool has_dedication = 4;  // always false in v1 (no dedications yet)
+  string source = 5;             // "listener" | "ai"
+  string requested_by_name = 6;  // display name; "" for ai
 }
 
 message GetQueueRequest {}
 message GetQueueResponse {
-  // The other N-1 rotation items starting after the current track (wrapping);
-  // the current track is excluded.
+  // Pending requests (approved + ready) in air order: listener requests
+  // FIFO, then AI picks FIFO. Empty when the station is on shuffle.
   repeated QueueItem items = 1;
 }
 
@@ -190,3 +199,49 @@ message HeartbeatRequest {
   string session_id = 1;  // the SPA's per-tab UUID
 }
 message HeartbeatResponse {}
+
+// A ranked YouTube search result the listener can request. duration_s is
+// int32 on purpose: int64 would transcode to a JSON string and fail the
+// SPA's typeof-number checks.
+message Candidate {
+  string yt_id = 1;
+  string title = 2;
+  string channel = 3;
+  int32 duration_s = 4;
+  string thumbnail_url = 5;
+}
+
+message SearchCandidatesRequest {
+  string query = 1;  // trimmed, non-blank, <= 200 runes
+}
+message SearchCandidatesResponse {
+  repeated Candidate candidates = 1;  // ranked, top 8
+}
+
+// TrackRequest is one queue/request record — a listener request or an AI
+// pick. Statuses: approved | ready | aired | failed (spec §3).
+message TrackRequest {
+  string id = 1;                 // uuid
+  string source = 2;             // "listener" | "ai"
+  string requested_by_name = 3;  // server-derived display name; "" for ai
+  string yt_id = 4;
+  string title = 5;
+  string channel = 6;
+  int32 duration_s = 7;
+  string thumbnail_url = 8;
+  string status = 9;
+  string fail_reason = 10;
+  string created_at = 11;        // RFC3339
+}
+
+message RequestTrackRequest {
+  Candidate candidate = 1;  // full snapshot of the picked search result
+}
+message RequestTrackResponse {
+  TrackRequest request = 1;
+}
+
+message ListMyRequestsRequest {}
+message ListMyRequestsResponse {
+  repeated TrackRequest requests = 1;  // caller's requests, newest first, cap 50
+}
