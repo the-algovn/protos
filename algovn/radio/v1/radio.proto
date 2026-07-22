@@ -11,16 +11,18 @@ option go_package = "github.com/the-algovn/protos/gen/go/algovn/radio/v1;radiov1
 // the-algovn/specs docs/superpowers/specs/2026-07-20-radio-v0-playlist-station-control-design.md
 // v1 adds the listener request + AI-pick surface (SearchCandidates/RequestTrack/ListMyRequests).
 service RadioService {
-  rpc CreatePlaylist(CreatePlaylistRequest) returns (CreatePlaylistResponse);
-  rpc ListPlaylists(ListPlaylistsRequest) returns (ListPlaylistsResponse);
-  rpc GetPlaylist(GetPlaylistRequest) returns (GetPlaylistResponse);
-  rpc RenamePlaylist(RenamePlaylistRequest) returns (RenamePlaylistResponse);
-  rpc DeletePlaylist(DeletePlaylistRequest) returns (DeletePlaylistResponse);
-  rpc AddTrack(AddTrackRequest) returns (AddTrackResponse);
-  rpc RemoveTrack(RemoveTrackRequest) returns (RemoveTrackResponse);
-  rpc ReorderTracks(ReorderTracksRequest) returns (ReorderTracksResponse);
+  // DEPRECATED (v1.2): the engine ignores playlists since v1; these return
+  // Unimplemented. Declarations retained per the never-break convention.
+  rpc CreatePlaylist(CreatePlaylistRequest) returns (CreatePlaylistResponse) { option deprecated = true; }
+  rpc ListPlaylists(ListPlaylistsRequest) returns (ListPlaylistsResponse) { option deprecated = true; }
+  rpc GetPlaylist(GetPlaylistRequest) returns (GetPlaylistResponse) { option deprecated = true; }
+  rpc RenamePlaylist(RenamePlaylistRequest) returns (RenamePlaylistResponse) { option deprecated = true; }
+  rpc DeletePlaylist(DeletePlaylistRequest) returns (DeletePlaylistResponse) { option deprecated = true; }
+  rpc AddTrack(AddTrackRequest) returns (AddTrackResponse) { option deprecated = true; }
+  rpc RemoveTrack(RemoveTrackRequest) returns (RemoveTrackResponse) { option deprecated = true; }
+  rpc ReorderTracks(ReorderTracksRequest) returns (ReorderTracksResponse) { option deprecated = true; }
+  rpc SetActivePlaylist(SetActivePlaylistRequest) returns (SetActivePlaylistResponse) { option deprecated = true; }
   rpc GetStation(GetStationRequest) returns (GetStationResponse);
-  rpc SetActivePlaylist(SetActivePlaylistRequest) returns (SetActivePlaylistResponse);
   rpc GoOnAir(GoOnAirRequest) returns (GoOnAirResponse);
   rpc GoOffAir(GoOffAirRequest) returns (GoOffAirResponse);
 
@@ -35,9 +37,23 @@ service RadioService {
   rpc SearchCandidates(SearchCandidatesRequest) returns (SearchCandidatesResponse);
   rpc RequestTrack(RequestTrackRequest) returns (RequestTrackResponse);
   rpc ListMyRequests(ListMyRequestsRequest) returns (ListMyRequestsResponse);
+
+  // v1.2 — station console moderation (gateway rule: role:admin). Spec:
+  // the-algovn/specs docs/superpowers/specs/2026-07-22-radio-v12-station-console-design.md
+  // buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+  rpc ListStationRequests(ListStationRequestsRequest) returns (ListStationRequestsResponse);
+  // buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+  // buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+  rpc ReorderRequests(ReorderRequestsRequest) returns (ListStationRequestsResponse);
+  // buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+  // buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+  rpc RemoveRequest(RemoveRequestRequest) returns (ListStationRequestsResponse);
+  rpc SkipTrack(SkipTrackRequest) returns (SkipTrackResponse);
+  rpc SetAIEnabled(SetAIEnabledRequest) returns (SetAIEnabledResponse);
 }
 
 message PlaylistSummary {
+  option deprecated = true;
   string id = 1;                 // uuid
   string name = 2;
   int32 track_count = 3;
@@ -50,6 +66,7 @@ message PlaylistSummary {
 // A library track projected into a playlist. Ordering is authoritative in
 // the repeated field order; position is informational (0-based, contiguous).
 message PlaylistTrack {
+  option deprecated = true;
   int32 position = 1;
   string yt_id = 2;
   string title = 3;
@@ -58,83 +75,112 @@ message PlaylistTrack {
 }
 
 message Playlist {
+  option deprecated = true;
   PlaylistSummary summary = 1;
   repeated PlaylistTrack tracks = 2;  // ordered by position
 }
 
 message Station {
-  string active_playlist_id = 1;    // "" when unset
-  string active_playlist_name = 2;  // "" when unset
-  int32 active_track_count = 3;     // 0 when unset
+  string active_playlist_id = 1 [deprecated = true];    // dead since v1; no longer populated
+  string active_playlist_name = 2 [deprecated = true];
+  int32 active_track_count = 3 [deprecated = true];
   bool on_air = 4;
   string on_air_since = 5;          // RFC3339, "" when off air — Slice 2's ear-sync anchor
+  bool ai_enabled = 6;              // v1.2: the programmer's pause switch
 }
 
 message CreatePlaylistRequest {
+  option deprecated = true;
   string name = 1;  // trimmed, non-blank, <= 200 runes
 }
 message CreatePlaylistResponse {
+  option deprecated = true;
   PlaylistSummary summary = 1;
 }
 
-message ListPlaylistsRequest {}
+message ListPlaylistsRequest {
+  option deprecated = true;
+}
 message ListPlaylistsResponse {
+  option deprecated = true;
   repeated PlaylistSummary playlists = 1;  // newest first
 }
 
 message GetPlaylistRequest {
+  option deprecated = true;
   string id = 1;
 }
 message GetPlaylistResponse {
+  option deprecated = true;
   Playlist playlist = 1;
 }
 
 message RenamePlaylistRequest {
+  option deprecated = true;
   string id = 1;
   string name = 2;  // trimmed, non-blank, <= 200 runes
 }
 message RenamePlaylistResponse {
+  option deprecated = true;
   PlaylistSummary summary = 1;
 }
 
 message DeletePlaylistRequest {
+  option deprecated = true;
   string id = 1;
 }
-message DeletePlaylistResponse {}
+message DeletePlaylistResponse {
+  option deprecated = true;
+}
 
 message AddTrackRequest {
+  option deprecated = true;
   string playlist_id = 1;
   string yt_id = 2;  // must exist in the library; already-present is an idempotent no-op
 }
 message AddTrackResponse {
+  option deprecated = true;
   Playlist playlist = 1;
 }
 
 message RemoveTrackRequest {
+  option deprecated = true;
   string playlist_id = 1;
   string yt_id = 2;
 }
 message RemoveTrackResponse {
+  option deprecated = true;
   Playlist playlist = 1;
 }
 
 message ReorderTracksRequest {
+  option deprecated = true;
   string playlist_id = 1;
   repeated string yt_ids = 2;  // must equal current membership as a set
 }
 message ReorderTracksResponse {
+  option deprecated = true;
   Playlist playlist = 1;
 }
 
 message GetStationRequest {}
+message StationStats {
+  int32  listeners = 1;
+  int32  library_count = 2;
+  double spend_today_usd = 3;
+  double budget_usd = 4;
+}
 message GetStationResponse {
-  Station station = 1;
+  Station      station = 1;
+  StationStats stats = 2;  // v1.2 operator dashboard numbers
 }
 
 message SetActivePlaylistRequest {
+  option deprecated = true;
   string playlist_id = 1;  // must exist and be non-empty
 }
 message SetActivePlaylistResponse {
+  option deprecated = true;
   Station station = 1;
 }
 
@@ -242,6 +288,7 @@ message TrackRequest {
   string status = 9;
   string fail_reason = 10;
   string created_at = 11;        // RFC3339
+  string reason = 12;            // the DJ's stated reason; "" unless source=ai
 }
 
 message RequestTrackRequest {
@@ -255,3 +302,19 @@ message ListMyRequestsRequest {}
 message ListMyRequestsResponse {
   repeated TrackRequest requests = 1;  // caller's requests, newest first, cap 50
 }
+
+message ListStationRequestsRequest {}
+message ListStationRequestsResponse {
+  repeated TrackRequest pending = 1;  // air order (two tiers: positioned, then natural)
+  repeated TrackRequest recent = 2;   // last 20 terminal (aired|failed), newest first
+}
+message ReorderRequestsRequest {
+  repeated string ids = 1;  // must equal the current pending set exactly
+}
+message RemoveRequestRequest {
+  string id = 1;  // must be approved|ready
+}
+message SkipTrackRequest {}
+message SkipTrackResponse {}
+message SetAIEnabledRequest { bool enabled = 1; }
+message SetAIEnabledResponse { Station station = 1; }

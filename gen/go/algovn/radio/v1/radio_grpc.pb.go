@@ -19,25 +19,30 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	RadioService_CreatePlaylist_FullMethodName    = "/algovn.radio.v1.RadioService/CreatePlaylist"
-	RadioService_ListPlaylists_FullMethodName     = "/algovn.radio.v1.RadioService/ListPlaylists"
-	RadioService_GetPlaylist_FullMethodName       = "/algovn.radio.v1.RadioService/GetPlaylist"
-	RadioService_RenamePlaylist_FullMethodName    = "/algovn.radio.v1.RadioService/RenamePlaylist"
-	RadioService_DeletePlaylist_FullMethodName    = "/algovn.radio.v1.RadioService/DeletePlaylist"
-	RadioService_AddTrack_FullMethodName          = "/algovn.radio.v1.RadioService/AddTrack"
-	RadioService_RemoveTrack_FullMethodName       = "/algovn.radio.v1.RadioService/RemoveTrack"
-	RadioService_ReorderTracks_FullMethodName     = "/algovn.radio.v1.RadioService/ReorderTracks"
-	RadioService_GetStation_FullMethodName        = "/algovn.radio.v1.RadioService/GetStation"
-	RadioService_SetActivePlaylist_FullMethodName = "/algovn.radio.v1.RadioService/SetActivePlaylist"
-	RadioService_GoOnAir_FullMethodName           = "/algovn.radio.v1.RadioService/GoOnAir"
-	RadioService_GoOffAir_FullMethodName          = "/algovn.radio.v1.RadioService/GoOffAir"
-	RadioService_GetNowPlaying_FullMethodName     = "/algovn.radio.v1.RadioService/GetNowPlaying"
-	RadioService_GetQueue_FullMethodName          = "/algovn.radio.v1.RadioService/GetQueue"
-	RadioService_GetHistory_FullMethodName        = "/algovn.radio.v1.RadioService/GetHistory"
-	RadioService_Heartbeat_FullMethodName         = "/algovn.radio.v1.RadioService/Heartbeat"
-	RadioService_SearchCandidates_FullMethodName  = "/algovn.radio.v1.RadioService/SearchCandidates"
-	RadioService_RequestTrack_FullMethodName      = "/algovn.radio.v1.RadioService/RequestTrack"
-	RadioService_ListMyRequests_FullMethodName    = "/algovn.radio.v1.RadioService/ListMyRequests"
+	RadioService_CreatePlaylist_FullMethodName      = "/algovn.radio.v1.RadioService/CreatePlaylist"
+	RadioService_ListPlaylists_FullMethodName       = "/algovn.radio.v1.RadioService/ListPlaylists"
+	RadioService_GetPlaylist_FullMethodName         = "/algovn.radio.v1.RadioService/GetPlaylist"
+	RadioService_RenamePlaylist_FullMethodName      = "/algovn.radio.v1.RadioService/RenamePlaylist"
+	RadioService_DeletePlaylist_FullMethodName      = "/algovn.radio.v1.RadioService/DeletePlaylist"
+	RadioService_AddTrack_FullMethodName            = "/algovn.radio.v1.RadioService/AddTrack"
+	RadioService_RemoveTrack_FullMethodName         = "/algovn.radio.v1.RadioService/RemoveTrack"
+	RadioService_ReorderTracks_FullMethodName       = "/algovn.radio.v1.RadioService/ReorderTracks"
+	RadioService_SetActivePlaylist_FullMethodName   = "/algovn.radio.v1.RadioService/SetActivePlaylist"
+	RadioService_GetStation_FullMethodName          = "/algovn.radio.v1.RadioService/GetStation"
+	RadioService_GoOnAir_FullMethodName             = "/algovn.radio.v1.RadioService/GoOnAir"
+	RadioService_GoOffAir_FullMethodName            = "/algovn.radio.v1.RadioService/GoOffAir"
+	RadioService_GetNowPlaying_FullMethodName       = "/algovn.radio.v1.RadioService/GetNowPlaying"
+	RadioService_GetQueue_FullMethodName            = "/algovn.radio.v1.RadioService/GetQueue"
+	RadioService_GetHistory_FullMethodName          = "/algovn.radio.v1.RadioService/GetHistory"
+	RadioService_Heartbeat_FullMethodName           = "/algovn.radio.v1.RadioService/Heartbeat"
+	RadioService_SearchCandidates_FullMethodName    = "/algovn.radio.v1.RadioService/SearchCandidates"
+	RadioService_RequestTrack_FullMethodName        = "/algovn.radio.v1.RadioService/RequestTrack"
+	RadioService_ListMyRequests_FullMethodName      = "/algovn.radio.v1.RadioService/ListMyRequests"
+	RadioService_ListStationRequests_FullMethodName = "/algovn.radio.v1.RadioService/ListStationRequests"
+	RadioService_ReorderRequests_FullMethodName     = "/algovn.radio.v1.RadioService/ReorderRequests"
+	RadioService_RemoveRequest_FullMethodName       = "/algovn.radio.v1.RadioService/RemoveRequest"
+	RadioService_SkipTrack_FullMethodName           = "/algovn.radio.v1.RadioService/SkipTrack"
+	RadioService_SetAIEnabled_FullMethodName        = "/algovn.radio.v1.RadioService/SetAIEnabled"
 )
 
 // RadioServiceClient is the client API for RadioService service.
@@ -51,16 +56,27 @@ const (
 // the-algovn/specs docs/superpowers/specs/2026-07-20-radio-v0-playlist-station-control-design.md
 // v1 adds the listener request + AI-pick surface (SearchCandidates/RequestTrack/ListMyRequests).
 type RadioServiceClient interface {
+	// Deprecated: Do not use.
+	// DEPRECATED (v1.2): the engine ignores playlists since v1; these return
+	// Unimplemented. Declarations retained per the never-break convention.
 	CreatePlaylist(ctx context.Context, in *CreatePlaylistRequest, opts ...grpc.CallOption) (*CreatePlaylistResponse, error)
+	// Deprecated: Do not use.
 	ListPlaylists(ctx context.Context, in *ListPlaylistsRequest, opts ...grpc.CallOption) (*ListPlaylistsResponse, error)
+	// Deprecated: Do not use.
 	GetPlaylist(ctx context.Context, in *GetPlaylistRequest, opts ...grpc.CallOption) (*GetPlaylistResponse, error)
+	// Deprecated: Do not use.
 	RenamePlaylist(ctx context.Context, in *RenamePlaylistRequest, opts ...grpc.CallOption) (*RenamePlaylistResponse, error)
+	// Deprecated: Do not use.
 	DeletePlaylist(ctx context.Context, in *DeletePlaylistRequest, opts ...grpc.CallOption) (*DeletePlaylistResponse, error)
+	// Deprecated: Do not use.
 	AddTrack(ctx context.Context, in *AddTrackRequest, opts ...grpc.CallOption) (*AddTrackResponse, error)
+	// Deprecated: Do not use.
 	RemoveTrack(ctx context.Context, in *RemoveTrackRequest, opts ...grpc.CallOption) (*RemoveTrackResponse, error)
+	// Deprecated: Do not use.
 	ReorderTracks(ctx context.Context, in *ReorderTracksRequest, opts ...grpc.CallOption) (*ReorderTracksResponse, error)
-	GetStation(ctx context.Context, in *GetStationRequest, opts ...grpc.CallOption) (*GetStationResponse, error)
+	// Deprecated: Do not use.
 	SetActivePlaylist(ctx context.Context, in *SetActivePlaylistRequest, opts ...grpc.CallOption) (*SetActivePlaylistResponse, error)
+	GetStation(ctx context.Context, in *GetStationRequest, opts ...grpc.CallOption) (*GetStationResponse, error)
 	GoOnAir(ctx context.Context, in *GoOnAirRequest, opts ...grpc.CallOption) (*GoOnAirResponse, error)
 	GoOffAir(ctx context.Context, in *GoOffAirRequest, opts ...grpc.CallOption) (*GoOffAirResponse, error)
 	// Slice 2 — public listener surface (gateway rule: anonymous).
@@ -73,6 +89,18 @@ type RadioServiceClient interface {
 	SearchCandidates(ctx context.Context, in *SearchCandidatesRequest, opts ...grpc.CallOption) (*SearchCandidatesResponse, error)
 	RequestTrack(ctx context.Context, in *RequestTrackRequest, opts ...grpc.CallOption) (*RequestTrackResponse, error)
 	ListMyRequests(ctx context.Context, in *ListMyRequestsRequest, opts ...grpc.CallOption) (*ListMyRequestsResponse, error)
+	// v1.2 — station console moderation (gateway rule: role:admin). Spec:
+	// the-algovn/specs docs/superpowers/specs/2026-07-22-radio-v12-station-console-design.md
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	ListStationRequests(ctx context.Context, in *ListStationRequestsRequest, opts ...grpc.CallOption) (*ListStationRequestsResponse, error)
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+	ReorderRequests(ctx context.Context, in *ReorderRequestsRequest, opts ...grpc.CallOption) (*ListStationRequestsResponse, error)
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+	RemoveRequest(ctx context.Context, in *RemoveRequestRequest, opts ...grpc.CallOption) (*ListStationRequestsResponse, error)
+	SkipTrack(ctx context.Context, in *SkipTrackRequest, opts ...grpc.CallOption) (*SkipTrackResponse, error)
+	SetAIEnabled(ctx context.Context, in *SetAIEnabledRequest, opts ...grpc.CallOption) (*SetAIEnabledResponse, error)
 }
 
 type radioServiceClient struct {
@@ -83,6 +111,7 @@ func NewRadioServiceClient(cc grpc.ClientConnInterface) RadioServiceClient {
 	return &radioServiceClient{cc}
 }
 
+// Deprecated: Do not use.
 func (c *radioServiceClient) CreatePlaylist(ctx context.Context, in *CreatePlaylistRequest, opts ...grpc.CallOption) (*CreatePlaylistResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(CreatePlaylistResponse)
@@ -93,6 +122,7 @@ func (c *radioServiceClient) CreatePlaylist(ctx context.Context, in *CreatePlayl
 	return out, nil
 }
 
+// Deprecated: Do not use.
 func (c *radioServiceClient) ListPlaylists(ctx context.Context, in *ListPlaylistsRequest, opts ...grpc.CallOption) (*ListPlaylistsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListPlaylistsResponse)
@@ -103,6 +133,7 @@ func (c *radioServiceClient) ListPlaylists(ctx context.Context, in *ListPlaylist
 	return out, nil
 }
 
+// Deprecated: Do not use.
 func (c *radioServiceClient) GetPlaylist(ctx context.Context, in *GetPlaylistRequest, opts ...grpc.CallOption) (*GetPlaylistResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetPlaylistResponse)
@@ -113,6 +144,7 @@ func (c *radioServiceClient) GetPlaylist(ctx context.Context, in *GetPlaylistReq
 	return out, nil
 }
 
+// Deprecated: Do not use.
 func (c *radioServiceClient) RenamePlaylist(ctx context.Context, in *RenamePlaylistRequest, opts ...grpc.CallOption) (*RenamePlaylistResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RenamePlaylistResponse)
@@ -123,6 +155,7 @@ func (c *radioServiceClient) RenamePlaylist(ctx context.Context, in *RenamePlayl
 	return out, nil
 }
 
+// Deprecated: Do not use.
 func (c *radioServiceClient) DeletePlaylist(ctx context.Context, in *DeletePlaylistRequest, opts ...grpc.CallOption) (*DeletePlaylistResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(DeletePlaylistResponse)
@@ -133,6 +166,7 @@ func (c *radioServiceClient) DeletePlaylist(ctx context.Context, in *DeletePlayl
 	return out, nil
 }
 
+// Deprecated: Do not use.
 func (c *radioServiceClient) AddTrack(ctx context.Context, in *AddTrackRequest, opts ...grpc.CallOption) (*AddTrackResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(AddTrackResponse)
@@ -143,6 +177,7 @@ func (c *radioServiceClient) AddTrack(ctx context.Context, in *AddTrackRequest, 
 	return out, nil
 }
 
+// Deprecated: Do not use.
 func (c *radioServiceClient) RemoveTrack(ctx context.Context, in *RemoveTrackRequest, opts ...grpc.CallOption) (*RemoveTrackResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(RemoveTrackResponse)
@@ -153,6 +188,7 @@ func (c *radioServiceClient) RemoveTrack(ctx context.Context, in *RemoveTrackReq
 	return out, nil
 }
 
+// Deprecated: Do not use.
 func (c *radioServiceClient) ReorderTracks(ctx context.Context, in *ReorderTracksRequest, opts ...grpc.CallOption) (*ReorderTracksResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ReorderTracksResponse)
@@ -163,20 +199,21 @@ func (c *radioServiceClient) ReorderTracks(ctx context.Context, in *ReorderTrack
 	return out, nil
 }
 
-func (c *radioServiceClient) GetStation(ctx context.Context, in *GetStationRequest, opts ...grpc.CallOption) (*GetStationResponse, error) {
+// Deprecated: Do not use.
+func (c *radioServiceClient) SetActivePlaylist(ctx context.Context, in *SetActivePlaylistRequest, opts ...grpc.CallOption) (*SetActivePlaylistResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(GetStationResponse)
-	err := c.cc.Invoke(ctx, RadioService_GetStation_FullMethodName, in, out, cOpts...)
+	out := new(SetActivePlaylistResponse)
+	err := c.cc.Invoke(ctx, RadioService_SetActivePlaylist_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *radioServiceClient) SetActivePlaylist(ctx context.Context, in *SetActivePlaylistRequest, opts ...grpc.CallOption) (*SetActivePlaylistResponse, error) {
+func (c *radioServiceClient) GetStation(ctx context.Context, in *GetStationRequest, opts ...grpc.CallOption) (*GetStationResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(SetActivePlaylistResponse)
-	err := c.cc.Invoke(ctx, RadioService_SetActivePlaylist_FullMethodName, in, out, cOpts...)
+	out := new(GetStationResponse)
+	err := c.cc.Invoke(ctx, RadioService_GetStation_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -273,6 +310,56 @@ func (c *radioServiceClient) ListMyRequests(ctx context.Context, in *ListMyReque
 	return out, nil
 }
 
+func (c *radioServiceClient) ListStationRequests(ctx context.Context, in *ListStationRequestsRequest, opts ...grpc.CallOption) (*ListStationRequestsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListStationRequestsResponse)
+	err := c.cc.Invoke(ctx, RadioService_ListStationRequests_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *radioServiceClient) ReorderRequests(ctx context.Context, in *ReorderRequestsRequest, opts ...grpc.CallOption) (*ListStationRequestsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListStationRequestsResponse)
+	err := c.cc.Invoke(ctx, RadioService_ReorderRequests_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *radioServiceClient) RemoveRequest(ctx context.Context, in *RemoveRequestRequest, opts ...grpc.CallOption) (*ListStationRequestsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListStationRequestsResponse)
+	err := c.cc.Invoke(ctx, RadioService_RemoveRequest_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *radioServiceClient) SkipTrack(ctx context.Context, in *SkipTrackRequest, opts ...grpc.CallOption) (*SkipTrackResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SkipTrackResponse)
+	err := c.cc.Invoke(ctx, RadioService_SkipTrack_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *radioServiceClient) SetAIEnabled(ctx context.Context, in *SetAIEnabledRequest, opts ...grpc.CallOption) (*SetAIEnabledResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SetAIEnabledResponse)
+	err := c.cc.Invoke(ctx, RadioService_SetAIEnabled_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RadioServiceServer is the server API for RadioService service.
 // All implementations must embed UnimplementedRadioServiceServer
 // for forward compatibility.
@@ -284,16 +371,27 @@ func (c *radioServiceClient) ListMyRequests(ctx context.Context, in *ListMyReque
 // the-algovn/specs docs/superpowers/specs/2026-07-20-radio-v0-playlist-station-control-design.md
 // v1 adds the listener request + AI-pick surface (SearchCandidates/RequestTrack/ListMyRequests).
 type RadioServiceServer interface {
+	// Deprecated: Do not use.
+	// DEPRECATED (v1.2): the engine ignores playlists since v1; these return
+	// Unimplemented. Declarations retained per the never-break convention.
 	CreatePlaylist(context.Context, *CreatePlaylistRequest) (*CreatePlaylistResponse, error)
+	// Deprecated: Do not use.
 	ListPlaylists(context.Context, *ListPlaylistsRequest) (*ListPlaylistsResponse, error)
+	// Deprecated: Do not use.
 	GetPlaylist(context.Context, *GetPlaylistRequest) (*GetPlaylistResponse, error)
+	// Deprecated: Do not use.
 	RenamePlaylist(context.Context, *RenamePlaylistRequest) (*RenamePlaylistResponse, error)
+	// Deprecated: Do not use.
 	DeletePlaylist(context.Context, *DeletePlaylistRequest) (*DeletePlaylistResponse, error)
+	// Deprecated: Do not use.
 	AddTrack(context.Context, *AddTrackRequest) (*AddTrackResponse, error)
+	// Deprecated: Do not use.
 	RemoveTrack(context.Context, *RemoveTrackRequest) (*RemoveTrackResponse, error)
+	// Deprecated: Do not use.
 	ReorderTracks(context.Context, *ReorderTracksRequest) (*ReorderTracksResponse, error)
-	GetStation(context.Context, *GetStationRequest) (*GetStationResponse, error)
+	// Deprecated: Do not use.
 	SetActivePlaylist(context.Context, *SetActivePlaylistRequest) (*SetActivePlaylistResponse, error)
+	GetStation(context.Context, *GetStationRequest) (*GetStationResponse, error)
 	GoOnAir(context.Context, *GoOnAirRequest) (*GoOnAirResponse, error)
 	GoOffAir(context.Context, *GoOffAirRequest) (*GoOffAirResponse, error)
 	// Slice 2 — public listener surface (gateway rule: anonymous).
@@ -306,6 +404,18 @@ type RadioServiceServer interface {
 	SearchCandidates(context.Context, *SearchCandidatesRequest) (*SearchCandidatesResponse, error)
 	RequestTrack(context.Context, *RequestTrackRequest) (*RequestTrackResponse, error)
 	ListMyRequests(context.Context, *ListMyRequestsRequest) (*ListMyRequestsResponse, error)
+	// v1.2 — station console moderation (gateway rule: role:admin). Spec:
+	// the-algovn/specs docs/superpowers/specs/2026-07-22-radio-v12-station-console-design.md
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	ListStationRequests(context.Context, *ListStationRequestsRequest) (*ListStationRequestsResponse, error)
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+	ReorderRequests(context.Context, *ReorderRequestsRequest) (*ListStationRequestsResponse, error)
+	// buf:lint:ignore RPC_REQUEST_RESPONSE_UNIQUE
+	// buf:lint:ignore RPC_RESPONSE_STANDARD_NAME
+	RemoveRequest(context.Context, *RemoveRequestRequest) (*ListStationRequestsResponse, error)
+	SkipTrack(context.Context, *SkipTrackRequest) (*SkipTrackResponse, error)
+	SetAIEnabled(context.Context, *SetAIEnabledRequest) (*SetAIEnabledResponse, error)
 	mustEmbedUnimplementedRadioServiceServer()
 }
 
@@ -340,11 +450,11 @@ func (UnimplementedRadioServiceServer) RemoveTrack(context.Context, *RemoveTrack
 func (UnimplementedRadioServiceServer) ReorderTracks(context.Context, *ReorderTracksRequest) (*ReorderTracksResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ReorderTracks not implemented")
 }
-func (UnimplementedRadioServiceServer) GetStation(context.Context, *GetStationRequest) (*GetStationResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method GetStation not implemented")
-}
 func (UnimplementedRadioServiceServer) SetActivePlaylist(context.Context, *SetActivePlaylistRequest) (*SetActivePlaylistResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetActivePlaylist not implemented")
+}
+func (UnimplementedRadioServiceServer) GetStation(context.Context, *GetStationRequest) (*GetStationResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetStation not implemented")
 }
 func (UnimplementedRadioServiceServer) GoOnAir(context.Context, *GoOnAirRequest) (*GoOnAirResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GoOnAir not implemented")
@@ -372,6 +482,21 @@ func (UnimplementedRadioServiceServer) RequestTrack(context.Context, *RequestTra
 }
 func (UnimplementedRadioServiceServer) ListMyRequests(context.Context, *ListMyRequestsRequest) (*ListMyRequestsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListMyRequests not implemented")
+}
+func (UnimplementedRadioServiceServer) ListStationRequests(context.Context, *ListStationRequestsRequest) (*ListStationRequestsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListStationRequests not implemented")
+}
+func (UnimplementedRadioServiceServer) ReorderRequests(context.Context, *ReorderRequestsRequest) (*ListStationRequestsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ReorderRequests not implemented")
+}
+func (UnimplementedRadioServiceServer) RemoveRequest(context.Context, *RemoveRequestRequest) (*ListStationRequestsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method RemoveRequest not implemented")
+}
+func (UnimplementedRadioServiceServer) SkipTrack(context.Context, *SkipTrackRequest) (*SkipTrackResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SkipTrack not implemented")
+}
+func (UnimplementedRadioServiceServer) SetAIEnabled(context.Context, *SetAIEnabledRequest) (*SetAIEnabledResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SetAIEnabled not implemented")
 }
 func (UnimplementedRadioServiceServer) mustEmbedUnimplementedRadioServiceServer() {}
 func (UnimplementedRadioServiceServer) testEmbeddedByValue()                      {}
@@ -538,24 +663,6 @@ func _RadioService_ReorderTracks_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
-func _RadioService_GetStation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetStationRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RadioServiceServer).GetStation(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: RadioService_GetStation_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RadioServiceServer).GetStation(ctx, req.(*GetStationRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _RadioService_SetActivePlaylist_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SetActivePlaylistRequest)
 	if err := dec(in); err != nil {
@@ -570,6 +677,24 @@ func _RadioService_SetActivePlaylist_Handler(srv interface{}, ctx context.Contex
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(RadioServiceServer).SetActivePlaylist(ctx, req.(*SetActivePlaylistRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RadioService_GetStation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetStationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RadioServiceServer).GetStation(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RadioService_GetStation_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RadioServiceServer).GetStation(ctx, req.(*GetStationRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -736,6 +861,96 @@ func _RadioService_ListMyRequests_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RadioService_ListStationRequests_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListStationRequestsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RadioServiceServer).ListStationRequests(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RadioService_ListStationRequests_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RadioServiceServer).ListStationRequests(ctx, req.(*ListStationRequestsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RadioService_ReorderRequests_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ReorderRequestsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RadioServiceServer).ReorderRequests(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RadioService_ReorderRequests_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RadioServiceServer).ReorderRequests(ctx, req.(*ReorderRequestsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RadioService_RemoveRequest_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RemoveRequestRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RadioServiceServer).RemoveRequest(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RadioService_RemoveRequest_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RadioServiceServer).RemoveRequest(ctx, req.(*RemoveRequestRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RadioService_SkipTrack_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SkipTrackRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RadioServiceServer).SkipTrack(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RadioService_SkipTrack_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RadioServiceServer).SkipTrack(ctx, req.(*SkipTrackRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RadioService_SetAIEnabled_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetAIEnabledRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RadioServiceServer).SetAIEnabled(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RadioService_SetAIEnabled_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RadioServiceServer).SetAIEnabled(ctx, req.(*SetAIEnabledRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RadioService_ServiceDesc is the grpc.ServiceDesc for RadioService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -776,12 +991,12 @@ var RadioService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _RadioService_ReorderTracks_Handler,
 		},
 		{
-			MethodName: "GetStation",
-			Handler:    _RadioService_GetStation_Handler,
-		},
-		{
 			MethodName: "SetActivePlaylist",
 			Handler:    _RadioService_SetActivePlaylist_Handler,
+		},
+		{
+			MethodName: "GetStation",
+			Handler:    _RadioService_GetStation_Handler,
 		},
 		{
 			MethodName: "GoOnAir",
@@ -818,6 +1033,26 @@ var RadioService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListMyRequests",
 			Handler:    _RadioService_ListMyRequests_Handler,
+		},
+		{
+			MethodName: "ListStationRequests",
+			Handler:    _RadioService_ListStationRequests_Handler,
+		},
+		{
+			MethodName: "ReorderRequests",
+			Handler:    _RadioService_ReorderRequests_Handler,
+		},
+		{
+			MethodName: "RemoveRequest",
+			Handler:    _RadioService_RemoveRequest_Handler,
+		},
+		{
+			MethodName: "SkipTrack",
+			Handler:    _RadioService_SkipTrack_Handler,
+		},
+		{
+			MethodName: "SetAIEnabled",
+			Handler:    _RadioService_SetAIEnabled_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
