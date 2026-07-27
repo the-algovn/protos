@@ -50,6 +50,10 @@ service RadioService {
   rpc RemoveRequest(RemoveRequestRequest) returns (ListStationRequestsResponse);
   rpc SkipTrack(SkipTrackRequest) returns (SkipTrackResponse);
   rpc SetAIEnabled(SetAIEnabledRequest) returns (SetAIEnabledResponse);
+
+  // v3 — DJ voice settings (gateway rule: role:admin). Spec:
+  // the-algovn/specs docs/superpowers/specs/2026-07-23-dj-voice-settings-design.md
+  rpc UpdateDJSettings(UpdateDJSettingsRequest) returns (UpdateDJSettingsResponse);
 }
 
 message PlaylistSummary {
@@ -173,6 +177,8 @@ message StationStats {
 message GetStationResponse {
   Station      station = 1;
   StationStats stats = 2;  // v1.2 operator dashboard numbers
+  DJSettings   dj = 3;     // v3 DJ voice settings (sibling field on purpose:
+                           // Station also rides GoOnAir/GoOffAir/SetAIEnabled)
 }
 
 message SetActivePlaylistRequest {
@@ -318,3 +324,17 @@ message SkipTrackRequest {}
 message SkipTrackResponse {}
 message SetAIEnabledRequest { bool enabled = 1; }
 message SetAIEnabledResponse { Station station = 1; }
+
+// v3 — DJ voice settings (2026-07-23). All persisted on the station row;
+// the director re-reads them every ~20s tick. int32 on purpose (int64
+// would transcode to a JSON string). protojson omits zero values: absent
+// break_every / station_id_min on the wire mean 0 (= disabled).
+message DJSettings {
+  string voice_id = 1;       // must be a server voice-catalog id; "fake" is preview-only, rejected on save
+  double speaking_rate = 2;  // accepted range 0.7–1.3; 1.0 = provider default
+  int32  break_every = 3;    // talk break due after N tracks; 0 disables
+  int32  station_id_min = 4; // MINUTES between station IDs; 0 disables
+  int32  max_chars = 5;      // LLM backsell script rune cap (50–1000)
+}
+message UpdateDJSettingsRequest  { DJSettings settings = 1; }
+message UpdateDJSettingsResponse { DJSettings settings = 1; }

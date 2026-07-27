@@ -43,6 +43,7 @@ const (
 	RadioService_RemoveRequest_FullMethodName       = "/algovn.radio.v1.RadioService/RemoveRequest"
 	RadioService_SkipTrack_FullMethodName           = "/algovn.radio.v1.RadioService/SkipTrack"
 	RadioService_SetAIEnabled_FullMethodName        = "/algovn.radio.v1.RadioService/SetAIEnabled"
+	RadioService_UpdateDJSettings_FullMethodName    = "/algovn.radio.v1.RadioService/UpdateDJSettings"
 )
 
 // RadioServiceClient is the client API for RadioService service.
@@ -101,6 +102,9 @@ type RadioServiceClient interface {
 	RemoveRequest(ctx context.Context, in *RemoveRequestRequest, opts ...grpc.CallOption) (*ListStationRequestsResponse, error)
 	SkipTrack(ctx context.Context, in *SkipTrackRequest, opts ...grpc.CallOption) (*SkipTrackResponse, error)
 	SetAIEnabled(ctx context.Context, in *SetAIEnabledRequest, opts ...grpc.CallOption) (*SetAIEnabledResponse, error)
+	// v3 — DJ voice settings (gateway rule: role:admin). Spec:
+	// the-algovn/specs docs/superpowers/specs/2026-07-23-dj-voice-settings-design.md
+	UpdateDJSettings(ctx context.Context, in *UpdateDJSettingsRequest, opts ...grpc.CallOption) (*UpdateDJSettingsResponse, error)
 }
 
 type radioServiceClient struct {
@@ -360,6 +364,16 @@ func (c *radioServiceClient) SetAIEnabled(ctx context.Context, in *SetAIEnabledR
 	return out, nil
 }
 
+func (c *radioServiceClient) UpdateDJSettings(ctx context.Context, in *UpdateDJSettingsRequest, opts ...grpc.CallOption) (*UpdateDJSettingsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UpdateDJSettingsResponse)
+	err := c.cc.Invoke(ctx, RadioService_UpdateDJSettings_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RadioServiceServer is the server API for RadioService service.
 // All implementations must embed UnimplementedRadioServiceServer
 // for forward compatibility.
@@ -416,6 +430,9 @@ type RadioServiceServer interface {
 	RemoveRequest(context.Context, *RemoveRequestRequest) (*ListStationRequestsResponse, error)
 	SkipTrack(context.Context, *SkipTrackRequest) (*SkipTrackResponse, error)
 	SetAIEnabled(context.Context, *SetAIEnabledRequest) (*SetAIEnabledResponse, error)
+	// v3 — DJ voice settings (gateway rule: role:admin). Spec:
+	// the-algovn/specs docs/superpowers/specs/2026-07-23-dj-voice-settings-design.md
+	UpdateDJSettings(context.Context, *UpdateDJSettingsRequest) (*UpdateDJSettingsResponse, error)
 	mustEmbedUnimplementedRadioServiceServer()
 }
 
@@ -497,6 +514,9 @@ func (UnimplementedRadioServiceServer) SkipTrack(context.Context, *SkipTrackRequ
 }
 func (UnimplementedRadioServiceServer) SetAIEnabled(context.Context, *SetAIEnabledRequest) (*SetAIEnabledResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetAIEnabled not implemented")
+}
+func (UnimplementedRadioServiceServer) UpdateDJSettings(context.Context, *UpdateDJSettingsRequest) (*UpdateDJSettingsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method UpdateDJSettings not implemented")
 }
 func (UnimplementedRadioServiceServer) mustEmbedUnimplementedRadioServiceServer() {}
 func (UnimplementedRadioServiceServer) testEmbeddedByValue()                      {}
@@ -951,6 +971,24 @@ func _RadioService_SetAIEnabled_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RadioService_UpdateDJSettings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateDJSettingsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RadioServiceServer).UpdateDJSettings(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RadioService_UpdateDJSettings_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RadioServiceServer).UpdateDJSettings(ctx, req.(*UpdateDJSettingsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RadioService_ServiceDesc is the grpc.ServiceDesc for RadioService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1053,6 +1091,10 @@ var RadioService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SetAIEnabled",
 			Handler:    _RadioService_SetAIEnabled_Handler,
+		},
+		{
+			MethodName: "UpdateDJSettings",
+			Handler:    _RadioService_UpdateDJSettings_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
