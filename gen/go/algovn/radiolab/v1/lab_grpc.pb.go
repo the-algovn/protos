@@ -34,6 +34,8 @@ const (
 	LabService_PresignArtifact_FullMethodName = "/algovn.radiolab.v1.LabService/PresignArtifact"
 	LabService_GetLedger_FullMethodName       = "/algovn.radiolab.v1.LabService/GetLedger"
 	LabService_SaveFixture_FullMethodName     = "/algovn.radiolab.v1.LabService/SaveFixture"
+	LabService_ListLLMCalls_FullMethodName    = "/algovn.radiolab.v1.LabService/ListLLMCalls"
+	LabService_GetLLMStats_FullMethodName     = "/algovn.radiolab.v1.LabService/GetLLMStats"
 )
 
 // LabServiceClient is the client API for LabService service.
@@ -61,6 +63,9 @@ type LabServiceClient interface {
 	PresignArtifact(ctx context.Context, in *PresignArtifactRequest, opts ...grpc.CallOption) (*PresignArtifactResponse, error)
 	GetLedger(ctx context.Context, in *GetLedgerRequest, opts ...grpc.CallOption) (*GetLedgerResponse, error)
 	SaveFixture(ctx context.Context, in *SaveFixtureRequest, opts ...grpc.CallOption) (*SaveFixtureResponse, error)
+	// LLM call audit (spec 2026-07-27, gateway rule: role:admin).
+	ListLLMCalls(ctx context.Context, in *ListLLMCallsRequest, opts ...grpc.CallOption) (*ListLLMCallsResponse, error)
+	GetLLMStats(ctx context.Context, in *GetLLMStatsRequest, opts ...grpc.CallOption) (*GetLLMStatsResponse, error)
 }
 
 type labServiceClient struct {
@@ -221,6 +226,26 @@ func (c *labServiceClient) SaveFixture(ctx context.Context, in *SaveFixtureReque
 	return out, nil
 }
 
+func (c *labServiceClient) ListLLMCalls(ctx context.Context, in *ListLLMCallsRequest, opts ...grpc.CallOption) (*ListLLMCallsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListLLMCallsResponse)
+	err := c.cc.Invoke(ctx, LabService_ListLLMCalls_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *labServiceClient) GetLLMStats(ctx context.Context, in *GetLLMStatsRequest, opts ...grpc.CallOption) (*GetLLMStatsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetLLMStatsResponse)
+	err := c.cc.Invoke(ctx, LabService_GetLLMStats_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // LabServiceServer is the server API for LabService service.
 // All implementations must embed UnimplementedLabServiceServer
 // for forward compatibility.
@@ -246,6 +271,9 @@ type LabServiceServer interface {
 	PresignArtifact(context.Context, *PresignArtifactRequest) (*PresignArtifactResponse, error)
 	GetLedger(context.Context, *GetLedgerRequest) (*GetLedgerResponse, error)
 	SaveFixture(context.Context, *SaveFixtureRequest) (*SaveFixtureResponse, error)
+	// LLM call audit (spec 2026-07-27, gateway rule: role:admin).
+	ListLLMCalls(context.Context, *ListLLMCallsRequest) (*ListLLMCallsResponse, error)
+	GetLLMStats(context.Context, *GetLLMStatsRequest) (*GetLLMStatsResponse, error)
 	mustEmbedUnimplementedLabServiceServer()
 }
 
@@ -300,6 +328,12 @@ func (UnimplementedLabServiceServer) GetLedger(context.Context, *GetLedgerReques
 }
 func (UnimplementedLabServiceServer) SaveFixture(context.Context, *SaveFixtureRequest) (*SaveFixtureResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method SaveFixture not implemented")
+}
+func (UnimplementedLabServiceServer) ListLLMCalls(context.Context, *ListLLMCallsRequest) (*ListLLMCallsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListLLMCalls not implemented")
+}
+func (UnimplementedLabServiceServer) GetLLMStats(context.Context, *GetLLMStatsRequest) (*GetLLMStatsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetLLMStats not implemented")
 }
 func (UnimplementedLabServiceServer) mustEmbedUnimplementedLabServiceServer() {}
 func (UnimplementedLabServiceServer) testEmbeddedByValue()                    {}
@@ -592,6 +626,42 @@ func _LabService_SaveFixture_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _LabService_ListLLMCalls_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListLLMCallsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LabServiceServer).ListLLMCalls(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: LabService_ListLLMCalls_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LabServiceServer).ListLLMCalls(ctx, req.(*ListLLMCallsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _LabService_GetLLMStats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetLLMStatsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LabServiceServer).GetLLMStats(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: LabService_GetLLMStats_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LabServiceServer).GetLLMStats(ctx, req.(*GetLLMStatsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // LabService_ServiceDesc is the grpc.ServiceDesc for LabService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -658,6 +728,14 @@ var LabService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SaveFixture",
 			Handler:    _LabService_SaveFixture_Handler,
+		},
+		{
+			MethodName: "ListLLMCalls",
+			Handler:    _LabService_ListLLMCalls_Handler,
+		},
+		{
+			MethodName: "GetLLMStats",
+			Handler:    _LabService_GetLLMStats_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

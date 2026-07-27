@@ -25,6 +25,10 @@ service LabService {
   rpc PresignArtifact(PresignArtifactRequest) returns (PresignArtifactResponse);
   rpc GetLedger(GetLedgerRequest) returns (GetLedgerResponse);
   rpc SaveFixture(SaveFixtureRequest) returns (SaveFixtureResponse);
+
+  // LLM call audit (spec 2026-07-27, gateway rule: role:admin).
+  rpc ListLLMCalls(ListLLMCallsRequest) returns (ListLLMCallsResponse);
+  rpc GetLLMStats(GetLLMStatsRequest) returns (GetLLMStatsResponse);
 }
 
 message Artifact {
@@ -238,4 +242,47 @@ message SaveFixtureRequest {
 }
 message SaveFixtureResponse {
   string path = 1;
+}
+
+// LLM call audit (spec 2026-07-27). int32 for token/count/latency numerics
+// (int64 would transcode to a JSON string and fail the SPA's number checks);
+// id/total are int64 → JSON strings, coerced with Number() in the SPA.
+message LLMCall {
+  int64  id = 1;
+  string ts = 2;            // RFC3339
+  string label = 3;         // director:backsell | programmer:pick | script:<type> | callin
+  string model = 4;         // full model id, e.g. claude-haiku-4-5-20251001
+  string provider = 5;      // anthropic | gemini | fake
+  string system_prompt = 6;
+  string user_prompt = 7;
+  string output = 8;        // raw model output ("" on error)
+  int32  in_tokens = 9;
+  int32  out_tokens = 10;
+  double cost_usd = 11;
+  int32  latency_ms = 12;
+  string error = 13;        // "" on success
+  bool   fake = 14;
+}
+message ListLLMCallsRequest {
+  string label = 1;         // "" = all call-sites
+  bool   errors_only = 2;
+  int32  limit = 3;         // server clamps: <=0 → 20, >100 → 100
+  int32  offset = 4;
+}
+message ListLLMCallsResponse {
+  repeated LLMCall calls = 1;  // newest first
+  int64 total = 2;
+}
+message LLMStat {
+  string label = 1;
+  string model = 2;
+  int32  count = 3;
+  int32  in_tokens = 4;
+  int32  out_tokens = 5;
+  double cost_usd = 6;
+}
+message GetLLMStatsRequest { int32 window_days = 1; }  // <=0 → 30
+message GetLLMStatsResponse {
+  repeated LLMStat stats = 1;
+  double total_usd = 2;
 }
