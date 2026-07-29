@@ -133,6 +133,10 @@ message RacePackage {
   repeated Line lines = 8;
   string drama = 9;
   Fairness fairness = 10;
+  // Spoken before the gun. A separate track with its own clock starting at 0 —
+  // the race clock's origin is the gun, so these cannot share it. Laid out
+  // sequentially by the client, not scheduled against the race timeline.
+  repeated Line intro_lines = 11;
 }
 
 message GetRaceRequest {

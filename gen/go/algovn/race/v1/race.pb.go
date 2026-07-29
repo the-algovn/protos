@@ -849,10 +849,14 @@ type RacePackage struct {
 	Ticks      []*Tick                `protobuf:"bytes,5,rep,name=ticks,proto3" json:"ticks,omitempty"`
 	Events     []*Event               `protobuf:"bytes,6,rep,name=events,proto3" json:"events,omitempty"`
 	// Duck indexes, winner first.
-	FinishOrder   []int32   `protobuf:"varint,7,rep,packed,name=finish_order,json=finishOrder,proto3" json:"finish_order,omitempty"`
-	Lines         []*Line   `protobuf:"bytes,8,rep,name=lines,proto3" json:"lines,omitempty"`
-	Drama         string    `protobuf:"bytes,9,opt,name=drama,proto3" json:"drama,omitempty"`
-	Fairness      *Fairness `protobuf:"bytes,10,opt,name=fairness,proto3" json:"fairness,omitempty"`
+	FinishOrder []int32   `protobuf:"varint,7,rep,packed,name=finish_order,json=finishOrder,proto3" json:"finish_order,omitempty"`
+	Lines       []*Line   `protobuf:"bytes,8,rep,name=lines,proto3" json:"lines,omitempty"`
+	Drama       string    `protobuf:"bytes,9,opt,name=drama,proto3" json:"drama,omitempty"`
+	Fairness    *Fairness `protobuf:"bytes,10,opt,name=fairness,proto3" json:"fairness,omitempty"`
+	// Spoken before the gun. A separate track with its own clock starting at 0 —
+	// the race clock's origin is the gun, so these cannot share it. Laid out
+	// sequentially by the client, not scheduled against the race timeline.
+	IntroLines    []*Line `protobuf:"bytes,11,rep,name=intro_lines,json=introLines,proto3" json:"intro_lines,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -953,6 +957,13 @@ func (x *RacePackage) GetDrama() string {
 func (x *RacePackage) GetFairness() *Fairness {
 	if x != nil {
 		return x.Fairness
+	}
+	return nil
+}
+
+func (x *RacePackage) GetIntroLines() []*Line {
+	if x != nil {
+		return x.IntroLines
 	}
 	return nil
 }
@@ -1345,7 +1356,7 @@ const file_algovn_race_v1_race_proto_rawDesc = "" +
 	"\vserver_seed\x18\x02 \x01(\tR\n" +
 	"serverSeed\x12!\n" +
 	"\fclient_nonce\x18\x03 \x01(\tR\vclientNonce\x12\x12\n" +
-	"\x04seed\x18\x04 \x01(\tR\x04seed\"\xf5\x02\n" +
+	"\x04seed\x18\x04 \x01(\tR\x04seed\"\xac\x03\n" +
 	"\vRacePackage\x12\x17\n" +
 	"\arace_id\x18\x01 \x01(\tR\x06raceId\x12\x17\n" +
 	"\aroom_id\x18\x02 \x01(\tR\x06roomId\x12\x1d\n" +
@@ -1359,7 +1370,9 @@ const file_algovn_race_v1_race_proto_rawDesc = "" +
 	"\x05lines\x18\b \x03(\v2\x14.algovn.race.v1.LineR\x05lines\x12\x14\n" +
 	"\x05drama\x18\t \x01(\tR\x05drama\x124\n" +
 	"\bfairness\x18\n" +
-	" \x01(\v2\x18.algovn.race.v1.FairnessR\bfairness\")\n" +
+	" \x01(\v2\x18.algovn.race.v1.FairnessR\bfairness\x125\n" +
+	"\vintro_lines\x18\v \x03(\v2\x14.algovn.race.v1.LineR\n" +
+	"introLines\")\n" +
 	"\x0eGetRaceRequest\x12\x17\n" +
 	"\arace_id\x18\x01 \x01(\tR\x06raceId\"\xb1\x01\n" +
 	"\x0fGetRaceResponse\x122\n" +
@@ -1453,28 +1466,29 @@ var file_algovn_race_v1_race_proto_depIdxs = []int32{
 	12, // 5: algovn.race.v1.RacePackage.events:type_name -> algovn.race.v1.Event
 	13, // 6: algovn.race.v1.RacePackage.lines:type_name -> algovn.race.v1.Line
 	14, // 7: algovn.race.v1.RacePackage.fairness:type_name -> algovn.race.v1.Fairness
-	0,  // 8: algovn.race.v1.GetRaceResponse.status:type_name -> algovn.race.v1.RaceStatus
-	15, // 9: algovn.race.v1.GetRaceResponse.race:type_name -> algovn.race.v1.RacePackage
-	0,  // 10: algovn.race.v1.RaceSummary.status:type_name -> algovn.race.v1.RaceStatus
-	19, // 11: algovn.race.v1.ListRoomRacesResponse.races:type_name -> algovn.race.v1.RaceSummary
-	20, // 12: algovn.race.v1.ListRoomRacesResponse.tally:type_name -> algovn.race.v1.WinTally
-	3,  // 13: algovn.race.v1.RaceService.CreateRoom:input_type -> algovn.race.v1.CreateRoomRequest
-	7,  // 14: algovn.race.v1.RaceService.CreateRace:input_type -> algovn.race.v1.CreateRaceRequest
-	9,  // 15: algovn.race.v1.RaceService.StartRace:input_type -> algovn.race.v1.StartRaceRequest
-	16, // 16: algovn.race.v1.RaceService.GetRace:input_type -> algovn.race.v1.GetRaceRequest
-	5,  // 17: algovn.race.v1.RaceService.GetRoom:input_type -> algovn.race.v1.GetRoomRequest
-	18, // 18: algovn.race.v1.RaceService.ListRoomRaces:input_type -> algovn.race.v1.ListRoomRacesRequest
-	4,  // 19: algovn.race.v1.RaceService.CreateRoom:output_type -> algovn.race.v1.CreateRoomResponse
-	8,  // 20: algovn.race.v1.RaceService.CreateRace:output_type -> algovn.race.v1.CreateRaceResponse
-	10, // 21: algovn.race.v1.RaceService.StartRace:output_type -> algovn.race.v1.StartRaceResponse
-	17, // 22: algovn.race.v1.RaceService.GetRace:output_type -> algovn.race.v1.GetRaceResponse
-	6,  // 23: algovn.race.v1.RaceService.GetRoom:output_type -> algovn.race.v1.GetRoomResponse
-	21, // 24: algovn.race.v1.RaceService.ListRoomRaces:output_type -> algovn.race.v1.ListRoomRacesResponse
-	19, // [19:25] is the sub-list for method output_type
-	13, // [13:19] is the sub-list for method input_type
-	13, // [13:13] is the sub-list for extension type_name
-	13, // [13:13] is the sub-list for extension extendee
-	0,  // [0:13] is the sub-list for field type_name
+	13, // 8: algovn.race.v1.RacePackage.intro_lines:type_name -> algovn.race.v1.Line
+	0,  // 9: algovn.race.v1.GetRaceResponse.status:type_name -> algovn.race.v1.RaceStatus
+	15, // 10: algovn.race.v1.GetRaceResponse.race:type_name -> algovn.race.v1.RacePackage
+	0,  // 11: algovn.race.v1.RaceSummary.status:type_name -> algovn.race.v1.RaceStatus
+	19, // 12: algovn.race.v1.ListRoomRacesResponse.races:type_name -> algovn.race.v1.RaceSummary
+	20, // 13: algovn.race.v1.ListRoomRacesResponse.tally:type_name -> algovn.race.v1.WinTally
+	3,  // 14: algovn.race.v1.RaceService.CreateRoom:input_type -> algovn.race.v1.CreateRoomRequest
+	7,  // 15: algovn.race.v1.RaceService.CreateRace:input_type -> algovn.race.v1.CreateRaceRequest
+	9,  // 16: algovn.race.v1.RaceService.StartRace:input_type -> algovn.race.v1.StartRaceRequest
+	16, // 17: algovn.race.v1.RaceService.GetRace:input_type -> algovn.race.v1.GetRaceRequest
+	5,  // 18: algovn.race.v1.RaceService.GetRoom:input_type -> algovn.race.v1.GetRoomRequest
+	18, // 19: algovn.race.v1.RaceService.ListRoomRaces:input_type -> algovn.race.v1.ListRoomRacesRequest
+	4,  // 20: algovn.race.v1.RaceService.CreateRoom:output_type -> algovn.race.v1.CreateRoomResponse
+	8,  // 21: algovn.race.v1.RaceService.CreateRace:output_type -> algovn.race.v1.CreateRaceResponse
+	10, // 22: algovn.race.v1.RaceService.StartRace:output_type -> algovn.race.v1.StartRaceResponse
+	17, // 23: algovn.race.v1.RaceService.GetRace:output_type -> algovn.race.v1.GetRaceResponse
+	6,  // 24: algovn.race.v1.RaceService.GetRoom:output_type -> algovn.race.v1.GetRoomResponse
+	21, // 25: algovn.race.v1.RaceService.ListRoomRaces:output_type -> algovn.race.v1.ListRoomRacesResponse
+	20, // [20:26] is the sub-list for method output_type
+	14, // [14:20] is the sub-list for method input_type
+	14, // [14:14] is the sub-list for extension type_name
+	14, // [14:14] is the sub-list for extension extendee
+	0,  // [0:14] is the sub-list for field type_name
 }
 
 func init() { file_algovn_race_v1_race_proto_init() }
