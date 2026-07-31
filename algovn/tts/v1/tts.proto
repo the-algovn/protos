@@ -1,0 +1,63 @@
+syntax = "proto3";
+
+package algovn.tts.v1;
+
+option go_package = "github.com/the-algovn/protos/gen/go/algovn/tts/v1;ttsv1";
+
+// TTSService synthesizes Vietnamese speech for the algovn services. Internal
+// only: it is never registered at a gateway, and no browser calls it. Audio
+// bytes travel in the response because utterances are short (a DJ break is a
+// few hundred characters); callers that need a URL store the bytes themselves.
+service TTSService {
+  rpc Synthesize(SynthesizeRequest) returns (SynthesizeResponse);
+  rpc ListVoices(ListVoicesRequest) returns (ListVoicesResponse);
+}
+
+// AudioFormat is the container the caller wants back, regardless of what the
+// backend natively emits.
+enum AudioFormat {
+  AUDIO_FORMAT_UNSPECIFIED = 0;
+  AUDIO_FORMAT_MP3 = 1;
+  AUDIO_FORMAT_WAV = 2;
+}
+
+message SynthesizeRequest {
+  string text = 1;
+  // voice_id is provider-namespaced ("google:vi-VN-Wavenet-B"). A bare id is
+  // resolved as "google:" for back-compat with ids already persisted in the
+  // radio station row and in RACE_VOICE_ID.
+  string voice_id = 2;
+  double speaking_rate = 3;
+  AudioFormat format = 4;
+  // label is caller-supplied and appears in logs only ("director:backsell").
+  string label = 5;
+}
+
+message SynthesizeResponse {
+  bytes audio = 1;
+  AudioFormat format = 2;
+  string voice_id = 3;
+  string provider = 4;
+  // cost_usd is the LIST-price marginal cost. It does not subtract the
+  // provider's monthly free allowance -- see free_tier_chars_per_month.
+  double cost_usd = 5;
+  bool cache_hit = 6;
+}
+
+message ListVoicesRequest {}
+
+message ListVoicesResponse {
+  repeated Voice voices = 1;
+}
+
+message Voice {
+  string id = 1;
+  string label = 2;
+  string provider = 3;
+  string tier = 4;
+  string gender = 5;
+  // free_tier_chars_per_month is the provider's monthly allowance for this
+  // tier, 0 when there is none. Advisory: the service is stateless and does
+  // not track consumption against it.
+  int64 free_tier_chars_per_month = 6;
+}
