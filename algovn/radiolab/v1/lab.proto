@@ -93,9 +93,13 @@ message Brief {
 }
 
 message GenerateScriptRequest {
-  Brief brief = 1;
-  string model = 2;            // gemini | anthropic | fake ("" → default)
-  string persona_override = 3; // "" → persona file on disk
+  // DEPRECATED: the typed Brief drifted from the director's Go struct — it
+  // carried fields the director never sends and lacked the one it always
+  // does. Send brief_json instead: the director's brief, verbatim.
+  Brief  brief            = 1 [deprecated = true];
+  string model            = 2;  // gemini | anthropic | script | fake ("" → script)
+  string persona_override = 3;  // "" → persona file on disk
+  string brief_json       = 4;  // the director's Brief as JSON; wins over `brief`
 }
 message GenerateScriptResponse {
   string script = 1;

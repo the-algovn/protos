@@ -642,10 +642,16 @@ func (x *Brief) GetMaxChars() int32 {
 }
 
 type GenerateScriptRequest struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
-	Brief           *Brief                 `protobuf:"bytes,1,opt,name=brief,proto3" json:"brief,omitempty"`
-	Model           string                 `protobuf:"bytes,2,opt,name=model,proto3" json:"model,omitempty"`                                            // gemini | anthropic | fake ("" → default)
-	PersonaOverride string                 `protobuf:"bytes,3,opt,name=persona_override,json=personaOverride,proto3" json:"persona_override,omitempty"` // "" → persona file on disk
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// DEPRECATED: the typed Brief drifted from the director's Go struct — it
+	// carried fields the director never sends and lacked the one it always
+	// does. Send brief_json instead: the director's brief, verbatim.
+	//
+	// Deprecated: Marked as deprecated in algovn/radiolab/v1/lab.proto.
+	Brief           *Brief `protobuf:"bytes,1,opt,name=brief,proto3" json:"brief,omitempty"`
+	Model           string `protobuf:"bytes,2,opt,name=model,proto3" json:"model,omitempty"`                                            // gemini | anthropic | script | fake ("" → script)
+	PersonaOverride string `protobuf:"bytes,3,opt,name=persona_override,json=personaOverride,proto3" json:"persona_override,omitempty"` // "" → persona file on disk
+	BriefJson       string `protobuf:"bytes,4,opt,name=brief_json,json=briefJson,proto3" json:"brief_json,omitempty"`                   // the director's Brief as JSON; wins over `brief`
 	unknownFields   protoimpl.UnknownFields
 	sizeCache       protoimpl.SizeCache
 }
@@ -680,6 +686,7 @@ func (*GenerateScriptRequest) Descriptor() ([]byte, []int) {
 	return file_algovn_radiolab_v1_lab_proto_rawDescGZIP(), []int{9}
 }
 
+// Deprecated: Marked as deprecated in algovn/radiolab/v1/lab.proto.
 func (x *GenerateScriptRequest) GetBrief() *Brief {
 	if x != nil {
 		return x.Brief
@@ -697,6 +704,13 @@ func (x *GenerateScriptRequest) GetModel() string {
 func (x *GenerateScriptRequest) GetPersonaOverride() string {
 	if x != nil {
 		return x.PersonaOverride
+	}
+	return ""
+}
+
+func (x *GenerateScriptRequest) GetBriefJson() string {
+	if x != nil {
+		return x.BriefJson
 	}
 	return ""
 }
@@ -2872,11 +2886,13 @@ const file_algovn_radiolab_v1_lab_proto_rawDesc = "" +
 	"\x10memory_summaries\x18\b \x03(\tR\x0fmemorySummaries\x12%\n" +
 	"\x0erecent_phrases\x18\t \x03(\tR\rrecentPhrases\x12\x1b\n" +
 	"\tmax_chars\x18\n" +
-	" \x01(\x05R\bmaxChars\"\x89\x01\n" +
-	"\x15GenerateScriptRequest\x12/\n" +
-	"\x05brief\x18\x01 \x01(\v2\x19.algovn.radiolab.v1.BriefR\x05brief\x12\x14\n" +
+	" \x01(\x05R\bmaxChars\"\xac\x01\n" +
+	"\x15GenerateScriptRequest\x123\n" +
+	"\x05brief\x18\x01 \x01(\v2\x19.algovn.radiolab.v1.BriefB\x02\x18\x01R\x05brief\x12\x14\n" +
 	"\x05model\x18\x02 \x01(\tR\x05model\x12)\n" +
-	"\x10persona_override\x18\x03 \x01(\tR\x0fpersonaOverride\"\x8e\x02\n" +
+	"\x10persona_override\x18\x03 \x01(\tR\x0fpersonaOverride\x12\x1d\n" +
+	"\n" +
+	"brief_json\x18\x04 \x01(\tR\tbriefJson\"\x8e\x02\n" +
 	"\x16GenerateScriptResponse\x12\x16\n" +
 	"\x06script\x18\x01 \x01(\tR\x06script\x12\x18\n" +
 	"\asummary\x18\x02 \x01(\tR\asummary\x12!\n" +
