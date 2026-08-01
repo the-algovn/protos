@@ -1,0 +1,203 @@
+syntax = "proto3";
+
+package algovn.videoclaw.v1;
+
+option go_package = "github.com/the-algovn/protos/gen/go/algovn/videoclaw/v1;videoclawv1";
+
+import "google/protobuf/timestamp.proto";
+
+service VideoClawService {
+  // Sources
+  rpc CreateSource(CreateSourceRequest) returns (CreateSourceResponse);
+  rpc ListSources(ListSourcesRequest) returns (ListSourcesResponse);
+  rpc UpdateSource(UpdateSourceRequest) returns (UpdateSourceResponse);
+  rpc DeleteSource(DeleteSourceRequest) returns (DeleteSourceResponse);
+
+  // Rules
+  rpc CreateRule(CreateRuleRequest) returns (CreateRuleResponse);
+  rpc UpdateRule(UpdateRuleRequest) returns (UpdateRuleResponse);
+  rpc DeleteRule(DeleteRuleRequest) returns (DeleteRuleResponse);
+
+  // Jobs
+  rpc StartCrawl(StartCrawlRequest) returns (StartCrawlResponse);
+  rpc GetCrawlJob(GetCrawlJobRequest) returns (GetCrawlJobResponse);
+  rpc ListCrawlJobs(ListCrawlJobsRequest) returns (ListCrawlJobsResponse);
+
+  // Videos
+  rpc ListVideos(ListVideosRequest) returns (ListVideosResponse);
+  rpc RetryDownload(RetryDownloadRequest) returns (RetryDownloadResponse);
+}
+
+message Source {
+  string id = 1;
+  string name = 2;
+  repeated string base_urls = 3;
+  bool enabled = 4;
+  google.protobuf.Timestamp created_at = 5;
+}
+
+message CreateSourceRequest {
+  string name = 1;
+  repeated string base_urls = 2;
+}
+
+message CreateSourceResponse {
+  Source source = 1;
+}
+
+message UpdateSourceRequest {
+  string id = 1;
+  string name = 2;
+  repeated string base_urls = 3;
+  bool enabled = 4;
+}
+
+message UpdateSourceResponse {
+  Source source = 1;
+}
+
+message DeleteSourceRequest {
+  string id = 1;
+}
+
+message DeleteSourceResponse {}
+
+message ListSourcesRequest {}
+message ListSourcesResponse {
+  repeated Source sources = 1;
+}
+
+message SourceRule {
+  string id = 1;
+  string source_id = 2;
+  string rule_type = 3;        // "listing" | "video_detail" | "api"
+  string method = 4;
+  string path_template = 5;    // "/page/{page}/"
+  string item_selector = 6;    // ".video-item"
+  string url_selector = 7;     // "a.video-link @ href"
+  string title_selector = 8;
+  string thumb_selector = 9;
+  string next_selector = 10;   // "a.next @ href"
+  int32 max_pages = 11;
+  bool use_flaresolverr = 12;
+  google.protobuf.Timestamp created_at = 13;
+}
+
+message CreateRuleRequest {
+  string source_id = 1;
+  string rule_type = 2;
+  string method = 3;
+  string path_template = 4;
+  string item_selector = 5;
+  string url_selector = 6;
+  string title_selector = 7;
+  string thumb_selector = 8;
+  string next_selector = 9;
+  int32 max_pages = 10;
+  bool use_flaresolverr = 11;
+}
+
+message CreateRuleResponse {
+  SourceRule rule = 1;
+}
+
+message UpdateRuleRequest {
+  string id = 1;
+  string rule_type = 2;
+  string method = 3;
+  string path_template = 4;
+  string item_selector = 5;
+  string url_selector = 6;
+  string title_selector = 7;
+  string thumb_selector = 8;
+  string next_selector = 9;
+  int32 max_pages = 10;
+  bool use_flaresolverr = 11;
+}
+
+message UpdateRuleResponse {
+  SourceRule rule = 1;
+}
+
+message DeleteRuleRequest {
+  string id = 1;
+}
+
+message DeleteRuleResponse {}
+
+message CrawlJob {
+  string id = 1;
+  string source_id = 2;
+  string status = 3;           // pending|running|done|failed
+  int32 pages_scraped = 4;
+  int32 videos_found = 5;
+  int32 videos_new = 6;
+  int32 videos_downloaded = 7;
+  google.protobuf.Timestamp started_at = 8;
+  google.protobuf.Timestamp finished_at = 9;
+  string error = 10;
+  google.protobuf.Timestamp created_at = 11;
+}
+
+message StartCrawlRequest {
+  string source_id = 1;
+}
+
+message StartCrawlResponse {
+  CrawlJob job = 1;
+}
+
+message GetCrawlJobRequest {
+  string id = 1;
+}
+
+message GetCrawlJobResponse {
+  CrawlJob job = 1;
+}
+
+message ListCrawlJobsRequest {
+  string source_id = 1;        // empty = all
+  int32 limit = 2;
+  int32 offset = 3;
+}
+message ListCrawlJobsResponse {
+  repeated CrawlJob jobs = 1;
+  int32 total = 2;
+}
+
+message Video {
+  string id = 1;
+  string source_id = 2;
+  string crawl_job_id = 3;
+  string external_id = 4;
+  string title = 5;
+  string page_url = 6;
+  string video_url = 7;
+  string thumbnail_url = 8;
+  string download_status = 9;  // new|downloading|done|failed
+  string file_path = 10;
+  int64 file_size = 11;
+  string download_error = 12;
+  google.protobuf.Timestamp found_at = 13;
+  google.protobuf.Timestamp downloaded_at = 14;
+}
+
+message ListVideosRequest {
+  string source_id = 1;        // empty = all
+  string download_status = 2;  // empty = all
+  string crawl_job_id = 3;     // empty = all
+  int32 limit = 4;
+  int32 offset = 5;
+}
+message ListVideosResponse {
+  repeated Video videos = 1;
+  int32 total = 2;
+}
+
+message RetryDownloadRequest {
+  string video_id = 1;
+}
+
+message RetryDownloadResponse {
+  Video video = 1;
+}
