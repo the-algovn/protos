@@ -467,22 +467,25 @@ func (x *ListSourcesResponse) GetSources() []*Source {
 }
 
 type SourceRule struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
-	Id              string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	SourceId        string                 `protobuf:"bytes,2,opt,name=source_id,json=sourceId,proto3" json:"source_id,omitempty"`
-	RuleType        string                 `protobuf:"bytes,3,opt,name=rule_type,json=ruleType,proto3" json:"rule_type,omitempty"` // "listing" | "video_detail" | "api"
-	Method          string                 `protobuf:"bytes,4,opt,name=method,proto3" json:"method,omitempty"`
-	PathTemplate    string                 `protobuf:"bytes,5,opt,name=path_template,json=pathTemplate,proto3" json:"path_template,omitempty"` // "/page/{page}/"
-	ItemSelector    string                 `protobuf:"bytes,6,opt,name=item_selector,json=itemSelector,proto3" json:"item_selector,omitempty"` // ".video-item"
-	UrlSelector     string                 `protobuf:"bytes,7,opt,name=url_selector,json=urlSelector,proto3" json:"url_selector,omitempty"`    // "a.video-link @ href"
-	TitleSelector   string                 `protobuf:"bytes,8,opt,name=title_selector,json=titleSelector,proto3" json:"title_selector,omitempty"`
-	ThumbSelector   string                 `protobuf:"bytes,9,opt,name=thumb_selector,json=thumbSelector,proto3" json:"thumb_selector,omitempty"`
-	NextSelector    string                 `protobuf:"bytes,10,opt,name=next_selector,json=nextSelector,proto3" json:"next_selector,omitempty"` // "a.next @ href"
-	MaxPages        int32                  `protobuf:"varint,11,opt,name=max_pages,json=maxPages,proto3" json:"max_pages,omitempty"`
-	UseFlaresolverr bool                   `protobuf:"varint,12,opt,name=use_flaresolverr,json=useFlaresolverr,proto3" json:"use_flaresolverr,omitempty"`
-	CreatedAt       *timestamppb.Timestamp `protobuf:"bytes,13,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	state               protoimpl.MessageState `protogen:"open.v1"`
+	Id                  string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	SourceId            string                 `protobuf:"bytes,2,opt,name=source_id,json=sourceId,proto3" json:"source_id,omitempty"`
+	RuleType            string                 `protobuf:"bytes,3,opt,name=rule_type,json=ruleType,proto3" json:"rule_type,omitempty"` // "listing" | "video_detail" | "api"
+	Method              string                 `protobuf:"bytes,4,opt,name=method,proto3" json:"method,omitempty"`
+	PathTemplate        string                 `protobuf:"bytes,5,opt,name=path_template,json=pathTemplate,proto3" json:"path_template,omitempty"` // "/page/{page}/"
+	ItemSelector        string                 `protobuf:"bytes,6,opt,name=item_selector,json=itemSelector,proto3" json:"item_selector,omitempty"` // ".video-item"
+	UrlSelector         string                 `protobuf:"bytes,7,opt,name=url_selector,json=urlSelector,proto3" json:"url_selector,omitempty"`    // "a.video-link @ href"
+	TitleSelector       string                 `protobuf:"bytes,8,opt,name=title_selector,json=titleSelector,proto3" json:"title_selector,omitempty"`
+	ThumbSelector       string                 `protobuf:"bytes,9,opt,name=thumb_selector,json=thumbSelector,proto3" json:"thumb_selector,omitempty"`
+	NextSelector        string                 `protobuf:"bytes,10,opt,name=next_selector,json=nextSelector,proto3" json:"next_selector,omitempty"` // "a.next @ href"
+	MaxPages            int32                  `protobuf:"varint,11,opt,name=max_pages,json=maxPages,proto3" json:"max_pages,omitempty"`
+	UseFlaresolverr     bool                   `protobuf:"varint,12,opt,name=use_flaresolverr,json=useFlaresolverr,proto3" json:"use_flaresolverr,omitempty"`
+	CreatedAt           *timestamppb.Timestamp `protobuf:"bytes,13,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	VideoUrlSelector    string                 `protobuf:"bytes,14,opt,name=video_url_selector,json=videoUrlSelector,proto3" json:"video_url_selector,omitempty"`
+	DescriptionSelector string                 `protobuf:"bytes,15,opt,name=description_selector,json=descriptionSelector,proto3" json:"description_selector,omitempty"`
+	UpdatedAt           *timestamppb.Timestamp `protobuf:"bytes,16,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	unknownFields       protoimpl.UnknownFields
+	sizeCache           protoimpl.SizeCache
 }
 
 func (x *SourceRule) Reset() {
@@ -606,21 +609,44 @@ func (x *SourceRule) GetCreatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+func (x *SourceRule) GetVideoUrlSelector() string {
+	if x != nil {
+		return x.VideoUrlSelector
+	}
+	return ""
+}
+
+func (x *SourceRule) GetDescriptionSelector() string {
+	if x != nil {
+		return x.DescriptionSelector
+	}
+	return ""
+}
+
+func (x *SourceRule) GetUpdatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return nil
+}
+
 type CreateRuleRequest struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
-	SourceId        string                 `protobuf:"bytes,1,opt,name=source_id,json=sourceId,proto3" json:"source_id,omitempty"`
-	RuleType        string                 `protobuf:"bytes,2,opt,name=rule_type,json=ruleType,proto3" json:"rule_type,omitempty"`
-	Method          string                 `protobuf:"bytes,3,opt,name=method,proto3" json:"method,omitempty"`
-	PathTemplate    string                 `protobuf:"bytes,4,opt,name=path_template,json=pathTemplate,proto3" json:"path_template,omitempty"`
-	ItemSelector    string                 `protobuf:"bytes,5,opt,name=item_selector,json=itemSelector,proto3" json:"item_selector,omitempty"`
-	UrlSelector     string                 `protobuf:"bytes,6,opt,name=url_selector,json=urlSelector,proto3" json:"url_selector,omitempty"`
-	TitleSelector   string                 `protobuf:"bytes,7,opt,name=title_selector,json=titleSelector,proto3" json:"title_selector,omitempty"`
-	ThumbSelector   string                 `protobuf:"bytes,8,opt,name=thumb_selector,json=thumbSelector,proto3" json:"thumb_selector,omitempty"`
-	NextSelector    string                 `protobuf:"bytes,9,opt,name=next_selector,json=nextSelector,proto3" json:"next_selector,omitempty"`
-	MaxPages        int32                  `protobuf:"varint,10,opt,name=max_pages,json=maxPages,proto3" json:"max_pages,omitempty"`
-	UseFlaresolverr bool                   `protobuf:"varint,11,opt,name=use_flaresolverr,json=useFlaresolverr,proto3" json:"use_flaresolverr,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	state               protoimpl.MessageState `protogen:"open.v1"`
+	SourceId            string                 `protobuf:"bytes,1,opt,name=source_id,json=sourceId,proto3" json:"source_id,omitempty"`
+	RuleType            string                 `protobuf:"bytes,2,opt,name=rule_type,json=ruleType,proto3" json:"rule_type,omitempty"`
+	Method              string                 `protobuf:"bytes,3,opt,name=method,proto3" json:"method,omitempty"`
+	PathTemplate        string                 `protobuf:"bytes,4,opt,name=path_template,json=pathTemplate,proto3" json:"path_template,omitempty"`
+	ItemSelector        string                 `protobuf:"bytes,5,opt,name=item_selector,json=itemSelector,proto3" json:"item_selector,omitempty"`
+	UrlSelector         string                 `protobuf:"bytes,6,opt,name=url_selector,json=urlSelector,proto3" json:"url_selector,omitempty"`
+	TitleSelector       string                 `protobuf:"bytes,7,opt,name=title_selector,json=titleSelector,proto3" json:"title_selector,omitempty"`
+	ThumbSelector       string                 `protobuf:"bytes,8,opt,name=thumb_selector,json=thumbSelector,proto3" json:"thumb_selector,omitempty"`
+	NextSelector        string                 `protobuf:"bytes,9,opt,name=next_selector,json=nextSelector,proto3" json:"next_selector,omitempty"`
+	MaxPages            int32                  `protobuf:"varint,10,opt,name=max_pages,json=maxPages,proto3" json:"max_pages,omitempty"`
+	UseFlaresolverr     bool                   `protobuf:"varint,11,opt,name=use_flaresolverr,json=useFlaresolverr,proto3" json:"use_flaresolverr,omitempty"`
+	VideoUrlSelector    string                 `protobuf:"bytes,12,opt,name=video_url_selector,json=videoUrlSelector,proto3" json:"video_url_selector,omitempty"`
+	DescriptionSelector string                 `protobuf:"bytes,13,opt,name=description_selector,json=descriptionSelector,proto3" json:"description_selector,omitempty"`
+	unknownFields       protoimpl.UnknownFields
+	sizeCache           protoimpl.SizeCache
 }
 
 func (x *CreateRuleRequest) Reset() {
@@ -730,6 +756,20 @@ func (x *CreateRuleRequest) GetUseFlaresolverr() bool {
 	return false
 }
 
+func (x *CreateRuleRequest) GetVideoUrlSelector() string {
+	if x != nil {
+		return x.VideoUrlSelector
+	}
+	return ""
+}
+
+func (x *CreateRuleRequest) GetDescriptionSelector() string {
+	if x != nil {
+		return x.DescriptionSelector
+	}
+	return ""
+}
+
 type CreateRuleResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Rule          *SourceRule            `protobuf:"bytes,1,opt,name=rule,proto3" json:"rule,omitempty"`
@@ -775,20 +815,22 @@ func (x *CreateRuleResponse) GetRule() *SourceRule {
 }
 
 type UpdateRuleRequest struct {
-	state           protoimpl.MessageState `protogen:"open.v1"`
-	Id              string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	RuleType        string                 `protobuf:"bytes,2,opt,name=rule_type,json=ruleType,proto3" json:"rule_type,omitempty"`
-	Method          string                 `protobuf:"bytes,3,opt,name=method,proto3" json:"method,omitempty"`
-	PathTemplate    string                 `protobuf:"bytes,4,opt,name=path_template,json=pathTemplate,proto3" json:"path_template,omitempty"`
-	ItemSelector    string                 `protobuf:"bytes,5,opt,name=item_selector,json=itemSelector,proto3" json:"item_selector,omitempty"`
-	UrlSelector     string                 `protobuf:"bytes,6,opt,name=url_selector,json=urlSelector,proto3" json:"url_selector,omitempty"`
-	TitleSelector   string                 `protobuf:"bytes,7,opt,name=title_selector,json=titleSelector,proto3" json:"title_selector,omitempty"`
-	ThumbSelector   string                 `protobuf:"bytes,8,opt,name=thumb_selector,json=thumbSelector,proto3" json:"thumb_selector,omitempty"`
-	NextSelector    string                 `protobuf:"bytes,9,opt,name=next_selector,json=nextSelector,proto3" json:"next_selector,omitempty"`
-	MaxPages        int32                  `protobuf:"varint,10,opt,name=max_pages,json=maxPages,proto3" json:"max_pages,omitempty"`
-	UseFlaresolverr bool                   `protobuf:"varint,11,opt,name=use_flaresolverr,json=useFlaresolverr,proto3" json:"use_flaresolverr,omitempty"`
-	unknownFields   protoimpl.UnknownFields
-	sizeCache       protoimpl.SizeCache
+	state               protoimpl.MessageState `protogen:"open.v1"`
+	Id                  string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	RuleType            string                 `protobuf:"bytes,2,opt,name=rule_type,json=ruleType,proto3" json:"rule_type,omitempty"`
+	Method              string                 `protobuf:"bytes,3,opt,name=method,proto3" json:"method,omitempty"`
+	PathTemplate        string                 `protobuf:"bytes,4,opt,name=path_template,json=pathTemplate,proto3" json:"path_template,omitempty"`
+	ItemSelector        string                 `protobuf:"bytes,5,opt,name=item_selector,json=itemSelector,proto3" json:"item_selector,omitempty"`
+	UrlSelector         string                 `protobuf:"bytes,6,opt,name=url_selector,json=urlSelector,proto3" json:"url_selector,omitempty"`
+	TitleSelector       string                 `protobuf:"bytes,7,opt,name=title_selector,json=titleSelector,proto3" json:"title_selector,omitempty"`
+	ThumbSelector       string                 `protobuf:"bytes,8,opt,name=thumb_selector,json=thumbSelector,proto3" json:"thumb_selector,omitempty"`
+	NextSelector        string                 `protobuf:"bytes,9,opt,name=next_selector,json=nextSelector,proto3" json:"next_selector,omitempty"`
+	MaxPages            int32                  `protobuf:"varint,10,opt,name=max_pages,json=maxPages,proto3" json:"max_pages,omitempty"`
+	UseFlaresolverr     bool                   `protobuf:"varint,11,opt,name=use_flaresolverr,json=useFlaresolverr,proto3" json:"use_flaresolverr,omitempty"`
+	VideoUrlSelector    string                 `protobuf:"bytes,12,opt,name=video_url_selector,json=videoUrlSelector,proto3" json:"video_url_selector,omitempty"`
+	DescriptionSelector string                 `protobuf:"bytes,13,opt,name=description_selector,json=descriptionSelector,proto3" json:"description_selector,omitempty"`
+	unknownFields       protoimpl.UnknownFields
+	sizeCache           protoimpl.SizeCache
 }
 
 func (x *UpdateRuleRequest) Reset() {
@@ -896,6 +938,20 @@ func (x *UpdateRuleRequest) GetUseFlaresolverr() bool {
 		return x.UseFlaresolverr
 	}
 	return false
+}
+
+func (x *UpdateRuleRequest) GetVideoUrlSelector() string {
+	if x != nil {
+		return x.VideoUrlSelector
+	}
+	return ""
+}
+
+func (x *UpdateRuleRequest) GetDescriptionSelector() string {
+	if x != nil {
+		return x.DescriptionSelector
+	}
+	return ""
 }
 
 type UpdateRuleResponse struct {
@@ -1450,6 +1506,7 @@ type Video struct {
 	DownloadError  string                 `protobuf:"bytes,12,opt,name=download_error,json=downloadError,proto3" json:"download_error,omitempty"`
 	FoundAt        *timestamppb.Timestamp `protobuf:"bytes,13,opt,name=found_at,json=foundAt,proto3" json:"found_at,omitempty"`
 	DownloadedAt   *timestamppb.Timestamp `protobuf:"bytes,14,opt,name=downloaded_at,json=downloadedAt,proto3" json:"downloaded_at,omitempty"`
+	Description    string                 `protobuf:"bytes,15,opt,name=description,proto3" json:"description,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
@@ -1580,6 +1637,13 @@ func (x *Video) GetDownloadedAt() *timestamppb.Timestamp {
 		return x.DownloadedAt
 	}
 	return nil
+}
+
+func (x *Video) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
 }
 
 type ListVideosRequest struct {
@@ -1827,7 +1891,7 @@ const file_algovn_videoclaw_v1_videoclaw_proto_rawDesc = "" +
 	"\x14DeleteSourceResponse\"\x14\n" +
 	"\x12ListSourcesRequest\"L\n" +
 	"\x13ListSourcesResponse\x125\n" +
-	"\asources\x18\x01 \x03(\v2\x1b.algovn.videoclaw.v1.SourceR\asources\"\xd1\x03\n" +
+	"\asources\x18\x01 \x03(\v2\x1b.algovn.videoclaw.v1.SourceR\asources\"\xed\x04\n" +
 	"\n" +
 	"SourceRule\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1b\n" +
@@ -1844,7 +1908,11 @@ const file_algovn_videoclaw_v1_videoclaw_proto_rawDesc = "" +
 	"\tmax_pages\x18\v \x01(\x05R\bmaxPages\x12)\n" +
 	"\x10use_flaresolverr\x18\f \x01(\bR\x0fuseFlaresolverr\x129\n" +
 	"\n" +
-	"created_at\x18\r \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"\x8d\x03\n" +
+	"created_at\x18\r \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\x12,\n" +
+	"\x12video_url_selector\x18\x0e \x01(\tR\x10videoUrlSelector\x121\n" +
+	"\x14description_selector\x18\x0f \x01(\tR\x13descriptionSelector\x129\n" +
+	"\n" +
+	"updated_at\x18\x10 \x01(\v2\x1a.google.protobuf.TimestampR\tupdatedAt\"\xee\x03\n" +
 	"\x11CreateRuleRequest\x12\x1b\n" +
 	"\tsource_id\x18\x01 \x01(\tR\bsourceId\x12\x1b\n" +
 	"\trule_type\x18\x02 \x01(\tR\bruleType\x12\x16\n" +
@@ -1857,9 +1925,11 @@ const file_algovn_videoclaw_v1_videoclaw_proto_rawDesc = "" +
 	"\rnext_selector\x18\t \x01(\tR\fnextSelector\x12\x1b\n" +
 	"\tmax_pages\x18\n" +
 	" \x01(\x05R\bmaxPages\x12)\n" +
-	"\x10use_flaresolverr\x18\v \x01(\bR\x0fuseFlaresolverr\"I\n" +
+	"\x10use_flaresolverr\x18\v \x01(\bR\x0fuseFlaresolverr\x12,\n" +
+	"\x12video_url_selector\x18\f \x01(\tR\x10videoUrlSelector\x121\n" +
+	"\x14description_selector\x18\r \x01(\tR\x13descriptionSelector\"I\n" +
 	"\x12CreateRuleResponse\x123\n" +
-	"\x04rule\x18\x01 \x01(\v2\x1f.algovn.videoclaw.v1.SourceRuleR\x04rule\"\x80\x03\n" +
+	"\x04rule\x18\x01 \x01(\v2\x1f.algovn.videoclaw.v1.SourceRuleR\x04rule\"\xe1\x03\n" +
 	"\x11UpdateRuleRequest\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1b\n" +
 	"\trule_type\x18\x02 \x01(\tR\bruleType\x12\x16\n" +
@@ -1872,7 +1942,9 @@ const file_algovn_videoclaw_v1_videoclaw_proto_rawDesc = "" +
 	"\rnext_selector\x18\t \x01(\tR\fnextSelector\x12\x1b\n" +
 	"\tmax_pages\x18\n" +
 	" \x01(\x05R\bmaxPages\x12)\n" +
-	"\x10use_flaresolverr\x18\v \x01(\bR\x0fuseFlaresolverr\"I\n" +
+	"\x10use_flaresolverr\x18\v \x01(\bR\x0fuseFlaresolverr\x12,\n" +
+	"\x12video_url_selector\x18\f \x01(\tR\x10videoUrlSelector\x121\n" +
+	"\x14description_selector\x18\r \x01(\tR\x13descriptionSelector\"I\n" +
 	"\x12UpdateRuleResponse\x123\n" +
 	"\x04rule\x18\x01 \x01(\v2\x1f.algovn.videoclaw.v1.SourceRuleR\x04rule\"#\n" +
 	"\x11DeleteRuleRequest\x12\x0e\n" +
@@ -1909,7 +1981,7 @@ const file_algovn_videoclaw_v1_videoclaw_proto_rawDesc = "" +
 	"\x06offset\x18\x03 \x01(\x05R\x06offset\"`\n" +
 	"\x15ListCrawlJobsResponse\x121\n" +
 	"\x04jobs\x18\x01 \x03(\v2\x1d.algovn.videoclaw.v1.CrawlJobR\x04jobs\x12\x14\n" +
-	"\x05total\x18\x02 \x01(\x05R\x05total\"\xec\x03\n" +
+	"\x05total\x18\x02 \x01(\x05R\x05total\"\x8e\x04\n" +
 	"\x05Video\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x1b\n" +
 	"\tsource_id\x18\x02 \x01(\tR\bsourceId\x12 \n" +
@@ -1927,7 +1999,8 @@ const file_algovn_videoclaw_v1_videoclaw_proto_rawDesc = "" +
 	"\tfile_size\x18\v \x01(\x03R\bfileSize\x12%\n" +
 	"\x0edownload_error\x18\f \x01(\tR\rdownloadError\x125\n" +
 	"\bfound_at\x18\r \x01(\v2\x1a.google.protobuf.TimestampR\afoundAt\x12?\n" +
-	"\rdownloaded_at\x18\x0e \x01(\v2\x1a.google.protobuf.TimestampR\fdownloadedAt\"\xa9\x01\n" +
+	"\rdownloaded_at\x18\x0e \x01(\v2\x1a.google.protobuf.TimestampR\fdownloadedAt\x12 \n" +
+	"\vdescription\x18\x0f \x01(\tR\vdescription\"\xa9\x01\n" +
 	"\x11ListVideosRequest\x12\x1b\n" +
 	"\tsource_id\x18\x01 \x01(\tR\bsourceId\x12'\n" +
 	"\x0fdownload_status\x18\x02 \x01(\tR\x0edownloadStatus\x12 \n" +
@@ -2011,47 +2084,48 @@ var file_algovn_videoclaw_v1_videoclaw_proto_depIdxs = []int32{
 	0,  // 2: algovn.videoclaw.v1.UpdateSourceResponse.source:type_name -> algovn.videoclaw.v1.Source
 	0,  // 3: algovn.videoclaw.v1.ListSourcesResponse.sources:type_name -> algovn.videoclaw.v1.Source
 	28, // 4: algovn.videoclaw.v1.SourceRule.created_at:type_name -> google.protobuf.Timestamp
-	9,  // 5: algovn.videoclaw.v1.CreateRuleResponse.rule:type_name -> algovn.videoclaw.v1.SourceRule
-	9,  // 6: algovn.videoclaw.v1.UpdateRuleResponse.rule:type_name -> algovn.videoclaw.v1.SourceRule
-	28, // 7: algovn.videoclaw.v1.CrawlJob.started_at:type_name -> google.protobuf.Timestamp
-	28, // 8: algovn.videoclaw.v1.CrawlJob.finished_at:type_name -> google.protobuf.Timestamp
-	28, // 9: algovn.videoclaw.v1.CrawlJob.created_at:type_name -> google.protobuf.Timestamp
-	16, // 10: algovn.videoclaw.v1.StartCrawlResponse.job:type_name -> algovn.videoclaw.v1.CrawlJob
-	16, // 11: algovn.videoclaw.v1.GetCrawlJobResponse.job:type_name -> algovn.videoclaw.v1.CrawlJob
-	16, // 12: algovn.videoclaw.v1.ListCrawlJobsResponse.jobs:type_name -> algovn.videoclaw.v1.CrawlJob
-	28, // 13: algovn.videoclaw.v1.Video.found_at:type_name -> google.protobuf.Timestamp
-	28, // 14: algovn.videoclaw.v1.Video.downloaded_at:type_name -> google.protobuf.Timestamp
-	23, // 15: algovn.videoclaw.v1.ListVideosResponse.videos:type_name -> algovn.videoclaw.v1.Video
-	23, // 16: algovn.videoclaw.v1.RetryDownloadResponse.video:type_name -> algovn.videoclaw.v1.Video
-	1,  // 17: algovn.videoclaw.v1.VideoClawService.CreateSource:input_type -> algovn.videoclaw.v1.CreateSourceRequest
-	7,  // 18: algovn.videoclaw.v1.VideoClawService.ListSources:input_type -> algovn.videoclaw.v1.ListSourcesRequest
-	3,  // 19: algovn.videoclaw.v1.VideoClawService.UpdateSource:input_type -> algovn.videoclaw.v1.UpdateSourceRequest
-	5,  // 20: algovn.videoclaw.v1.VideoClawService.DeleteSource:input_type -> algovn.videoclaw.v1.DeleteSourceRequest
-	10, // 21: algovn.videoclaw.v1.VideoClawService.CreateRule:input_type -> algovn.videoclaw.v1.CreateRuleRequest
-	12, // 22: algovn.videoclaw.v1.VideoClawService.UpdateRule:input_type -> algovn.videoclaw.v1.UpdateRuleRequest
-	14, // 23: algovn.videoclaw.v1.VideoClawService.DeleteRule:input_type -> algovn.videoclaw.v1.DeleteRuleRequest
-	17, // 24: algovn.videoclaw.v1.VideoClawService.StartCrawl:input_type -> algovn.videoclaw.v1.StartCrawlRequest
-	19, // 25: algovn.videoclaw.v1.VideoClawService.GetCrawlJob:input_type -> algovn.videoclaw.v1.GetCrawlJobRequest
-	21, // 26: algovn.videoclaw.v1.VideoClawService.ListCrawlJobs:input_type -> algovn.videoclaw.v1.ListCrawlJobsRequest
-	24, // 27: algovn.videoclaw.v1.VideoClawService.ListVideos:input_type -> algovn.videoclaw.v1.ListVideosRequest
-	26, // 28: algovn.videoclaw.v1.VideoClawService.RetryDownload:input_type -> algovn.videoclaw.v1.RetryDownloadRequest
-	2,  // 29: algovn.videoclaw.v1.VideoClawService.CreateSource:output_type -> algovn.videoclaw.v1.CreateSourceResponse
-	8,  // 30: algovn.videoclaw.v1.VideoClawService.ListSources:output_type -> algovn.videoclaw.v1.ListSourcesResponse
-	4,  // 31: algovn.videoclaw.v1.VideoClawService.UpdateSource:output_type -> algovn.videoclaw.v1.UpdateSourceResponse
-	6,  // 32: algovn.videoclaw.v1.VideoClawService.DeleteSource:output_type -> algovn.videoclaw.v1.DeleteSourceResponse
-	11, // 33: algovn.videoclaw.v1.VideoClawService.CreateRule:output_type -> algovn.videoclaw.v1.CreateRuleResponse
-	13, // 34: algovn.videoclaw.v1.VideoClawService.UpdateRule:output_type -> algovn.videoclaw.v1.UpdateRuleResponse
-	15, // 35: algovn.videoclaw.v1.VideoClawService.DeleteRule:output_type -> algovn.videoclaw.v1.DeleteRuleResponse
-	18, // 36: algovn.videoclaw.v1.VideoClawService.StartCrawl:output_type -> algovn.videoclaw.v1.StartCrawlResponse
-	20, // 37: algovn.videoclaw.v1.VideoClawService.GetCrawlJob:output_type -> algovn.videoclaw.v1.GetCrawlJobResponse
-	22, // 38: algovn.videoclaw.v1.VideoClawService.ListCrawlJobs:output_type -> algovn.videoclaw.v1.ListCrawlJobsResponse
-	25, // 39: algovn.videoclaw.v1.VideoClawService.ListVideos:output_type -> algovn.videoclaw.v1.ListVideosResponse
-	27, // 40: algovn.videoclaw.v1.VideoClawService.RetryDownload:output_type -> algovn.videoclaw.v1.RetryDownloadResponse
-	29, // [29:41] is the sub-list for method output_type
-	17, // [17:29] is the sub-list for method input_type
-	17, // [17:17] is the sub-list for extension type_name
-	17, // [17:17] is the sub-list for extension extendee
-	0,  // [0:17] is the sub-list for field type_name
+	28, // 5: algovn.videoclaw.v1.SourceRule.updated_at:type_name -> google.protobuf.Timestamp
+	9,  // 6: algovn.videoclaw.v1.CreateRuleResponse.rule:type_name -> algovn.videoclaw.v1.SourceRule
+	9,  // 7: algovn.videoclaw.v1.UpdateRuleResponse.rule:type_name -> algovn.videoclaw.v1.SourceRule
+	28, // 8: algovn.videoclaw.v1.CrawlJob.started_at:type_name -> google.protobuf.Timestamp
+	28, // 9: algovn.videoclaw.v1.CrawlJob.finished_at:type_name -> google.protobuf.Timestamp
+	28, // 10: algovn.videoclaw.v1.CrawlJob.created_at:type_name -> google.protobuf.Timestamp
+	16, // 11: algovn.videoclaw.v1.StartCrawlResponse.job:type_name -> algovn.videoclaw.v1.CrawlJob
+	16, // 12: algovn.videoclaw.v1.GetCrawlJobResponse.job:type_name -> algovn.videoclaw.v1.CrawlJob
+	16, // 13: algovn.videoclaw.v1.ListCrawlJobsResponse.jobs:type_name -> algovn.videoclaw.v1.CrawlJob
+	28, // 14: algovn.videoclaw.v1.Video.found_at:type_name -> google.protobuf.Timestamp
+	28, // 15: algovn.videoclaw.v1.Video.downloaded_at:type_name -> google.protobuf.Timestamp
+	23, // 16: algovn.videoclaw.v1.ListVideosResponse.videos:type_name -> algovn.videoclaw.v1.Video
+	23, // 17: algovn.videoclaw.v1.RetryDownloadResponse.video:type_name -> algovn.videoclaw.v1.Video
+	1,  // 18: algovn.videoclaw.v1.VideoClawService.CreateSource:input_type -> algovn.videoclaw.v1.CreateSourceRequest
+	7,  // 19: algovn.videoclaw.v1.VideoClawService.ListSources:input_type -> algovn.videoclaw.v1.ListSourcesRequest
+	3,  // 20: algovn.videoclaw.v1.VideoClawService.UpdateSource:input_type -> algovn.videoclaw.v1.UpdateSourceRequest
+	5,  // 21: algovn.videoclaw.v1.VideoClawService.DeleteSource:input_type -> algovn.videoclaw.v1.DeleteSourceRequest
+	10, // 22: algovn.videoclaw.v1.VideoClawService.CreateRule:input_type -> algovn.videoclaw.v1.CreateRuleRequest
+	12, // 23: algovn.videoclaw.v1.VideoClawService.UpdateRule:input_type -> algovn.videoclaw.v1.UpdateRuleRequest
+	14, // 24: algovn.videoclaw.v1.VideoClawService.DeleteRule:input_type -> algovn.videoclaw.v1.DeleteRuleRequest
+	17, // 25: algovn.videoclaw.v1.VideoClawService.StartCrawl:input_type -> algovn.videoclaw.v1.StartCrawlRequest
+	19, // 26: algovn.videoclaw.v1.VideoClawService.GetCrawlJob:input_type -> algovn.videoclaw.v1.GetCrawlJobRequest
+	21, // 27: algovn.videoclaw.v1.VideoClawService.ListCrawlJobs:input_type -> algovn.videoclaw.v1.ListCrawlJobsRequest
+	24, // 28: algovn.videoclaw.v1.VideoClawService.ListVideos:input_type -> algovn.videoclaw.v1.ListVideosRequest
+	26, // 29: algovn.videoclaw.v1.VideoClawService.RetryDownload:input_type -> algovn.videoclaw.v1.RetryDownloadRequest
+	2,  // 30: algovn.videoclaw.v1.VideoClawService.CreateSource:output_type -> algovn.videoclaw.v1.CreateSourceResponse
+	8,  // 31: algovn.videoclaw.v1.VideoClawService.ListSources:output_type -> algovn.videoclaw.v1.ListSourcesResponse
+	4,  // 32: algovn.videoclaw.v1.VideoClawService.UpdateSource:output_type -> algovn.videoclaw.v1.UpdateSourceResponse
+	6,  // 33: algovn.videoclaw.v1.VideoClawService.DeleteSource:output_type -> algovn.videoclaw.v1.DeleteSourceResponse
+	11, // 34: algovn.videoclaw.v1.VideoClawService.CreateRule:output_type -> algovn.videoclaw.v1.CreateRuleResponse
+	13, // 35: algovn.videoclaw.v1.VideoClawService.UpdateRule:output_type -> algovn.videoclaw.v1.UpdateRuleResponse
+	15, // 36: algovn.videoclaw.v1.VideoClawService.DeleteRule:output_type -> algovn.videoclaw.v1.DeleteRuleResponse
+	18, // 37: algovn.videoclaw.v1.VideoClawService.StartCrawl:output_type -> algovn.videoclaw.v1.StartCrawlResponse
+	20, // 38: algovn.videoclaw.v1.VideoClawService.GetCrawlJob:output_type -> algovn.videoclaw.v1.GetCrawlJobResponse
+	22, // 39: algovn.videoclaw.v1.VideoClawService.ListCrawlJobs:output_type -> algovn.videoclaw.v1.ListCrawlJobsResponse
+	25, // 40: algovn.videoclaw.v1.VideoClawService.ListVideos:output_type -> algovn.videoclaw.v1.ListVideosResponse
+	27, // 41: algovn.videoclaw.v1.VideoClawService.RetryDownload:output_type -> algovn.videoclaw.v1.RetryDownloadResponse
+	30, // [30:42] is the sub-list for method output_type
+	18, // [18:30] is the sub-list for method input_type
+	18, // [18:18] is the sub-list for extension type_name
+	18, // [18:18] is the sub-list for extension extendee
+	0,  // [0:18] is the sub-list for field type_name
 }
 
 func init() { file_algovn_videoclaw_v1_videoclaw_proto_init() }

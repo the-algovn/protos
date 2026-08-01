@@ -81,6 +81,9 @@ message SourceRule {
   int32 max_pages = 11;
   bool use_flaresolverr = 12;
   google.protobuf.Timestamp created_at = 13;
+  string video_url_selector = 14;
+  string description_selector = 15;
+  google.protobuf.Timestamp updated_at = 16;
 }
 
 message CreateRuleRequest {
@@ -95,6 +98,8 @@ message CreateRuleRequest {
   string next_selector = 9;
   int32 max_pages = 10;
   bool use_flaresolverr = 11;
+  string video_url_selector = 12;
+  string description_selector = 13;
 }
 
 message CreateRuleResponse {
@@ -113,6 +118,8 @@ message UpdateRuleRequest {
   string next_selector = 9;
   int32 max_pages = 10;
   bool use_flaresolverr = 11;
+  string video_url_selector = 12;
+  string description_selector = 13;
 }
 
 message UpdateRuleResponse {
@@ -180,6 +187,7 @@ message Video {
   string download_error = 12;
   google.protobuf.Timestamp found_at = 13;
   google.protobuf.Timestamp downloaded_at = 14;
+  string description = 15;
 }
 
 message ListVideosRequest {
