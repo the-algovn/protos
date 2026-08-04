@@ -54,6 +54,10 @@ service RadioService {
   // v3 — DJ voice settings (gateway rule: role:admin). Spec:
   // the-algovn/specs docs/superpowers/specs/2026-07-23-dj-voice-settings-design.md
   rpc UpdateDJSettings(UpdateDJSettingsRequest) returns (UpdateDJSettingsResponse);
+
+  // v4 — the show timeline (gateway rule: role:admin). Spec:
+  // specs docs/superpowers/specs/2026-08-04-radio-console-show-timeline-design.md
+  rpc GetShowTimeline(GetShowTimelineRequest) returns (GetShowTimelineResponse);
 }
 
 message PlaylistSummary {
@@ -338,3 +342,55 @@ message DJSettings {
 }
 message UpdateDJSettingsRequest  { DJSettings settings = 1; }
 message UpdateDJSettingsResponse { DJSettings settings = 1; }
+
+// v4 — the show timeline (2026-08-04). Spec:
+// specs docs/superpowers/specs/2026-08-04-radio-console-show-timeline-design.md
+
+// ShowSegment is one item of the timeline, past or future. Fields that do not
+// apply to a row are absent: music rows carry no script, talk rows no artist.
+// Branch on `kind`; never assume a field is populated.
+message ShowSegment {
+  string segment_id        = 1;   // stable identity across polls
+  string kind              = 2;   // track | dj | station_id | unknown
+  string certainty         = 3;   // aired|airing|committed|prepared|projected|due|unknown|staging
+  string title             = 4;
+  string artist            = 5;
+  string thumbnail_url     = 6;
+  string started_at        = 7;   // RFC3339. For future segments this is a PROJECTION
+  int32  duration_s        = 8;
+  string source            = 9;   // "" | listener | ai
+  string requested_by_name = 10;
+  string reason            = 11;
+  string request_id        = 12;
+  string status            = 13;  // request status; staging rows only
+  string script            = 14;
+  string backsell_title    = 15;
+  string promise_title     = 16;
+  string correlation_id    = 17;  // filter for the LLM-call drawer
+  string model             = 18;
+  int32  in_tokens         = 19;
+  int32  out_tokens        = 20;
+  double cost_usd          = 21;
+  int32  latency_ms        = 22;
+}
+
+message SessionMarker {
+  string started_at = 1;
+  string ended_at   = 2;  // ABSENT = still on air
+}
+
+message GetShowTimelineRequest {
+  int32 limit  = 1;  // past page size; 0 -> the store default (50), capped at 200
+  int32 offset = 2;
+}
+
+message GetShowTimelineResponse {
+  repeated ShowSegment   past       = 1;  // newest first, EXCLUDING the airing row
+  ShowSegment            airing     = 2;  // ABSENT = nothing on air
+  repeated ShowSegment   upcoming   = 3;  // soonest first; empty when off air
+  repeated ShowSegment   staging    = 4;  // approved but not airable; off the time axis
+  repeated SessionMarker sessions   = 5;
+  string                 break_gate = 6;  // ok|off_air|dj_disabled|ai_paused|budget_reached|no_listeners
+  int64                  total_past = 7;
+  string                 server_now = 8;  // RFC3339 — lets the SPA correct for clock skew
+}

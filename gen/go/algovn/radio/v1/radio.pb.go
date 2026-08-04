@@ -3096,6 +3096,425 @@ func (x *UpdateDJSettingsResponse) GetSettings() *DJSettings {
 	return nil
 }
 
+// ShowSegment is one item of the timeline, past or future. Fields that do not
+// apply to a row are absent: music rows carry no script, talk rows no artist.
+// Branch on `kind`; never assume a field is populated.
+type ShowSegment struct {
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	SegmentId       string                 `protobuf:"bytes,1,opt,name=segment_id,json=segmentId,proto3" json:"segment_id,omitempty"` // stable identity across polls
+	Kind            string                 `protobuf:"bytes,2,opt,name=kind,proto3" json:"kind,omitempty"`                            // track | dj | station_id | unknown
+	Certainty       string                 `protobuf:"bytes,3,opt,name=certainty,proto3" json:"certainty,omitempty"`                  // aired|airing|committed|prepared|projected|due|unknown|staging
+	Title           string                 `protobuf:"bytes,4,opt,name=title,proto3" json:"title,omitempty"`
+	Artist          string                 `protobuf:"bytes,5,opt,name=artist,proto3" json:"artist,omitempty"`
+	ThumbnailUrl    string                 `protobuf:"bytes,6,opt,name=thumbnail_url,json=thumbnailUrl,proto3" json:"thumbnail_url,omitempty"`
+	StartedAt       string                 `protobuf:"bytes,7,opt,name=started_at,json=startedAt,proto3" json:"started_at,omitempty"` // RFC3339. For future segments this is a PROJECTION
+	DurationS       int32                  `protobuf:"varint,8,opt,name=duration_s,json=durationS,proto3" json:"duration_s,omitempty"`
+	Source          string                 `protobuf:"bytes,9,opt,name=source,proto3" json:"source,omitempty"` // "" | listener | ai
+	RequestedByName string                 `protobuf:"bytes,10,opt,name=requested_by_name,json=requestedByName,proto3" json:"requested_by_name,omitempty"`
+	Reason          string                 `protobuf:"bytes,11,opt,name=reason,proto3" json:"reason,omitempty"`
+	RequestId       string                 `protobuf:"bytes,12,opt,name=request_id,json=requestId,proto3" json:"request_id,omitempty"`
+	Status          string                 `protobuf:"bytes,13,opt,name=status,proto3" json:"status,omitempty"` // request status; staging rows only
+	Script          string                 `protobuf:"bytes,14,opt,name=script,proto3" json:"script,omitempty"`
+	BacksellTitle   string                 `protobuf:"bytes,15,opt,name=backsell_title,json=backsellTitle,proto3" json:"backsell_title,omitempty"`
+	PromiseTitle    string                 `protobuf:"bytes,16,opt,name=promise_title,json=promiseTitle,proto3" json:"promise_title,omitempty"`
+	CorrelationId   string                 `protobuf:"bytes,17,opt,name=correlation_id,json=correlationId,proto3" json:"correlation_id,omitempty"` // filter for the LLM-call drawer
+	Model           string                 `protobuf:"bytes,18,opt,name=model,proto3" json:"model,omitempty"`
+	InTokens        int32                  `protobuf:"varint,19,opt,name=in_tokens,json=inTokens,proto3" json:"in_tokens,omitempty"`
+	OutTokens       int32                  `protobuf:"varint,20,opt,name=out_tokens,json=outTokens,proto3" json:"out_tokens,omitempty"`
+	CostUsd         float64                `protobuf:"fixed64,21,opt,name=cost_usd,json=costUsd,proto3" json:"cost_usd,omitempty"`
+	LatencyMs       int32                  `protobuf:"varint,22,opt,name=latency_ms,json=latencyMs,proto3" json:"latency_ms,omitempty"`
+	unknownFields   protoimpl.UnknownFields
+	sizeCache       protoimpl.SizeCache
+}
+
+func (x *ShowSegment) Reset() {
+	*x = ShowSegment{}
+	mi := &file_algovn_radio_v1_radio_proto_msgTypes[59]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ShowSegment) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ShowSegment) ProtoMessage() {}
+
+func (x *ShowSegment) ProtoReflect() protoreflect.Message {
+	mi := &file_algovn_radio_v1_radio_proto_msgTypes[59]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ShowSegment.ProtoReflect.Descriptor instead.
+func (*ShowSegment) Descriptor() ([]byte, []int) {
+	return file_algovn_radio_v1_radio_proto_rawDescGZIP(), []int{59}
+}
+
+func (x *ShowSegment) GetSegmentId() string {
+	if x != nil {
+		return x.SegmentId
+	}
+	return ""
+}
+
+func (x *ShowSegment) GetKind() string {
+	if x != nil {
+		return x.Kind
+	}
+	return ""
+}
+
+func (x *ShowSegment) GetCertainty() string {
+	if x != nil {
+		return x.Certainty
+	}
+	return ""
+}
+
+func (x *ShowSegment) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
+func (x *ShowSegment) GetArtist() string {
+	if x != nil {
+		return x.Artist
+	}
+	return ""
+}
+
+func (x *ShowSegment) GetThumbnailUrl() string {
+	if x != nil {
+		return x.ThumbnailUrl
+	}
+	return ""
+}
+
+func (x *ShowSegment) GetStartedAt() string {
+	if x != nil {
+		return x.StartedAt
+	}
+	return ""
+}
+
+func (x *ShowSegment) GetDurationS() int32 {
+	if x != nil {
+		return x.DurationS
+	}
+	return 0
+}
+
+func (x *ShowSegment) GetSource() string {
+	if x != nil {
+		return x.Source
+	}
+	return ""
+}
+
+func (x *ShowSegment) GetRequestedByName() string {
+	if x != nil {
+		return x.RequestedByName
+	}
+	return ""
+}
+
+func (x *ShowSegment) GetReason() string {
+	if x != nil {
+		return x.Reason
+	}
+	return ""
+}
+
+func (x *ShowSegment) GetRequestId() string {
+	if x != nil {
+		return x.RequestId
+	}
+	return ""
+}
+
+func (x *ShowSegment) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *ShowSegment) GetScript() string {
+	if x != nil {
+		return x.Script
+	}
+	return ""
+}
+
+func (x *ShowSegment) GetBacksellTitle() string {
+	if x != nil {
+		return x.BacksellTitle
+	}
+	return ""
+}
+
+func (x *ShowSegment) GetPromiseTitle() string {
+	if x != nil {
+		return x.PromiseTitle
+	}
+	return ""
+}
+
+func (x *ShowSegment) GetCorrelationId() string {
+	if x != nil {
+		return x.CorrelationId
+	}
+	return ""
+}
+
+func (x *ShowSegment) GetModel() string {
+	if x != nil {
+		return x.Model
+	}
+	return ""
+}
+
+func (x *ShowSegment) GetInTokens() int32 {
+	if x != nil {
+		return x.InTokens
+	}
+	return 0
+}
+
+func (x *ShowSegment) GetOutTokens() int32 {
+	if x != nil {
+		return x.OutTokens
+	}
+	return 0
+}
+
+func (x *ShowSegment) GetCostUsd() float64 {
+	if x != nil {
+		return x.CostUsd
+	}
+	return 0
+}
+
+func (x *ShowSegment) GetLatencyMs() int32 {
+	if x != nil {
+		return x.LatencyMs
+	}
+	return 0
+}
+
+type SessionMarker struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	StartedAt     string                 `protobuf:"bytes,1,opt,name=started_at,json=startedAt,proto3" json:"started_at,omitempty"`
+	EndedAt       string                 `protobuf:"bytes,2,opt,name=ended_at,json=endedAt,proto3" json:"ended_at,omitempty"` // ABSENT = still on air
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SessionMarker) Reset() {
+	*x = SessionMarker{}
+	mi := &file_algovn_radio_v1_radio_proto_msgTypes[60]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SessionMarker) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SessionMarker) ProtoMessage() {}
+
+func (x *SessionMarker) ProtoReflect() protoreflect.Message {
+	mi := &file_algovn_radio_v1_radio_proto_msgTypes[60]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SessionMarker.ProtoReflect.Descriptor instead.
+func (*SessionMarker) Descriptor() ([]byte, []int) {
+	return file_algovn_radio_v1_radio_proto_rawDescGZIP(), []int{60}
+}
+
+func (x *SessionMarker) GetStartedAt() string {
+	if x != nil {
+		return x.StartedAt
+	}
+	return ""
+}
+
+func (x *SessionMarker) GetEndedAt() string {
+	if x != nil {
+		return x.EndedAt
+	}
+	return ""
+}
+
+type GetShowTimelineRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Limit         int32                  `protobuf:"varint,1,opt,name=limit,proto3" json:"limit,omitempty"` // past page size; 0 -> the store default (50), capped at 200
+	Offset        int32                  `protobuf:"varint,2,opt,name=offset,proto3" json:"offset,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetShowTimelineRequest) Reset() {
+	*x = GetShowTimelineRequest{}
+	mi := &file_algovn_radio_v1_radio_proto_msgTypes[61]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetShowTimelineRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetShowTimelineRequest) ProtoMessage() {}
+
+func (x *GetShowTimelineRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_algovn_radio_v1_radio_proto_msgTypes[61]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetShowTimelineRequest.ProtoReflect.Descriptor instead.
+func (*GetShowTimelineRequest) Descriptor() ([]byte, []int) {
+	return file_algovn_radio_v1_radio_proto_rawDescGZIP(), []int{61}
+}
+
+func (x *GetShowTimelineRequest) GetLimit() int32 {
+	if x != nil {
+		return x.Limit
+	}
+	return 0
+}
+
+func (x *GetShowTimelineRequest) GetOffset() int32 {
+	if x != nil {
+		return x.Offset
+	}
+	return 0
+}
+
+type GetShowTimelineResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Past          []*ShowSegment         `protobuf:"bytes,1,rep,name=past,proto3" json:"past,omitempty"`         // newest first, EXCLUDING the airing row
+	Airing        *ShowSegment           `protobuf:"bytes,2,opt,name=airing,proto3" json:"airing,omitempty"`     // ABSENT = nothing on air
+	Upcoming      []*ShowSegment         `protobuf:"bytes,3,rep,name=upcoming,proto3" json:"upcoming,omitempty"` // soonest first; empty when off air
+	Staging       []*ShowSegment         `protobuf:"bytes,4,rep,name=staging,proto3" json:"staging,omitempty"`   // approved but not airable; off the time axis
+	Sessions      []*SessionMarker       `protobuf:"bytes,5,rep,name=sessions,proto3" json:"sessions,omitempty"`
+	BreakGate     string                 `protobuf:"bytes,6,opt,name=break_gate,json=breakGate,proto3" json:"break_gate,omitempty"` // ok|off_air|dj_disabled|ai_paused|budget_reached|no_listeners
+	TotalPast     int64                  `protobuf:"varint,7,opt,name=total_past,json=totalPast,proto3" json:"total_past,omitempty"`
+	ServerNow     string                 `protobuf:"bytes,8,opt,name=server_now,json=serverNow,proto3" json:"server_now,omitempty"` // RFC3339 — lets the SPA correct for clock skew
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetShowTimelineResponse) Reset() {
+	*x = GetShowTimelineResponse{}
+	mi := &file_algovn_radio_v1_radio_proto_msgTypes[62]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetShowTimelineResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetShowTimelineResponse) ProtoMessage() {}
+
+func (x *GetShowTimelineResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_algovn_radio_v1_radio_proto_msgTypes[62]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetShowTimelineResponse.ProtoReflect.Descriptor instead.
+func (*GetShowTimelineResponse) Descriptor() ([]byte, []int) {
+	return file_algovn_radio_v1_radio_proto_rawDescGZIP(), []int{62}
+}
+
+func (x *GetShowTimelineResponse) GetPast() []*ShowSegment {
+	if x != nil {
+		return x.Past
+	}
+	return nil
+}
+
+func (x *GetShowTimelineResponse) GetAiring() *ShowSegment {
+	if x != nil {
+		return x.Airing
+	}
+	return nil
+}
+
+func (x *GetShowTimelineResponse) GetUpcoming() []*ShowSegment {
+	if x != nil {
+		return x.Upcoming
+	}
+	return nil
+}
+
+func (x *GetShowTimelineResponse) GetStaging() []*ShowSegment {
+	if x != nil {
+		return x.Staging
+	}
+	return nil
+}
+
+func (x *GetShowTimelineResponse) GetSessions() []*SessionMarker {
+	if x != nil {
+		return x.Sessions
+	}
+	return nil
+}
+
+func (x *GetShowTimelineResponse) GetBreakGate() string {
+	if x != nil {
+		return x.BreakGate
+	}
+	return ""
+}
+
+func (x *GetShowTimelineResponse) GetTotalPast() int64 {
+	if x != nil {
+		return x.TotalPast
+	}
+	return 0
+}
+
+func (x *GetShowTimelineResponse) GetServerNow() string {
+	if x != nil {
+		return x.ServerNow
+	}
+	return ""
+}
+
 var File_algovn_radio_v1_radio_proto protoreflect.FileDescriptor
 
 const file_algovn_radio_v1_radio_proto_rawDesc = "" +
@@ -3299,7 +3718,56 @@ const file_algovn_radio_v1_radio_proto_rawDesc = "" +
 	"\x17UpdateDJSettingsRequest\x127\n" +
 	"\bsettings\x18\x01 \x01(\v2\x1b.algovn.radio.v1.DJSettingsR\bsettings\"S\n" +
 	"\x18UpdateDJSettingsResponse\x127\n" +
-	"\bsettings\x18\x01 \x01(\v2\x1b.algovn.radio.v1.DJSettingsR\bsettings2\xec\x12\n" +
+	"\bsettings\x18\x01 \x01(\v2\x1b.algovn.radio.v1.DJSettingsR\bsettings\"\x99\x05\n" +
+	"\vShowSegment\x12\x1d\n" +
+	"\n" +
+	"segment_id\x18\x01 \x01(\tR\tsegmentId\x12\x12\n" +
+	"\x04kind\x18\x02 \x01(\tR\x04kind\x12\x1c\n" +
+	"\tcertainty\x18\x03 \x01(\tR\tcertainty\x12\x14\n" +
+	"\x05title\x18\x04 \x01(\tR\x05title\x12\x16\n" +
+	"\x06artist\x18\x05 \x01(\tR\x06artist\x12#\n" +
+	"\rthumbnail_url\x18\x06 \x01(\tR\fthumbnailUrl\x12\x1d\n" +
+	"\n" +
+	"started_at\x18\a \x01(\tR\tstartedAt\x12\x1d\n" +
+	"\n" +
+	"duration_s\x18\b \x01(\x05R\tdurationS\x12\x16\n" +
+	"\x06source\x18\t \x01(\tR\x06source\x12*\n" +
+	"\x11requested_by_name\x18\n" +
+	" \x01(\tR\x0frequestedByName\x12\x16\n" +
+	"\x06reason\x18\v \x01(\tR\x06reason\x12\x1d\n" +
+	"\n" +
+	"request_id\x18\f \x01(\tR\trequestId\x12\x16\n" +
+	"\x06status\x18\r \x01(\tR\x06status\x12\x16\n" +
+	"\x06script\x18\x0e \x01(\tR\x06script\x12%\n" +
+	"\x0ebacksell_title\x18\x0f \x01(\tR\rbacksellTitle\x12#\n" +
+	"\rpromise_title\x18\x10 \x01(\tR\fpromiseTitle\x12%\n" +
+	"\x0ecorrelation_id\x18\x11 \x01(\tR\rcorrelationId\x12\x14\n" +
+	"\x05model\x18\x12 \x01(\tR\x05model\x12\x1b\n" +
+	"\tin_tokens\x18\x13 \x01(\x05R\binTokens\x12\x1d\n" +
+	"\n" +
+	"out_tokens\x18\x14 \x01(\x05R\toutTokens\x12\x19\n" +
+	"\bcost_usd\x18\x15 \x01(\x01R\acostUsd\x12\x1d\n" +
+	"\n" +
+	"latency_ms\x18\x16 \x01(\x05R\tlatencyMs\"I\n" +
+	"\rSessionMarker\x12\x1d\n" +
+	"\n" +
+	"started_at\x18\x01 \x01(\tR\tstartedAt\x12\x19\n" +
+	"\bended_at\x18\x02 \x01(\tR\aendedAt\"F\n" +
+	"\x16GetShowTimelineRequest\x12\x14\n" +
+	"\x05limit\x18\x01 \x01(\x05R\x05limit\x12\x16\n" +
+	"\x06offset\x18\x02 \x01(\x05R\x06offset\"\x8c\x03\n" +
+	"\x17GetShowTimelineResponse\x120\n" +
+	"\x04past\x18\x01 \x03(\v2\x1c.algovn.radio.v1.ShowSegmentR\x04past\x124\n" +
+	"\x06airing\x18\x02 \x01(\v2\x1c.algovn.radio.v1.ShowSegmentR\x06airing\x128\n" +
+	"\bupcoming\x18\x03 \x03(\v2\x1c.algovn.radio.v1.ShowSegmentR\bupcoming\x126\n" +
+	"\astaging\x18\x04 \x03(\v2\x1c.algovn.radio.v1.ShowSegmentR\astaging\x12:\n" +
+	"\bsessions\x18\x05 \x03(\v2\x1e.algovn.radio.v1.SessionMarkerR\bsessions\x12\x1d\n" +
+	"\n" +
+	"break_gate\x18\x06 \x01(\tR\tbreakGate\x12\x1d\n" +
+	"\n" +
+	"total_past\x18\a \x01(\x03R\ttotalPast\x12\x1d\n" +
+	"\n" +
+	"server_now\x18\b \x01(\tR\tserverNow2\xd2\x13\n" +
 	"\fRadioService\x12f\n" +
 	"\x0eCreatePlaylist\x12&.algovn.radio.v1.CreatePlaylistRequest\x1a'.algovn.radio.v1.CreatePlaylistResponse\"\x03\x88\x02\x01\x12c\n" +
 	"\rListPlaylists\x12%.algovn.radio.v1.ListPlaylistsRequest\x1a&.algovn.radio.v1.ListPlaylistsResponse\"\x03\x88\x02\x01\x12]\n" +
@@ -3327,7 +3795,8 @@ const file_algovn_radio_v1_radio_proto_rawDesc = "" +
 	"\rRemoveRequest\x12%.algovn.radio.v1.RemoveRequestRequest\x1a,.algovn.radio.v1.ListStationRequestsResponse\x12R\n" +
 	"\tSkipTrack\x12!.algovn.radio.v1.SkipTrackRequest\x1a\".algovn.radio.v1.SkipTrackResponse\x12[\n" +
 	"\fSetAIEnabled\x12$.algovn.radio.v1.SetAIEnabledRequest\x1a%.algovn.radio.v1.SetAIEnabledResponse\x12g\n" +
-	"\x10UpdateDJSettings\x12(.algovn.radio.v1.UpdateDJSettingsRequest\x1a).algovn.radio.v1.UpdateDJSettingsResponseB=Z;github.com/the-algovn/protos/gen/go/algovn/radio/v1;radiov1b\x06proto3"
+	"\x10UpdateDJSettings\x12(.algovn.radio.v1.UpdateDJSettingsRequest\x1a).algovn.radio.v1.UpdateDJSettingsResponse\x12d\n" +
+	"\x0fGetShowTimeline\x12'.algovn.radio.v1.GetShowTimelineRequest\x1a(.algovn.radio.v1.GetShowTimelineResponseB=Z;github.com/the-algovn/protos/gen/go/algovn/radio/v1;radiov1b\x06proto3"
 
 var (
 	file_algovn_radio_v1_radio_proto_rawDescOnce sync.Once
@@ -3341,7 +3810,7 @@ func file_algovn_radio_v1_radio_proto_rawDescGZIP() []byte {
 	return file_algovn_radio_v1_radio_proto_rawDescData
 }
 
-var file_algovn_radio_v1_radio_proto_msgTypes = make([]protoimpl.MessageInfo, 59)
+var file_algovn_radio_v1_radio_proto_msgTypes = make([]protoimpl.MessageInfo, 63)
 var file_algovn_radio_v1_radio_proto_goTypes = []any{
 	(*PlaylistSummary)(nil),             // 0: algovn.radio.v1.PlaylistSummary
 	(*PlaylistTrack)(nil),               // 1: algovn.radio.v1.PlaylistTrack
@@ -3402,6 +3871,10 @@ var file_algovn_radio_v1_radio_proto_goTypes = []any{
 	(*DJSettings)(nil),                  // 56: algovn.radio.v1.DJSettings
 	(*UpdateDJSettingsRequest)(nil),     // 57: algovn.radio.v1.UpdateDJSettingsRequest
 	(*UpdateDJSettingsResponse)(nil),    // 58: algovn.radio.v1.UpdateDJSettingsResponse
+	(*ShowSegment)(nil),                 // 59: algovn.radio.v1.ShowSegment
+	(*SessionMarker)(nil),               // 60: algovn.radio.v1.SessionMarker
+	(*GetShowTimelineRequest)(nil),      // 61: algovn.radio.v1.GetShowTimelineRequest
+	(*GetShowTimelineResponse)(nil),     // 62: algovn.radio.v1.GetShowTimelineResponse
 }
 var file_algovn_radio_v1_radio_proto_depIdxs = []int32{
 	0,  // 0: algovn.radio.v1.Playlist.summary:type_name -> algovn.radio.v1.PlaylistSummary
@@ -3431,61 +3904,68 @@ var file_algovn_radio_v1_radio_proto_depIdxs = []int32{
 	3,  // 24: algovn.radio.v1.SetAIEnabledResponse.station:type_name -> algovn.radio.v1.Station
 	56, // 25: algovn.radio.v1.UpdateDJSettingsRequest.settings:type_name -> algovn.radio.v1.DJSettings
 	56, // 26: algovn.radio.v1.UpdateDJSettingsResponse.settings:type_name -> algovn.radio.v1.DJSettings
-	4,  // 27: algovn.radio.v1.RadioService.CreatePlaylist:input_type -> algovn.radio.v1.CreatePlaylistRequest
-	6,  // 28: algovn.radio.v1.RadioService.ListPlaylists:input_type -> algovn.radio.v1.ListPlaylistsRequest
-	8,  // 29: algovn.radio.v1.RadioService.GetPlaylist:input_type -> algovn.radio.v1.GetPlaylistRequest
-	10, // 30: algovn.radio.v1.RadioService.RenamePlaylist:input_type -> algovn.radio.v1.RenamePlaylistRequest
-	12, // 31: algovn.radio.v1.RadioService.DeletePlaylist:input_type -> algovn.radio.v1.DeletePlaylistRequest
-	14, // 32: algovn.radio.v1.RadioService.AddTrack:input_type -> algovn.radio.v1.AddTrackRequest
-	16, // 33: algovn.radio.v1.RadioService.RemoveTrack:input_type -> algovn.radio.v1.RemoveTrackRequest
-	18, // 34: algovn.radio.v1.RadioService.ReorderTracks:input_type -> algovn.radio.v1.ReorderTracksRequest
-	23, // 35: algovn.radio.v1.RadioService.SetActivePlaylist:input_type -> algovn.radio.v1.SetActivePlaylistRequest
-	20, // 36: algovn.radio.v1.RadioService.GetStation:input_type -> algovn.radio.v1.GetStationRequest
-	25, // 37: algovn.radio.v1.RadioService.GoOnAir:input_type -> algovn.radio.v1.GoOnAirRequest
-	27, // 38: algovn.radio.v1.RadioService.GoOffAir:input_type -> algovn.radio.v1.GoOffAirRequest
-	30, // 39: algovn.radio.v1.RadioService.GetNowPlaying:input_type -> algovn.radio.v1.GetNowPlayingRequest
-	33, // 40: algovn.radio.v1.RadioService.GetQueue:input_type -> algovn.radio.v1.GetQueueRequest
-	36, // 41: algovn.radio.v1.RadioService.GetHistory:input_type -> algovn.radio.v1.GetHistoryRequest
-	38, // 42: algovn.radio.v1.RadioService.Heartbeat:input_type -> algovn.radio.v1.HeartbeatRequest
-	41, // 43: algovn.radio.v1.RadioService.SearchCandidates:input_type -> algovn.radio.v1.SearchCandidatesRequest
-	44, // 44: algovn.radio.v1.RadioService.RequestTrack:input_type -> algovn.radio.v1.RequestTrackRequest
-	46, // 45: algovn.radio.v1.RadioService.ListMyRequests:input_type -> algovn.radio.v1.ListMyRequestsRequest
-	48, // 46: algovn.radio.v1.RadioService.ListStationRequests:input_type -> algovn.radio.v1.ListStationRequestsRequest
-	50, // 47: algovn.radio.v1.RadioService.ReorderRequests:input_type -> algovn.radio.v1.ReorderRequestsRequest
-	51, // 48: algovn.radio.v1.RadioService.RemoveRequest:input_type -> algovn.radio.v1.RemoveRequestRequest
-	52, // 49: algovn.radio.v1.RadioService.SkipTrack:input_type -> algovn.radio.v1.SkipTrackRequest
-	54, // 50: algovn.radio.v1.RadioService.SetAIEnabled:input_type -> algovn.radio.v1.SetAIEnabledRequest
-	57, // 51: algovn.radio.v1.RadioService.UpdateDJSettings:input_type -> algovn.radio.v1.UpdateDJSettingsRequest
-	5,  // 52: algovn.radio.v1.RadioService.CreatePlaylist:output_type -> algovn.radio.v1.CreatePlaylistResponse
-	7,  // 53: algovn.radio.v1.RadioService.ListPlaylists:output_type -> algovn.radio.v1.ListPlaylistsResponse
-	9,  // 54: algovn.radio.v1.RadioService.GetPlaylist:output_type -> algovn.radio.v1.GetPlaylistResponse
-	11, // 55: algovn.radio.v1.RadioService.RenamePlaylist:output_type -> algovn.radio.v1.RenamePlaylistResponse
-	13, // 56: algovn.radio.v1.RadioService.DeletePlaylist:output_type -> algovn.radio.v1.DeletePlaylistResponse
-	15, // 57: algovn.radio.v1.RadioService.AddTrack:output_type -> algovn.radio.v1.AddTrackResponse
-	17, // 58: algovn.radio.v1.RadioService.RemoveTrack:output_type -> algovn.radio.v1.RemoveTrackResponse
-	19, // 59: algovn.radio.v1.RadioService.ReorderTracks:output_type -> algovn.radio.v1.ReorderTracksResponse
-	24, // 60: algovn.radio.v1.RadioService.SetActivePlaylist:output_type -> algovn.radio.v1.SetActivePlaylistResponse
-	22, // 61: algovn.radio.v1.RadioService.GetStation:output_type -> algovn.radio.v1.GetStationResponse
-	26, // 62: algovn.radio.v1.RadioService.GoOnAir:output_type -> algovn.radio.v1.GoOnAirResponse
-	28, // 63: algovn.radio.v1.RadioService.GoOffAir:output_type -> algovn.radio.v1.GoOffAirResponse
-	31, // 64: algovn.radio.v1.RadioService.GetNowPlaying:output_type -> algovn.radio.v1.GetNowPlayingResponse
-	34, // 65: algovn.radio.v1.RadioService.GetQueue:output_type -> algovn.radio.v1.GetQueueResponse
-	37, // 66: algovn.radio.v1.RadioService.GetHistory:output_type -> algovn.radio.v1.GetHistoryResponse
-	39, // 67: algovn.radio.v1.RadioService.Heartbeat:output_type -> algovn.radio.v1.HeartbeatResponse
-	42, // 68: algovn.radio.v1.RadioService.SearchCandidates:output_type -> algovn.radio.v1.SearchCandidatesResponse
-	45, // 69: algovn.radio.v1.RadioService.RequestTrack:output_type -> algovn.radio.v1.RequestTrackResponse
-	47, // 70: algovn.radio.v1.RadioService.ListMyRequests:output_type -> algovn.radio.v1.ListMyRequestsResponse
-	49, // 71: algovn.radio.v1.RadioService.ListStationRequests:output_type -> algovn.radio.v1.ListStationRequestsResponse
-	49, // 72: algovn.radio.v1.RadioService.ReorderRequests:output_type -> algovn.radio.v1.ListStationRequestsResponse
-	49, // 73: algovn.radio.v1.RadioService.RemoveRequest:output_type -> algovn.radio.v1.ListStationRequestsResponse
-	53, // 74: algovn.radio.v1.RadioService.SkipTrack:output_type -> algovn.radio.v1.SkipTrackResponse
-	55, // 75: algovn.radio.v1.RadioService.SetAIEnabled:output_type -> algovn.radio.v1.SetAIEnabledResponse
-	58, // 76: algovn.radio.v1.RadioService.UpdateDJSettings:output_type -> algovn.radio.v1.UpdateDJSettingsResponse
-	52, // [52:77] is the sub-list for method output_type
-	27, // [27:52] is the sub-list for method input_type
-	27, // [27:27] is the sub-list for extension type_name
-	27, // [27:27] is the sub-list for extension extendee
-	0,  // [0:27] is the sub-list for field type_name
+	59, // 27: algovn.radio.v1.GetShowTimelineResponse.past:type_name -> algovn.radio.v1.ShowSegment
+	59, // 28: algovn.radio.v1.GetShowTimelineResponse.airing:type_name -> algovn.radio.v1.ShowSegment
+	59, // 29: algovn.radio.v1.GetShowTimelineResponse.upcoming:type_name -> algovn.radio.v1.ShowSegment
+	59, // 30: algovn.radio.v1.GetShowTimelineResponse.staging:type_name -> algovn.radio.v1.ShowSegment
+	60, // 31: algovn.radio.v1.GetShowTimelineResponse.sessions:type_name -> algovn.radio.v1.SessionMarker
+	4,  // 32: algovn.radio.v1.RadioService.CreatePlaylist:input_type -> algovn.radio.v1.CreatePlaylistRequest
+	6,  // 33: algovn.radio.v1.RadioService.ListPlaylists:input_type -> algovn.radio.v1.ListPlaylistsRequest
+	8,  // 34: algovn.radio.v1.RadioService.GetPlaylist:input_type -> algovn.radio.v1.GetPlaylistRequest
+	10, // 35: algovn.radio.v1.RadioService.RenamePlaylist:input_type -> algovn.radio.v1.RenamePlaylistRequest
+	12, // 36: algovn.radio.v1.RadioService.DeletePlaylist:input_type -> algovn.radio.v1.DeletePlaylistRequest
+	14, // 37: algovn.radio.v1.RadioService.AddTrack:input_type -> algovn.radio.v1.AddTrackRequest
+	16, // 38: algovn.radio.v1.RadioService.RemoveTrack:input_type -> algovn.radio.v1.RemoveTrackRequest
+	18, // 39: algovn.radio.v1.RadioService.ReorderTracks:input_type -> algovn.radio.v1.ReorderTracksRequest
+	23, // 40: algovn.radio.v1.RadioService.SetActivePlaylist:input_type -> algovn.radio.v1.SetActivePlaylistRequest
+	20, // 41: algovn.radio.v1.RadioService.GetStation:input_type -> algovn.radio.v1.GetStationRequest
+	25, // 42: algovn.radio.v1.RadioService.GoOnAir:input_type -> algovn.radio.v1.GoOnAirRequest
+	27, // 43: algovn.radio.v1.RadioService.GoOffAir:input_type -> algovn.radio.v1.GoOffAirRequest
+	30, // 44: algovn.radio.v1.RadioService.GetNowPlaying:input_type -> algovn.radio.v1.GetNowPlayingRequest
+	33, // 45: algovn.radio.v1.RadioService.GetQueue:input_type -> algovn.radio.v1.GetQueueRequest
+	36, // 46: algovn.radio.v1.RadioService.GetHistory:input_type -> algovn.radio.v1.GetHistoryRequest
+	38, // 47: algovn.radio.v1.RadioService.Heartbeat:input_type -> algovn.radio.v1.HeartbeatRequest
+	41, // 48: algovn.radio.v1.RadioService.SearchCandidates:input_type -> algovn.radio.v1.SearchCandidatesRequest
+	44, // 49: algovn.radio.v1.RadioService.RequestTrack:input_type -> algovn.radio.v1.RequestTrackRequest
+	46, // 50: algovn.radio.v1.RadioService.ListMyRequests:input_type -> algovn.radio.v1.ListMyRequestsRequest
+	48, // 51: algovn.radio.v1.RadioService.ListStationRequests:input_type -> algovn.radio.v1.ListStationRequestsRequest
+	50, // 52: algovn.radio.v1.RadioService.ReorderRequests:input_type -> algovn.radio.v1.ReorderRequestsRequest
+	51, // 53: algovn.radio.v1.RadioService.RemoveRequest:input_type -> algovn.radio.v1.RemoveRequestRequest
+	52, // 54: algovn.radio.v1.RadioService.SkipTrack:input_type -> algovn.radio.v1.SkipTrackRequest
+	54, // 55: algovn.radio.v1.RadioService.SetAIEnabled:input_type -> algovn.radio.v1.SetAIEnabledRequest
+	57, // 56: algovn.radio.v1.RadioService.UpdateDJSettings:input_type -> algovn.radio.v1.UpdateDJSettingsRequest
+	61, // 57: algovn.radio.v1.RadioService.GetShowTimeline:input_type -> algovn.radio.v1.GetShowTimelineRequest
+	5,  // 58: algovn.radio.v1.RadioService.CreatePlaylist:output_type -> algovn.radio.v1.CreatePlaylistResponse
+	7,  // 59: algovn.radio.v1.RadioService.ListPlaylists:output_type -> algovn.radio.v1.ListPlaylistsResponse
+	9,  // 60: algovn.radio.v1.RadioService.GetPlaylist:output_type -> algovn.radio.v1.GetPlaylistResponse
+	11, // 61: algovn.radio.v1.RadioService.RenamePlaylist:output_type -> algovn.radio.v1.RenamePlaylistResponse
+	13, // 62: algovn.radio.v1.RadioService.DeletePlaylist:output_type -> algovn.radio.v1.DeletePlaylistResponse
+	15, // 63: algovn.radio.v1.RadioService.AddTrack:output_type -> algovn.radio.v1.AddTrackResponse
+	17, // 64: algovn.radio.v1.RadioService.RemoveTrack:output_type -> algovn.radio.v1.RemoveTrackResponse
+	19, // 65: algovn.radio.v1.RadioService.ReorderTracks:output_type -> algovn.radio.v1.ReorderTracksResponse
+	24, // 66: algovn.radio.v1.RadioService.SetActivePlaylist:output_type -> algovn.radio.v1.SetActivePlaylistResponse
+	22, // 67: algovn.radio.v1.RadioService.GetStation:output_type -> algovn.radio.v1.GetStationResponse
+	26, // 68: algovn.radio.v1.RadioService.GoOnAir:output_type -> algovn.radio.v1.GoOnAirResponse
+	28, // 69: algovn.radio.v1.RadioService.GoOffAir:output_type -> algovn.radio.v1.GoOffAirResponse
+	31, // 70: algovn.radio.v1.RadioService.GetNowPlaying:output_type -> algovn.radio.v1.GetNowPlayingResponse
+	34, // 71: algovn.radio.v1.RadioService.GetQueue:output_type -> algovn.radio.v1.GetQueueResponse
+	37, // 72: algovn.radio.v1.RadioService.GetHistory:output_type -> algovn.radio.v1.GetHistoryResponse
+	39, // 73: algovn.radio.v1.RadioService.Heartbeat:output_type -> algovn.radio.v1.HeartbeatResponse
+	42, // 74: algovn.radio.v1.RadioService.SearchCandidates:output_type -> algovn.radio.v1.SearchCandidatesResponse
+	45, // 75: algovn.radio.v1.RadioService.RequestTrack:output_type -> algovn.radio.v1.RequestTrackResponse
+	47, // 76: algovn.radio.v1.RadioService.ListMyRequests:output_type -> algovn.radio.v1.ListMyRequestsResponse
+	49, // 77: algovn.radio.v1.RadioService.ListStationRequests:output_type -> algovn.radio.v1.ListStationRequestsResponse
+	49, // 78: algovn.radio.v1.RadioService.ReorderRequests:output_type -> algovn.radio.v1.ListStationRequestsResponse
+	49, // 79: algovn.radio.v1.RadioService.RemoveRequest:output_type -> algovn.radio.v1.ListStationRequestsResponse
+	53, // 80: algovn.radio.v1.RadioService.SkipTrack:output_type -> algovn.radio.v1.SkipTrackResponse
+	55, // 81: algovn.radio.v1.RadioService.SetAIEnabled:output_type -> algovn.radio.v1.SetAIEnabledResponse
+	58, // 82: algovn.radio.v1.RadioService.UpdateDJSettings:output_type -> algovn.radio.v1.UpdateDJSettingsResponse
+	62, // 83: algovn.radio.v1.RadioService.GetShowTimeline:output_type -> algovn.radio.v1.GetShowTimelineResponse
+	58, // [58:84] is the sub-list for method output_type
+	32, // [32:58] is the sub-list for method input_type
+	32, // [32:32] is the sub-list for extension type_name
+	32, // [32:32] is the sub-list for extension extendee
+	0,  // [0:32] is the sub-list for field type_name
 }
 
 func init() { file_algovn_radio_v1_radio_proto_init() }
@@ -3499,7 +3979,7 @@ func file_algovn_radio_v1_radio_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_algovn_radio_v1_radio_proto_rawDesc), len(file_algovn_radio_v1_radio_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   59,
+			NumMessages:   63,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -272,6 +272,9 @@ message ListLLMCallsRequest {
   bool   errors_only = 2;
   int32  limit = 3;         // server clamps: <=0 → 20, >100 → 100
   int32  offset = 4;
+  // Groups every call made for one unit of work — one director prepare makes
+  // up to two (the script validation loop retries once). "" = all.
+  string correlation_id = 5;
 }
 message ListLLMCallsResponse {
   repeated LLMCall calls = 1;  // newest first

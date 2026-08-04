@@ -2531,11 +2531,14 @@ func (x *LLMCall) GetFake() bool {
 }
 
 type ListLLMCallsRequest struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Label         string                 `protobuf:"bytes,1,opt,name=label,proto3" json:"label,omitempty"` // "" = all call-sites
-	ErrorsOnly    bool                   `protobuf:"varint,2,opt,name=errors_only,json=errorsOnly,proto3" json:"errors_only,omitempty"`
-	Limit         int32                  `protobuf:"varint,3,opt,name=limit,proto3" json:"limit,omitempty"` // server clamps: <=0 → 20, >100 → 100
-	Offset        int32                  `protobuf:"varint,4,opt,name=offset,proto3" json:"offset,omitempty"`
+	state      protoimpl.MessageState `protogen:"open.v1"`
+	Label      string                 `protobuf:"bytes,1,opt,name=label,proto3" json:"label,omitempty"` // "" = all call-sites
+	ErrorsOnly bool                   `protobuf:"varint,2,opt,name=errors_only,json=errorsOnly,proto3" json:"errors_only,omitempty"`
+	Limit      int32                  `protobuf:"varint,3,opt,name=limit,proto3" json:"limit,omitempty"` // server clamps: <=0 → 20, >100 → 100
+	Offset     int32                  `protobuf:"varint,4,opt,name=offset,proto3" json:"offset,omitempty"`
+	// Groups every call made for one unit of work — one director prepare makes
+	// up to two (the script validation loop retries once). "" = all.
+	CorrelationId string `protobuf:"bytes,5,opt,name=correlation_id,json=correlationId,proto3" json:"correlation_id,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -2596,6 +2599,13 @@ func (x *ListLLMCallsRequest) GetOffset() int32 {
 		return x.Offset
 	}
 	return 0
+}
+
+func (x *ListLLMCallsRequest) GetCorrelationId() string {
+	if x != nil {
+		return x.CorrelationId
+	}
+	return ""
 }
 
 type ListLLMCallsResponse struct {
@@ -3036,13 +3046,14 @@ const file_algovn_radiolab_v1_lab_proto_rawDesc = "" +
 	"\n" +
 	"latency_ms\x18\f \x01(\x05R\tlatencyMs\x12\x14\n" +
 	"\x05error\x18\r \x01(\tR\x05error\x12\x12\n" +
-	"\x04fake\x18\x0e \x01(\bR\x04fake\"z\n" +
+	"\x04fake\x18\x0e \x01(\bR\x04fake\"\xa1\x01\n" +
 	"\x13ListLLMCallsRequest\x12\x14\n" +
 	"\x05label\x18\x01 \x01(\tR\x05label\x12\x1f\n" +
 	"\verrors_only\x18\x02 \x01(\bR\n" +
 	"errorsOnly\x12\x14\n" +
 	"\x05limit\x18\x03 \x01(\x05R\x05limit\x12\x16\n" +
-	"\x06offset\x18\x04 \x01(\x05R\x06offset\"_\n" +
+	"\x06offset\x18\x04 \x01(\x05R\x06offset\x12%\n" +
+	"\x0ecorrelation_id\x18\x05 \x01(\tR\rcorrelationId\"_\n" +
 	"\x14ListLLMCallsResponse\x121\n" +
 	"\x05calls\x18\x01 \x03(\v2\x1b.algovn.radiolab.v1.LLMCallR\x05calls\x12\x14\n" +
 	"\x05total\x18\x02 \x01(\x03R\x05total\"\xa2\x01\n" +

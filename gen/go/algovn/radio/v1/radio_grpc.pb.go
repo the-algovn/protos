@@ -44,6 +44,7 @@ const (
 	RadioService_SkipTrack_FullMethodName           = "/algovn.radio.v1.RadioService/SkipTrack"
 	RadioService_SetAIEnabled_FullMethodName        = "/algovn.radio.v1.RadioService/SetAIEnabled"
 	RadioService_UpdateDJSettings_FullMethodName    = "/algovn.radio.v1.RadioService/UpdateDJSettings"
+	RadioService_GetShowTimeline_FullMethodName     = "/algovn.radio.v1.RadioService/GetShowTimeline"
 )
 
 // RadioServiceClient is the client API for RadioService service.
@@ -105,6 +106,9 @@ type RadioServiceClient interface {
 	// v3 — DJ voice settings (gateway rule: role:admin). Spec:
 	// the-algovn/specs docs/superpowers/specs/2026-07-23-dj-voice-settings-design.md
 	UpdateDJSettings(ctx context.Context, in *UpdateDJSettingsRequest, opts ...grpc.CallOption) (*UpdateDJSettingsResponse, error)
+	// v4 — the show timeline (gateway rule: role:admin). Spec:
+	// specs docs/superpowers/specs/2026-08-04-radio-console-show-timeline-design.md
+	GetShowTimeline(ctx context.Context, in *GetShowTimelineRequest, opts ...grpc.CallOption) (*GetShowTimelineResponse, error)
 }
 
 type radioServiceClient struct {
@@ -374,6 +378,16 @@ func (c *radioServiceClient) UpdateDJSettings(ctx context.Context, in *UpdateDJS
 	return out, nil
 }
 
+func (c *radioServiceClient) GetShowTimeline(ctx context.Context, in *GetShowTimelineRequest, opts ...grpc.CallOption) (*GetShowTimelineResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetShowTimelineResponse)
+	err := c.cc.Invoke(ctx, RadioService_GetShowTimeline_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RadioServiceServer is the server API for RadioService service.
 // All implementations must embed UnimplementedRadioServiceServer
 // for forward compatibility.
@@ -433,6 +447,9 @@ type RadioServiceServer interface {
 	// v3 — DJ voice settings (gateway rule: role:admin). Spec:
 	// the-algovn/specs docs/superpowers/specs/2026-07-23-dj-voice-settings-design.md
 	UpdateDJSettings(context.Context, *UpdateDJSettingsRequest) (*UpdateDJSettingsResponse, error)
+	// v4 — the show timeline (gateway rule: role:admin). Spec:
+	// specs docs/superpowers/specs/2026-08-04-radio-console-show-timeline-design.md
+	GetShowTimeline(context.Context, *GetShowTimelineRequest) (*GetShowTimelineResponse, error)
 	mustEmbedUnimplementedRadioServiceServer()
 }
 
@@ -517,6 +534,9 @@ func (UnimplementedRadioServiceServer) SetAIEnabled(context.Context, *SetAIEnabl
 }
 func (UnimplementedRadioServiceServer) UpdateDJSettings(context.Context, *UpdateDJSettingsRequest) (*UpdateDJSettingsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateDJSettings not implemented")
+}
+func (UnimplementedRadioServiceServer) GetShowTimeline(context.Context, *GetShowTimelineRequest) (*GetShowTimelineResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetShowTimeline not implemented")
 }
 func (UnimplementedRadioServiceServer) mustEmbedUnimplementedRadioServiceServer() {}
 func (UnimplementedRadioServiceServer) testEmbeddedByValue()                      {}
@@ -989,6 +1009,24 @@ func _RadioService_UpdateDJSettings_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RadioService_GetShowTimeline_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetShowTimelineRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RadioServiceServer).GetShowTimeline(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RadioService_GetShowTimeline_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RadioServiceServer).GetShowTimeline(ctx, req.(*GetShowTimelineRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RadioService_ServiceDesc is the grpc.ServiceDesc for RadioService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1095,6 +1133,10 @@ var RadioService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateDJSettings",
 			Handler:    _RadioService_UpdateDJSettings_Handler,
+		},
+		{
+			MethodName: "GetShowTimeline",
+			Handler:    _RadioService_GetShowTimeline_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
