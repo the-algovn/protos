@@ -58,6 +58,13 @@ service RadioService {
   // v4 — the show timeline (gateway rule: role:admin). Spec:
   // specs docs/superpowers/specs/2026-08-04-radio-console-show-timeline-design.md
   rpc GetShowTimeline(GetShowTimelineRequest) returns (GetShowTimelineResponse);
+
+  // Operator break commands. ForceBreak bypasses the CADENCE gate only -
+  // never budget, listeners or on-air. CancelPreparedBreak also disarms an
+  // arming that has not been prepared yet; the name is narrower than the
+  // behaviour because buf breaking runs in FILE mode.
+  rpc ForceBreak(ForceBreakRequest) returns (ForceBreakResponse);
+  rpc CancelPreparedBreak(CancelPreparedBreakRequest) returns (CancelPreparedBreakResponse);
 }
 
 message PlaylistSummary {
@@ -372,11 +379,28 @@ message ShowSegment {
   int32  out_tokens        = 20;
   double cost_usd          = 21;
   int32  latency_ms        = 22;
+  // Operator-armed rather than cadence-owed. Set on the due or prepared
+  // break row so the console can offer Cancel during the ~20s window
+  // between arming and preparation.
+  bool   forced            = 23;
 }
 
 message SessionMarker {
   string started_at = 1;
   string ended_at   = 2;  // ABSENT = still on air
+}
+
+message ForceBreakRequest {}
+message ForceBreakResponse {
+  // true = a break is now due. false = a clip was already prepared, so
+  // there was nothing to arm.
+  bool armed = 1;
+}
+
+message CancelPreparedBreakRequest {}
+message CancelPreparedBreakResponse {
+  // true = a prepared clip was discarded, an arming was cleared, or both.
+  bool cancelled = 1;
 }
 
 message GetShowTimelineRequest {

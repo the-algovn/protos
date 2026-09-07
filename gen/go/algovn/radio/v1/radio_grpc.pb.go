@@ -45,6 +45,8 @@ const (
 	RadioService_SetAIEnabled_FullMethodName        = "/algovn.radio.v1.RadioService/SetAIEnabled"
 	RadioService_UpdateDJSettings_FullMethodName    = "/algovn.radio.v1.RadioService/UpdateDJSettings"
 	RadioService_GetShowTimeline_FullMethodName     = "/algovn.radio.v1.RadioService/GetShowTimeline"
+	RadioService_ForceBreak_FullMethodName          = "/algovn.radio.v1.RadioService/ForceBreak"
+	RadioService_CancelPreparedBreak_FullMethodName = "/algovn.radio.v1.RadioService/CancelPreparedBreak"
 )
 
 // RadioServiceClient is the client API for RadioService service.
@@ -109,6 +111,12 @@ type RadioServiceClient interface {
 	// v4 — the show timeline (gateway rule: role:admin). Spec:
 	// specs docs/superpowers/specs/2026-08-04-radio-console-show-timeline-design.md
 	GetShowTimeline(ctx context.Context, in *GetShowTimelineRequest, opts ...grpc.CallOption) (*GetShowTimelineResponse, error)
+	// Operator break commands. ForceBreak bypasses the CADENCE gate only -
+	// never budget, listeners or on-air. CancelPreparedBreak also disarms an
+	// arming that has not been prepared yet; the name is narrower than the
+	// behaviour because buf breaking runs in FILE mode.
+	ForceBreak(ctx context.Context, in *ForceBreakRequest, opts ...grpc.CallOption) (*ForceBreakResponse, error)
+	CancelPreparedBreak(ctx context.Context, in *CancelPreparedBreakRequest, opts ...grpc.CallOption) (*CancelPreparedBreakResponse, error)
 }
 
 type radioServiceClient struct {
@@ -388,6 +396,26 @@ func (c *radioServiceClient) GetShowTimeline(ctx context.Context, in *GetShowTim
 	return out, nil
 }
 
+func (c *radioServiceClient) ForceBreak(ctx context.Context, in *ForceBreakRequest, opts ...grpc.CallOption) (*ForceBreakResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ForceBreakResponse)
+	err := c.cc.Invoke(ctx, RadioService_ForceBreak_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *radioServiceClient) CancelPreparedBreak(ctx context.Context, in *CancelPreparedBreakRequest, opts ...grpc.CallOption) (*CancelPreparedBreakResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CancelPreparedBreakResponse)
+	err := c.cc.Invoke(ctx, RadioService_CancelPreparedBreak_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RadioServiceServer is the server API for RadioService service.
 // All implementations must embed UnimplementedRadioServiceServer
 // for forward compatibility.
@@ -450,6 +478,12 @@ type RadioServiceServer interface {
 	// v4 — the show timeline (gateway rule: role:admin). Spec:
 	// specs docs/superpowers/specs/2026-08-04-radio-console-show-timeline-design.md
 	GetShowTimeline(context.Context, *GetShowTimelineRequest) (*GetShowTimelineResponse, error)
+	// Operator break commands. ForceBreak bypasses the CADENCE gate only -
+	// never budget, listeners or on-air. CancelPreparedBreak also disarms an
+	// arming that has not been prepared yet; the name is narrower than the
+	// behaviour because buf breaking runs in FILE mode.
+	ForceBreak(context.Context, *ForceBreakRequest) (*ForceBreakResponse, error)
+	CancelPreparedBreak(context.Context, *CancelPreparedBreakRequest) (*CancelPreparedBreakResponse, error)
 	mustEmbedUnimplementedRadioServiceServer()
 }
 
@@ -537,6 +571,12 @@ func (UnimplementedRadioServiceServer) UpdateDJSettings(context.Context, *Update
 }
 func (UnimplementedRadioServiceServer) GetShowTimeline(context.Context, *GetShowTimelineRequest) (*GetShowTimelineResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetShowTimeline not implemented")
+}
+func (UnimplementedRadioServiceServer) ForceBreak(context.Context, *ForceBreakRequest) (*ForceBreakResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ForceBreak not implemented")
+}
+func (UnimplementedRadioServiceServer) CancelPreparedBreak(context.Context, *CancelPreparedBreakRequest) (*CancelPreparedBreakResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CancelPreparedBreak not implemented")
 }
 func (UnimplementedRadioServiceServer) mustEmbedUnimplementedRadioServiceServer() {}
 func (UnimplementedRadioServiceServer) testEmbeddedByValue()                      {}
@@ -1027,6 +1067,42 @@ func _RadioService_GetShowTimeline_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RadioService_ForceBreak_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ForceBreakRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RadioServiceServer).ForceBreak(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RadioService_ForceBreak_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RadioServiceServer).ForceBreak(ctx, req.(*ForceBreakRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _RadioService_CancelPreparedBreak_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CancelPreparedBreakRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RadioServiceServer).CancelPreparedBreak(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RadioService_CancelPreparedBreak_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RadioServiceServer).CancelPreparedBreak(ctx, req.(*CancelPreparedBreakRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RadioService_ServiceDesc is the grpc.ServiceDesc for RadioService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1137,6 +1213,14 @@ var RadioService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetShowTimeline",
 			Handler:    _RadioService_GetShowTimeline_Handler,
+		},
+		{
+			MethodName: "ForceBreak",
+			Handler:    _RadioService_ForceBreak_Handler,
+		},
+		{
+			MethodName: "CancelPreparedBreak",
+			Handler:    _RadioService_CancelPreparedBreak_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
