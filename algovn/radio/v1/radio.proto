@@ -219,7 +219,7 @@ message NowPlaying {
   string title = 2;
   string artist = 3;           // library channel
   string thumbnail_url = 4;    // "" in v0 (not persisted at ingest)
-  string dedication = 5;       // "" in v0
+  string dedication = 5;       // the requester's note; "" when none
   string started_at = 6;       // RFC3339 — ear-sync anchor, sample-clock truth
   int32 duration_seconds = 7;
   int32 listeners = 8;
@@ -238,7 +238,7 @@ message QueueItem {
   string title = 1;
   string artist = 2;
   string thumbnail_url = 3;
-  bool has_dedication = 4;  // always false in v1 (no dedications yet)
+  bool has_dedication = 4;  // text withheld until it airs
   string source = 5;             // "listener" | "ai"
   string requested_by_name = 6;  // display name; "" for ai
   string reason = 7;  // the DJ's stated reason; "" unless source=ai
@@ -261,6 +261,7 @@ message HistoryItem {
   string source = 5;
   string requested_by_name = 6;
   string reason = 7;
+  string dedication = 8;  // the requester's note, revealed once it has aired
 }
 
 message GetHistoryRequest {}
@@ -306,10 +307,14 @@ message TrackRequest {
   string fail_reason = 10;
   string created_at = 11;        // RFC3339
   string reason = 12;            // the DJ's stated reason; "" unless source=ai
+  string dedication = 13;        // the requester's note; "" when none
 }
 
 message RequestTrackRequest {
   Candidate candidate = 1;  // full snapshot of the picked search result
+  // v1.3 - the note the DJ reads on air. Optional, trimmed, <= 400 runes.
+  // The signature is NOT here: display_name stays server-derived.
+  string dedication = 2;
 }
 message RequestTrackResponse {
   TrackRequest request = 1;
