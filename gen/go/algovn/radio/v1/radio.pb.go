@@ -2443,7 +2443,7 @@ func (x *TrackRequest) GetDedication() string {
 type RequestTrackRequest struct {
 	state     protoimpl.MessageState `protogen:"open.v1"`
 	Candidate *Candidate             `protobuf:"bytes,1,opt,name=candidate,proto3" json:"candidate,omitempty"` // full snapshot of the picked search result
-	// v1.3 — the note the DJ reads on air. Optional, trimmed, <= 400 runes.
+	// v1.3 - the note the DJ reads on air. Optional, trimmed, <= 400 runes.
 	// The signature is NOT here: display_name stays server-derived.
 	Dedication    string `protobuf:"bytes,2,opt,name=dedication,proto3" json:"dedication,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -2959,14 +2959,15 @@ func (x *SetAIEnabledResponse) GetStation() *Station {
 // would transcode to a JSON string). protojson omits zero values: absent
 // break_every / station_id_min on the wire mean 0 (= disabled).
 type DJSettings struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	VoiceId       string                 `protobuf:"bytes,1,opt,name=voice_id,json=voiceId,proto3" json:"voice_id,omitempty"`                   // must be a server voice-catalog id; "fake" is preview-only, rejected on save
-	SpeakingRate  float64                `protobuf:"fixed64,2,opt,name=speaking_rate,json=speakingRate,proto3" json:"speaking_rate,omitempty"`  // accepted range 0.7–1.3; 1.0 = provider default
-	BreakEvery    int32                  `protobuf:"varint,3,opt,name=break_every,json=breakEvery,proto3" json:"break_every,omitempty"`         // talk break due after N tracks; 0 disables
-	StationIdMin  int32                  `protobuf:"varint,4,opt,name=station_id_min,json=stationIdMin,proto3" json:"station_id_min,omitempty"` // MINUTES between station IDs; 0 disables
-	MaxChars      int32                  `protobuf:"varint,5,opt,name=max_chars,json=maxChars,proto3" json:"max_chars,omitempty"`               // LLM backsell script rune cap (50–1000)
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	state          protoimpl.MessageState `protogen:"open.v1"`
+	VoiceId        string                 `protobuf:"bytes,1,opt,name=voice_id,json=voiceId,proto3" json:"voice_id,omitempty"`                         // must be a server voice-catalog id; "fake" is preview-only, rejected on save
+	SpeakingRate   float64                `protobuf:"fixed64,2,opt,name=speaking_rate,json=speakingRate,proto3" json:"speaking_rate,omitempty"`        // accepted range 0.7–1.3; 1.0 = provider default
+	BreakEvery     int32                  `protobuf:"varint,3,opt,name=break_every,json=breakEvery,proto3" json:"break_every,omitempty"`               // talk break due after N tracks; 0 disables
+	StationIdMin   int32                  `protobuf:"varint,4,opt,name=station_id_min,json=stationIdMin,proto3" json:"station_id_min,omitempty"`       // MINUTES between station IDs; 0 disables
+	MaxChars       int32                  `protobuf:"varint,5,opt,name=max_chars,json=maxChars,proto3" json:"max_chars,omitempty"`                     // LLM backsell script rune cap (50–1000)
+	MusingEveryMin int32                  `protobuf:"varint,6,opt,name=musing_every_min,json=musingEveryMin,proto3" json:"musing_every_min,omitempty"` // MINUTES between musings; 0 disables
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *DJSettings) Reset() {
@@ -3030,6 +3031,13 @@ func (x *DJSettings) GetStationIdMin() int32 {
 func (x *DJSettings) GetMaxChars() int32 {
 	if x != nil {
 		return x.MaxChars
+	}
+	return 0
+}
+
+func (x *DJSettings) GetMusingEveryMin() int32 {
+	if x != nil {
+		return x.MusingEveryMin
 	}
 	return 0
 }
@@ -3128,7 +3136,7 @@ func (x *UpdateDJSettingsResponse) GetSettings() *DJSettings {
 type ShowSegment struct {
 	state           protoimpl.MessageState `protogen:"open.v1"`
 	SegmentId       string                 `protobuf:"bytes,1,opt,name=segment_id,json=segmentId,proto3" json:"segment_id,omitempty"` // stable identity across polls
-	Kind            string                 `protobuf:"bytes,2,opt,name=kind,proto3" json:"kind,omitempty"`                            // track | dj | station_id | unknown
+	Kind            string                 `protobuf:"bytes,2,opt,name=kind,proto3" json:"kind,omitempty"`                            // track | dj | station_id | musing | daypart_transition | wake_greeting | unknown
 	Certainty       string                 `protobuf:"bytes,3,opt,name=certainty,proto3" json:"certainty,omitempty"`                  // aired|airing|committed|prepared|projected|due|unknown|staging
 	Title           string                 `protobuf:"bytes,4,opt,name=title,proto3" json:"title,omitempty"`
 	Artist          string                 `protobuf:"bytes,5,opt,name=artist,proto3" json:"artist,omitempty"`
@@ -3915,7 +3923,7 @@ const file_algovn_radio_v1_radio_proto_rawDesc = "" +
 	"\x13SetAIEnabledRequest\x12\x18\n" +
 	"\aenabled\x18\x01 \x01(\bR\aenabled\"J\n" +
 	"\x14SetAIEnabledResponse\x122\n" +
-	"\astation\x18\x01 \x01(\v2\x18.algovn.radio.v1.StationR\astation\"\xb0\x01\n" +
+	"\astation\x18\x01 \x01(\v2\x18.algovn.radio.v1.StationR\astation\"\xda\x01\n" +
 	"\n" +
 	"DJSettings\x12\x19\n" +
 	"\bvoice_id\x18\x01 \x01(\tR\avoiceId\x12#\n" +
@@ -3923,7 +3931,8 @@ const file_algovn_radio_v1_radio_proto_rawDesc = "" +
 	"\vbreak_every\x18\x03 \x01(\x05R\n" +
 	"breakEvery\x12$\n" +
 	"\x0estation_id_min\x18\x04 \x01(\x05R\fstationIdMin\x12\x1b\n" +
-	"\tmax_chars\x18\x05 \x01(\x05R\bmaxChars\"R\n" +
+	"\tmax_chars\x18\x05 \x01(\x05R\bmaxChars\x12(\n" +
+	"\x10musing_every_min\x18\x06 \x01(\x05R\x0emusingEveryMin\"R\n" +
 	"\x17UpdateDJSettingsRequest\x127\n" +
 	"\bsettings\x18\x01 \x01(\v2\x1b.algovn.radio.v1.DJSettingsR\bsettings\"S\n" +
 	"\x18UpdateDJSettingsResponse\x127\n" +

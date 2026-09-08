@@ -351,6 +351,7 @@ message DJSettings {
   int32  break_every = 3;    // talk break due after N tracks; 0 disables
   int32  station_id_min = 4; // MINUTES between station IDs; 0 disables
   int32  max_chars = 5;      // LLM backsell script rune cap (50–1000)
+  int32  musing_every_min = 6; // MINUTES between musings; 0 disables
 }
 message UpdateDJSettingsRequest  { DJSettings settings = 1; }
 message UpdateDJSettingsResponse { DJSettings settings = 1; }
@@ -363,7 +364,7 @@ message UpdateDJSettingsResponse { DJSettings settings = 1; }
 // Branch on `kind`; never assume a field is populated.
 message ShowSegment {
   string segment_id        = 1;   // stable identity across polls
-  string kind              = 2;   // track | dj | station_id | unknown
+  string kind              = 2;   // track | dj | station_id | musing | daypart_transition | wake_greeting | unknown
   string certainty         = 3;   // aired|airing|committed|prepared|projected|due|unknown|staging
   string title             = 4;
   string artist            = 5;
