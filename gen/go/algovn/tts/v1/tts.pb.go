@@ -405,6 +405,308 @@ func (x *Voice) GetFreeTierCharsPerMonth() int64 {
 	return 0
 }
 
+type CreateVoiceRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	Label string                 `protobuf:"bytes,1,opt,name=label,proto3" json:"label,omitempty"`
+	// gender is "MALE", "FEMALE" or "NEUTRAL".
+	Gender string `protobuf:"bytes,2,opt,name=gender,proto3" json:"gender,omitempty"`
+	// ref_audio is any container ffmpeg decodes (wav, mp3, m4a), 3-30 s.
+	RefAudio []byte `protobuf:"bytes,3,opt,name=ref_audio,json=refAudio,proto3" json:"ref_audio,omitempty"`
+	// ref_text is the exact transcript of ref_audio.
+	RefText       string `protobuf:"bytes,4,opt,name=ref_text,json=refText,proto3" json:"ref_text,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateVoiceRequest) Reset() {
+	*x = CreateVoiceRequest{}
+	mi := &file_algovn_tts_v1_tts_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateVoiceRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateVoiceRequest) ProtoMessage() {}
+
+func (x *CreateVoiceRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_algovn_tts_v1_tts_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateVoiceRequest.ProtoReflect.Descriptor instead.
+func (*CreateVoiceRequest) Descriptor() ([]byte, []int) {
+	return file_algovn_tts_v1_tts_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *CreateVoiceRequest) GetLabel() string {
+	if x != nil {
+		return x.Label
+	}
+	return ""
+}
+
+func (x *CreateVoiceRequest) GetGender() string {
+	if x != nil {
+		return x.Gender
+	}
+	return ""
+}
+
+func (x *CreateVoiceRequest) GetRefAudio() []byte {
+	if x != nil {
+		return x.RefAudio
+	}
+	return nil
+}
+
+func (x *CreateVoiceRequest) GetRefText() string {
+	if x != nil {
+		return x.RefText
+	}
+	return ""
+}
+
+type CreateVoiceResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Voice         *Voice                 `protobuf:"bytes,1,opt,name=voice,proto3" json:"voice,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CreateVoiceResponse) Reset() {
+	*x = CreateVoiceResponse{}
+	mi := &file_algovn_tts_v1_tts_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CreateVoiceResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateVoiceResponse) ProtoMessage() {}
+
+func (x *CreateVoiceResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_algovn_tts_v1_tts_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateVoiceResponse.ProtoReflect.Descriptor instead.
+func (*CreateVoiceResponse) Descriptor() ([]byte, []int) {
+	return file_algovn_tts_v1_tts_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *CreateVoiceResponse) GetVoice() *Voice {
+	if x != nil {
+		return x.Voice
+	}
+	return nil
+}
+
+type DesignVoiceRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// description is the voice in words, e.g. "giong nu tre mien Nam, am ap".
+	Description string `protobuf:"bytes,1,opt,name=description,proto3" json:"description,omitempty"`
+	SampleText  string `protobuf:"bytes,2,opt,name=sample_text,json=sampleText,proto3" json:"sample_text,omitempty"`
+	// takes is 1-3.
+	Takes         int32 `protobuf:"varint,3,opt,name=takes,proto3" json:"takes,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DesignVoiceRequest) Reset() {
+	*x = DesignVoiceRequest{}
+	mi := &file_algovn_tts_v1_tts_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DesignVoiceRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DesignVoiceRequest) ProtoMessage() {}
+
+func (x *DesignVoiceRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_algovn_tts_v1_tts_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DesignVoiceRequest.ProtoReflect.Descriptor instead.
+func (*DesignVoiceRequest) Descriptor() ([]byte, []int) {
+	return file_algovn_tts_v1_tts_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *DesignVoiceRequest) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+func (x *DesignVoiceRequest) GetSampleText() string {
+	if x != nil {
+		return x.SampleText
+	}
+	return ""
+}
+
+func (x *DesignVoiceRequest) GetTakes() int32 {
+	if x != nil {
+		return x.Takes
+	}
+	return 0
+}
+
+type DesignVoiceResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// takes are WAV files, one per requested take.
+	Takes         [][]byte `protobuf:"bytes,1,rep,name=takes,proto3" json:"takes,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DesignVoiceResponse) Reset() {
+	*x = DesignVoiceResponse{}
+	mi := &file_algovn_tts_v1_tts_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DesignVoiceResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DesignVoiceResponse) ProtoMessage() {}
+
+func (x *DesignVoiceResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_algovn_tts_v1_tts_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DesignVoiceResponse.ProtoReflect.Descriptor instead.
+func (*DesignVoiceResponse) Descriptor() ([]byte, []int) {
+	return file_algovn_tts_v1_tts_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *DesignVoiceResponse) GetTakes() [][]byte {
+	if x != nil {
+		return x.Takes
+	}
+	return nil
+}
+
+type DeleteVoiceRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteVoiceRequest) Reset() {
+	*x = DeleteVoiceRequest{}
+	mi := &file_algovn_tts_v1_tts_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteVoiceRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteVoiceRequest) ProtoMessage() {}
+
+func (x *DeleteVoiceRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_algovn_tts_v1_tts_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteVoiceRequest.ProtoReflect.Descriptor instead.
+func (*DeleteVoiceRequest) Descriptor() ([]byte, []int) {
+	return file_algovn_tts_v1_tts_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *DeleteVoiceRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+type DeleteVoiceResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteVoiceResponse) Reset() {
+	*x = DeleteVoiceResponse{}
+	mi := &file_algovn_tts_v1_tts_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteVoiceResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteVoiceResponse) ProtoMessage() {}
+
+func (x *DeleteVoiceResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_algovn_tts_v1_tts_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteVoiceResponse.ProtoReflect.Descriptor instead.
+func (*DeleteVoiceResponse) Descriptor() ([]byte, []int) {
+	return file_algovn_tts_v1_tts_proto_rawDescGZIP(), []int{10}
+}
+
 var File_algovn_tts_v1_tts_proto protoreflect.FileDescriptor
 
 const file_algovn_tts_v1_tts_proto_rawDesc = "" +
@@ -432,17 +734,37 @@ const file_algovn_tts_v1_tts_proto_rawDesc = "" +
 	"\bprovider\x18\x03 \x01(\tR\bprovider\x12\x12\n" +
 	"\x04tier\x18\x04 \x01(\tR\x04tier\x12\x16\n" +
 	"\x06gender\x18\x05 \x01(\tR\x06gender\x128\n" +
-	"\x19free_tier_chars_per_month\x18\x06 \x01(\x03R\x15freeTierCharsPerMonth*W\n" +
+	"\x19free_tier_chars_per_month\x18\x06 \x01(\x03R\x15freeTierCharsPerMonth\"z\n" +
+	"\x12CreateVoiceRequest\x12\x14\n" +
+	"\x05label\x18\x01 \x01(\tR\x05label\x12\x16\n" +
+	"\x06gender\x18\x02 \x01(\tR\x06gender\x12\x1b\n" +
+	"\tref_audio\x18\x03 \x01(\fR\brefAudio\x12\x19\n" +
+	"\bref_text\x18\x04 \x01(\tR\arefText\"A\n" +
+	"\x13CreateVoiceResponse\x12*\n" +
+	"\x05voice\x18\x01 \x01(\v2\x14.algovn.tts.v1.VoiceR\x05voice\"m\n" +
+	"\x12DesignVoiceRequest\x12 \n" +
+	"\vdescription\x18\x01 \x01(\tR\vdescription\x12\x1f\n" +
+	"\vsample_text\x18\x02 \x01(\tR\n" +
+	"sampleText\x12\x14\n" +
+	"\x05takes\x18\x03 \x01(\x05R\x05takes\"+\n" +
+	"\x13DesignVoiceResponse\x12\x14\n" +
+	"\x05takes\x18\x01 \x03(\fR\x05takes\"$\n" +
+	"\x12DeleteVoiceRequest\x12\x0e\n" +
+	"\x02id\x18\x01 \x01(\tR\x02id\"\x15\n" +
+	"\x13DeleteVoiceResponse*W\n" +
 	"\vAudioFormat\x12\x1c\n" +
 	"\x18AUDIO_FORMAT_UNSPECIFIED\x10\x00\x12\x14\n" +
 	"\x10AUDIO_FORMAT_MP3\x10\x01\x12\x14\n" +
-	"\x10AUDIO_FORMAT_WAV\x10\x022\xb2\x01\n" +
+	"\x10AUDIO_FORMAT_WAV\x10\x022\xb4\x03\n" +
 	"\n" +
 	"TTSService\x12Q\n" +
 	"\n" +
 	"Synthesize\x12 .algovn.tts.v1.SynthesizeRequest\x1a!.algovn.tts.v1.SynthesizeResponse\x12Q\n" +
 	"\n" +
-	"ListVoices\x12 .algovn.tts.v1.ListVoicesRequest\x1a!.algovn.tts.v1.ListVoicesResponseB9Z7github.com/the-algovn/protos/gen/go/algovn/tts/v1;ttsv1b\x06proto3"
+	"ListVoices\x12 .algovn.tts.v1.ListVoicesRequest\x1a!.algovn.tts.v1.ListVoicesResponse\x12T\n" +
+	"\vCreateVoice\x12!.algovn.tts.v1.CreateVoiceRequest\x1a\".algovn.tts.v1.CreateVoiceResponse\x12T\n" +
+	"\vDesignVoice\x12!.algovn.tts.v1.DesignVoiceRequest\x1a\".algovn.tts.v1.DesignVoiceResponse\x12T\n" +
+	"\vDeleteVoice\x12!.algovn.tts.v1.DeleteVoiceRequest\x1a\".algovn.tts.v1.DeleteVoiceResponseB9Z7github.com/the-algovn/protos/gen/go/algovn/tts/v1;ttsv1b\x06proto3"
 
 var (
 	file_algovn_tts_v1_tts_proto_rawDescOnce sync.Once
@@ -457,28 +779,41 @@ func file_algovn_tts_v1_tts_proto_rawDescGZIP() []byte {
 }
 
 var file_algovn_tts_v1_tts_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_algovn_tts_v1_tts_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_algovn_tts_v1_tts_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_algovn_tts_v1_tts_proto_goTypes = []any{
-	(AudioFormat)(0),           // 0: algovn.tts.v1.AudioFormat
-	(*SynthesizeRequest)(nil),  // 1: algovn.tts.v1.SynthesizeRequest
-	(*SynthesizeResponse)(nil), // 2: algovn.tts.v1.SynthesizeResponse
-	(*ListVoicesRequest)(nil),  // 3: algovn.tts.v1.ListVoicesRequest
-	(*ListVoicesResponse)(nil), // 4: algovn.tts.v1.ListVoicesResponse
-	(*Voice)(nil),              // 5: algovn.tts.v1.Voice
+	(AudioFormat)(0),            // 0: algovn.tts.v1.AudioFormat
+	(*SynthesizeRequest)(nil),   // 1: algovn.tts.v1.SynthesizeRequest
+	(*SynthesizeResponse)(nil),  // 2: algovn.tts.v1.SynthesizeResponse
+	(*ListVoicesRequest)(nil),   // 3: algovn.tts.v1.ListVoicesRequest
+	(*ListVoicesResponse)(nil),  // 4: algovn.tts.v1.ListVoicesResponse
+	(*Voice)(nil),               // 5: algovn.tts.v1.Voice
+	(*CreateVoiceRequest)(nil),  // 6: algovn.tts.v1.CreateVoiceRequest
+	(*CreateVoiceResponse)(nil), // 7: algovn.tts.v1.CreateVoiceResponse
+	(*DesignVoiceRequest)(nil),  // 8: algovn.tts.v1.DesignVoiceRequest
+	(*DesignVoiceResponse)(nil), // 9: algovn.tts.v1.DesignVoiceResponse
+	(*DeleteVoiceRequest)(nil),  // 10: algovn.tts.v1.DeleteVoiceRequest
+	(*DeleteVoiceResponse)(nil), // 11: algovn.tts.v1.DeleteVoiceResponse
 }
 var file_algovn_tts_v1_tts_proto_depIdxs = []int32{
-	0, // 0: algovn.tts.v1.SynthesizeRequest.format:type_name -> algovn.tts.v1.AudioFormat
-	0, // 1: algovn.tts.v1.SynthesizeResponse.format:type_name -> algovn.tts.v1.AudioFormat
-	5, // 2: algovn.tts.v1.ListVoicesResponse.voices:type_name -> algovn.tts.v1.Voice
-	1, // 3: algovn.tts.v1.TTSService.Synthesize:input_type -> algovn.tts.v1.SynthesizeRequest
-	3, // 4: algovn.tts.v1.TTSService.ListVoices:input_type -> algovn.tts.v1.ListVoicesRequest
-	2, // 5: algovn.tts.v1.TTSService.Synthesize:output_type -> algovn.tts.v1.SynthesizeResponse
-	4, // 6: algovn.tts.v1.TTSService.ListVoices:output_type -> algovn.tts.v1.ListVoicesResponse
-	5, // [5:7] is the sub-list for method output_type
-	3, // [3:5] is the sub-list for method input_type
-	3, // [3:3] is the sub-list for extension type_name
-	3, // [3:3] is the sub-list for extension extendee
-	0, // [0:3] is the sub-list for field type_name
+	0,  // 0: algovn.tts.v1.SynthesizeRequest.format:type_name -> algovn.tts.v1.AudioFormat
+	0,  // 1: algovn.tts.v1.SynthesizeResponse.format:type_name -> algovn.tts.v1.AudioFormat
+	5,  // 2: algovn.tts.v1.ListVoicesResponse.voices:type_name -> algovn.tts.v1.Voice
+	5,  // 3: algovn.tts.v1.CreateVoiceResponse.voice:type_name -> algovn.tts.v1.Voice
+	1,  // 4: algovn.tts.v1.TTSService.Synthesize:input_type -> algovn.tts.v1.SynthesizeRequest
+	3,  // 5: algovn.tts.v1.TTSService.ListVoices:input_type -> algovn.tts.v1.ListVoicesRequest
+	6,  // 6: algovn.tts.v1.TTSService.CreateVoice:input_type -> algovn.tts.v1.CreateVoiceRequest
+	8,  // 7: algovn.tts.v1.TTSService.DesignVoice:input_type -> algovn.tts.v1.DesignVoiceRequest
+	10, // 8: algovn.tts.v1.TTSService.DeleteVoice:input_type -> algovn.tts.v1.DeleteVoiceRequest
+	2,  // 9: algovn.tts.v1.TTSService.Synthesize:output_type -> algovn.tts.v1.SynthesizeResponse
+	4,  // 10: algovn.tts.v1.TTSService.ListVoices:output_type -> algovn.tts.v1.ListVoicesResponse
+	7,  // 11: algovn.tts.v1.TTSService.CreateVoice:output_type -> algovn.tts.v1.CreateVoiceResponse
+	9,  // 12: algovn.tts.v1.TTSService.DesignVoice:output_type -> algovn.tts.v1.DesignVoiceResponse
+	11, // 13: algovn.tts.v1.TTSService.DeleteVoice:output_type -> algovn.tts.v1.DeleteVoiceResponse
+	9,  // [9:14] is the sub-list for method output_type
+	4,  // [4:9] is the sub-list for method input_type
+	4,  // [4:4] is the sub-list for extension type_name
+	4,  // [4:4] is the sub-list for extension extendee
+	0,  // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_algovn_tts_v1_tts_proto_init() }
@@ -492,7 +827,7 @@ func file_algovn_tts_v1_tts_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_algovn_tts_v1_tts_proto_rawDesc), len(file_algovn_tts_v1_tts_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   5,
+			NumMessages:   11,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

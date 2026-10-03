@@ -11,6 +11,14 @@ option go_package = "github.com/the-algovn/protos/gen/go/algovn/tts/v1;ttsv1";
 service TTSService {
   rpc Synthesize(SynthesizeRequest) returns (SynthesizeResponse);
   rpc ListVoices(ListVoicesRequest) returns (ListVoicesResponse);
+  // CreateVoice registers a self-hosted voice cloned from a reference clip.
+  // A voice saved from DesignVoice is created the same way, with the chosen
+  // take as ref_audio and the design's sample_text as ref_text.
+  rpc CreateVoice(CreateVoiceRequest) returns (CreateVoiceResponse);
+  // DesignVoice renders candidate takes of a voice described in words.
+  // Stateless: nothing is stored until the caller saves a take.
+  rpc DesignVoice(DesignVoiceRequest) returns (DesignVoiceResponse);
+  rpc DeleteVoice(DeleteVoiceRequest) returns (DeleteVoiceResponse);
 }
 
 // AudioFormat is the container the caller wants back, regardless of what the
@@ -61,3 +69,36 @@ message Voice {
   // not track consumption against it.
   int64 free_tier_chars_per_month = 6;
 }
+
+message CreateVoiceRequest {
+  string label = 1;
+  // gender is "MALE", "FEMALE" or "NEUTRAL".
+  string gender = 2;
+  // ref_audio is any container ffmpeg decodes (wav, mp3, m4a), 3-30 s.
+  bytes ref_audio = 3;
+  // ref_text is the exact transcript of ref_audio.
+  string ref_text = 4;
+}
+
+message CreateVoiceResponse {
+  Voice voice = 1;
+}
+
+message DesignVoiceRequest {
+  // description is the voice in words, e.g. "giong nu tre mien Nam, am ap".
+  string description = 1;
+  string sample_text = 2;
+  // takes is 1-3.
+  int32 takes = 3;
+}
+
+message DesignVoiceResponse {
+  // takes are WAV files, one per requested take.
+  repeated bytes takes = 1;
+}
+
+message DeleteVoiceRequest {
+  string id = 1;
+}
+
+message DeleteVoiceResponse {}

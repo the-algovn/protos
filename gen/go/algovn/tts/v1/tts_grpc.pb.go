@@ -19,8 +19,11 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	TTSService_Synthesize_FullMethodName = "/algovn.tts.v1.TTSService/Synthesize"
-	TTSService_ListVoices_FullMethodName = "/algovn.tts.v1.TTSService/ListVoices"
+	TTSService_Synthesize_FullMethodName  = "/algovn.tts.v1.TTSService/Synthesize"
+	TTSService_ListVoices_FullMethodName  = "/algovn.tts.v1.TTSService/ListVoices"
+	TTSService_CreateVoice_FullMethodName = "/algovn.tts.v1.TTSService/CreateVoice"
+	TTSService_DesignVoice_FullMethodName = "/algovn.tts.v1.TTSService/DesignVoice"
+	TTSService_DeleteVoice_FullMethodName = "/algovn.tts.v1.TTSService/DeleteVoice"
 )
 
 // TTSServiceClient is the client API for TTSService service.
@@ -34,6 +37,14 @@ const (
 type TTSServiceClient interface {
 	Synthesize(ctx context.Context, in *SynthesizeRequest, opts ...grpc.CallOption) (*SynthesizeResponse, error)
 	ListVoices(ctx context.Context, in *ListVoicesRequest, opts ...grpc.CallOption) (*ListVoicesResponse, error)
+	// CreateVoice registers a self-hosted voice cloned from a reference clip.
+	// A voice saved from DesignVoice is created the same way, with the chosen
+	// take as ref_audio and the design's sample_text as ref_text.
+	CreateVoice(ctx context.Context, in *CreateVoiceRequest, opts ...grpc.CallOption) (*CreateVoiceResponse, error)
+	// DesignVoice renders candidate takes of a voice described in words.
+	// Stateless: nothing is stored until the caller saves a take.
+	DesignVoice(ctx context.Context, in *DesignVoiceRequest, opts ...grpc.CallOption) (*DesignVoiceResponse, error)
+	DeleteVoice(ctx context.Context, in *DeleteVoiceRequest, opts ...grpc.CallOption) (*DeleteVoiceResponse, error)
 }
 
 type tTSServiceClient struct {
@@ -64,6 +75,36 @@ func (c *tTSServiceClient) ListVoices(ctx context.Context, in *ListVoicesRequest
 	return out, nil
 }
 
+func (c *tTSServiceClient) CreateVoice(ctx context.Context, in *CreateVoiceRequest, opts ...grpc.CallOption) (*CreateVoiceResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CreateVoiceResponse)
+	err := c.cc.Invoke(ctx, TTSService_CreateVoice_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *tTSServiceClient) DesignVoice(ctx context.Context, in *DesignVoiceRequest, opts ...grpc.CallOption) (*DesignVoiceResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DesignVoiceResponse)
+	err := c.cc.Invoke(ctx, TTSService_DesignVoice_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *tTSServiceClient) DeleteVoice(ctx context.Context, in *DeleteVoiceRequest, opts ...grpc.CallOption) (*DeleteVoiceResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteVoiceResponse)
+	err := c.cc.Invoke(ctx, TTSService_DeleteVoice_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // TTSServiceServer is the server API for TTSService service.
 // All implementations must embed UnimplementedTTSServiceServer
 // for forward compatibility.
@@ -75,6 +116,14 @@ func (c *tTSServiceClient) ListVoices(ctx context.Context, in *ListVoicesRequest
 type TTSServiceServer interface {
 	Synthesize(context.Context, *SynthesizeRequest) (*SynthesizeResponse, error)
 	ListVoices(context.Context, *ListVoicesRequest) (*ListVoicesResponse, error)
+	// CreateVoice registers a self-hosted voice cloned from a reference clip.
+	// A voice saved from DesignVoice is created the same way, with the chosen
+	// take as ref_audio and the design's sample_text as ref_text.
+	CreateVoice(context.Context, *CreateVoiceRequest) (*CreateVoiceResponse, error)
+	// DesignVoice renders candidate takes of a voice described in words.
+	// Stateless: nothing is stored until the caller saves a take.
+	DesignVoice(context.Context, *DesignVoiceRequest) (*DesignVoiceResponse, error)
+	DeleteVoice(context.Context, *DeleteVoiceRequest) (*DeleteVoiceResponse, error)
 	mustEmbedUnimplementedTTSServiceServer()
 }
 
@@ -90,6 +139,15 @@ func (UnimplementedTTSServiceServer) Synthesize(context.Context, *SynthesizeRequ
 }
 func (UnimplementedTTSServiceServer) ListVoices(context.Context, *ListVoicesRequest) (*ListVoicesResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ListVoices not implemented")
+}
+func (UnimplementedTTSServiceServer) CreateVoice(context.Context, *CreateVoiceRequest) (*CreateVoiceResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CreateVoice not implemented")
+}
+func (UnimplementedTTSServiceServer) DesignVoice(context.Context, *DesignVoiceRequest) (*DesignVoiceResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method DesignVoice not implemented")
+}
+func (UnimplementedTTSServiceServer) DeleteVoice(context.Context, *DeleteVoiceRequest) (*DeleteVoiceResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeleteVoice not implemented")
 }
 func (UnimplementedTTSServiceServer) mustEmbedUnimplementedTTSServiceServer() {}
 func (UnimplementedTTSServiceServer) testEmbeddedByValue()                    {}
@@ -148,6 +206,60 @@ func _TTSService_ListVoices_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _TTSService_CreateVoice_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateVoiceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TTSServiceServer).CreateVoice(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TTSService_CreateVoice_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TTSServiceServer).CreateVoice(ctx, req.(*CreateVoiceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TTSService_DesignVoice_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DesignVoiceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TTSServiceServer).DesignVoice(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TTSService_DesignVoice_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TTSServiceServer).DesignVoice(ctx, req.(*DesignVoiceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _TTSService_DeleteVoice_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteVoiceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(TTSServiceServer).DeleteVoice(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: TTSService_DeleteVoice_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(TTSServiceServer).DeleteVoice(ctx, req.(*DeleteVoiceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // TTSService_ServiceDesc is the grpc.ServiceDesc for TTSService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -162,6 +274,18 @@ var TTSService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListVoices",
 			Handler:    _TTSService_ListVoices_Handler,
+		},
+		{
+			MethodName: "CreateVoice",
+			Handler:    _TTSService_CreateVoice_Handler,
+		},
+		{
+			MethodName: "DesignVoice",
+			Handler:    _TTSService_DesignVoice_Handler,
+		},
+		{
+			MethodName: "DeleteVoice",
+			Handler:    _TTSService_DeleteVoice_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
