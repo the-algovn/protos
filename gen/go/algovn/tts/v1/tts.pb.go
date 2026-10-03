@@ -524,7 +524,8 @@ type DesignVoiceRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// description is the voice in words, e.g. "giong nu tre mien Nam, am ap".
 	Description string `protobuf:"bytes,1,opt,name=description,proto3" json:"description,omitempty"`
-	SampleText  string `protobuf:"bytes,2,opt,name=sample_text,json=sampleText,proto3" json:"sample_text,omitempty"`
+	// sample_text is the text to render, 1-250 characters.
+	SampleText string `protobuf:"bytes,2,opt,name=sample_text,json=sampleText,proto3" json:"sample_text,omitempty"`
 	// takes is 1-3.
 	Takes         int32 `protobuf:"varint,3,opt,name=takes,proto3" json:"takes,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -584,7 +585,7 @@ func (x *DesignVoiceRequest) GetTakes() int32 {
 
 type DesignVoiceResponse struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
-	// takes are WAV files, one per requested take.
+	// takes are MP3 files, one per requested take.
 	Takes         [][]byte `protobuf:"bytes,1,rep,name=takes,proto3" json:"takes,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache

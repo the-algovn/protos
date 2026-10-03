@@ -44,6 +44,7 @@ type TTSServiceClient interface {
 	// DesignVoice renders candidate takes of a voice described in words.
 	// Stateless: nothing is stored until the caller saves a take.
 	DesignVoice(ctx context.Context, in *DesignVoiceRequest, opts ...grpc.CallOption) (*DesignVoiceResponse, error)
+	// DeleteVoice removes a self-hosted voice. Unknown id -> NOT_FOUND; non-voxcpm id -> INVALID_ARGUMENT. Ids are never reused.
 	DeleteVoice(ctx context.Context, in *DeleteVoiceRequest, opts ...grpc.CallOption) (*DeleteVoiceResponse, error)
 }
 
@@ -123,6 +124,7 @@ type TTSServiceServer interface {
 	// DesignVoice renders candidate takes of a voice described in words.
 	// Stateless: nothing is stored until the caller saves a take.
 	DesignVoice(context.Context, *DesignVoiceRequest) (*DesignVoiceResponse, error)
+	// DeleteVoice removes a self-hosted voice. Unknown id -> NOT_FOUND; non-voxcpm id -> INVALID_ARGUMENT. Ids are never reused.
 	DeleteVoice(context.Context, *DeleteVoiceRequest) (*DeleteVoiceResponse, error)
 	mustEmbedUnimplementedTTSServiceServer()
 }
