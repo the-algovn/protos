@@ -32,9 +32,9 @@ enum AudioFormat {
 
 message SynthesizeRequest {
   string text = 1;
-  // voice_id is provider-namespaced ("google:vi-VN-Wavenet-B"). A bare id is
-  // resolved as "google:" for back-compat with ids already persisted in the
-  // radio station row and in RACE_VOICE_ID.
+  // voice_id is "provider:name". Today the only provider is "voxcpm", so ids
+  // look like "voxcpm:<id>". An id with no provider prefix is rejected with
+  // INVALID_ARGUMENT.
   string voice_id = 2;
   double speaking_rate = 3;
   AudioFormat format = 4;
@@ -47,8 +47,7 @@ message SynthesizeResponse {
   AudioFormat format = 2;
   string voice_id = 3;
   string provider = 4;
-  // cost_usd is the LIST-price marginal cost. It does not subtract the
-  // provider's monthly free allowance -- see free_tier_chars_per_month.
+  // cost_usd is 0 for self-hosted voices.
   double cost_usd = 5;
   bool cache_hit = 6;
 }
@@ -65,9 +64,7 @@ message Voice {
   string provider = 3;
   string tier = 4;
   string gender = 5;
-  // free_tier_chars_per_month is the provider's monthly allowance for this
-  // tier, 0 when there is none. Advisory: the service is stateless and does
-  // not track consumption against it.
+  // free_tier_chars_per_month is 0 for self-hosted voices.
   int64 free_tier_chars_per_month = 6;
 }
 

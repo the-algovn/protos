@@ -75,9 +75,9 @@ func (AudioFormat) EnumDescriptor() ([]byte, []int) {
 type SynthesizeRequest struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	Text  string                 `protobuf:"bytes,1,opt,name=text,proto3" json:"text,omitempty"`
-	// voice_id is provider-namespaced ("google:vi-VN-Wavenet-B"). A bare id is
-	// resolved as "google:" for back-compat with ids already persisted in the
-	// radio station row and in RACE_VOICE_ID.
+	// voice_id is "provider:name". Today the only provider is "voxcpm", so ids
+	// look like "voxcpm:<id>". An id with no provider prefix is rejected with
+	// INVALID_ARGUMENT.
 	VoiceId      string      `protobuf:"bytes,2,opt,name=voice_id,json=voiceId,proto3" json:"voice_id,omitempty"`
 	SpeakingRate float64     `protobuf:"fixed64,3,opt,name=speaking_rate,json=speakingRate,proto3" json:"speaking_rate,omitempty"`
 	Format       AudioFormat `protobuf:"varint,4,opt,name=format,proto3,enum=algovn.tts.v1.AudioFormat" json:"format,omitempty"`
@@ -158,8 +158,7 @@ type SynthesizeResponse struct {
 	Format   AudioFormat            `protobuf:"varint,2,opt,name=format,proto3,enum=algovn.tts.v1.AudioFormat" json:"format,omitempty"`
 	VoiceId  string                 `protobuf:"bytes,3,opt,name=voice_id,json=voiceId,proto3" json:"voice_id,omitempty"`
 	Provider string                 `protobuf:"bytes,4,opt,name=provider,proto3" json:"provider,omitempty"`
-	// cost_usd is the LIST-price marginal cost. It does not subtract the
-	// provider's monthly free allowance -- see free_tier_chars_per_month.
+	// cost_usd is 0 for self-hosted voices.
 	CostUsd       float64 `protobuf:"fixed64,5,opt,name=cost_usd,json=costUsd,proto3" json:"cost_usd,omitempty"`
 	CacheHit      bool    `protobuf:"varint,6,opt,name=cache_hit,json=cacheHit,proto3" json:"cache_hit,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -325,9 +324,7 @@ type Voice struct {
 	Provider string                 `protobuf:"bytes,3,opt,name=provider,proto3" json:"provider,omitempty"`
 	Tier     string                 `protobuf:"bytes,4,opt,name=tier,proto3" json:"tier,omitempty"`
 	Gender   string                 `protobuf:"bytes,5,opt,name=gender,proto3" json:"gender,omitempty"`
-	// free_tier_chars_per_month is the provider's monthly allowance for this
-	// tier, 0 when there is none. Advisory: the service is stateless and does
-	// not track consumption against it.
+	// free_tier_chars_per_month is 0 for self-hosted voices.
 	FreeTierCharsPerMonth int64 `protobuf:"varint,6,opt,name=free_tier_chars_per_month,json=freeTierCharsPerMonth,proto3" json:"free_tier_chars_per_month,omitempty"`
 	unknownFields         protoimpl.UnknownFields
 	sizeCache             protoimpl.SizeCache
